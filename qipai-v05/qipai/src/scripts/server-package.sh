@@ -4,16 +4,16 @@ echo ""
 echo "---------------------start---------------------"
 #配置
 #项目前辍
-PROJECT_PREFIX=xyqp
+PROJECT_PREFIX=v05
 #svn项目地址
-PROJECT_DIR=/d/xyqp-server/server/qipai-v003/qipai/
+PROJECT_DIR=/d/work/workspace/v05/qipai-v05/qipai
 #包输出目录
 OUT_DIR=/d/serverPackages/server
 
 #当前目录
 CUR_DIR=`pwd`
 #配置文件，配置需要保留的文件
-PROP_FILE="/d/xyqp-server/server/qipai-v003/qipai/src/scripts/server.properties"
+PROP_FILE="/d/work/workspace/v05/qipai-v05/qipai/src/scripts/server.properties"
 
 #打包的目标目录
 PACKAGE_DIR="${OUT_DIR}/server"
