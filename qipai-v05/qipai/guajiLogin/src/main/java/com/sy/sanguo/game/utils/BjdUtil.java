@@ -21,7 +21,7 @@ public class BjdUtil {
 
     public static final String plat = "mjqz";
     public static final String sign_key = "0NUs3u0qpsfrB4k9";
-    public static final String sign_key_new = "xw2qRjtbesoMPcd8";
+    public static final String sign_key_new = "2zqQTpC7ueLYGW1y";
     public static long sign_key_time_out = 0L;
 
     public static void init() throws Exception {
