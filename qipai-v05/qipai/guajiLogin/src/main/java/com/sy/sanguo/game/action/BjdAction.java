@@ -1834,4 +1834,27 @@ public class BjdAction extends GameStrutsAction {
         }
     }
 
+    /**
+     * 账号注册
+     */
+    public void selfRegister() {
+        try {
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.info("BjdAction|selfRegister|params|" + params);
+            if (!BjdUtil.checkSign(params)) {
+                response(-1, LangMsg.getMsg(LangMsg.code_1));
+                return;
+            }
+            Map<String, Object> result = LoginUtil.selfRegister(params, userDao, false);
+            JSONObject json = new JSONObject();
+            json.putAll(result);
+            response(json);
+            LOGGER.info("BjdAction|selfRegister|succ|" + result + "|" + params);
+        } catch (Exception e) {
+            response(2, LangMsg.getMsg(LangMsg.code_4));
+            LOGGER.error("selfRegister|error|" + e.getMessage(), e);
+        }
+    }
+
+
 }

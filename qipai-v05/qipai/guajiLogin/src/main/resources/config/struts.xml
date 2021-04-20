@@ -195,5 +195,6 @@
 		<action class="com.sy.sanguo.game.action.BjdAction" name="updateGroup"  method="updateGroup" />
 		<action class="com.sy.sanguo.game.action.BjdAction" name="moveGroupUser"  method="moveGroupUser" />
 		<action class="com.sy.sanguo.game.action.BjdAction" name="fireUser"  method="fireUser" />
+		<action class="com.sy.sanguo.game.action.BjdAction" name="selfRegister"  method="selfRegister" />
 	</package>
 </struts>

@@ -1295,7 +1295,7 @@ public class UserAction extends GameStrutsAction {
             Map<String, Object> result = new HashMap<>();
             String platform = params.get("p");
             if ("self".equals(platform)) {
-                result = this.selfRegister(params);
+                result = LoginUtil.selfRegister(params, userDao);
             } else {
                 result.put("code", -3);
                 result.put("msg", LangMsg.getMsg(LangMsg.code_3));
@@ -1308,106 +1308,6 @@ public class UserAction extends GameStrutsAction {
             return;
         }
         LogUtil.i("register:" + this.result);
-    }
-
-    private Map<String, Object> selfRegister(Map<String, String> params) throws Exception {
-        Map<String, Object> result = new HashMap<>();
-        String username = params.get("u");
-        String nickName = params.get("nickName");
-        String password = params.get("ps");
-        String sign = params.get("k");
-        long time = NumberUtils.toLong(params.get("t"));
-        String platform = "self";
-        String channel = params.get("c");// 渠道
-        String deviceCode = params.get("deviceCode");// 设备码
-        String headimgurl = params.get("headimgurl");// 头像
-
-        String secret = "mwFLeKLzNoL46dDn0vE2";
-        StringBuilder md5 = new StringBuilder();
-        md5.append(username == null ? "" : username);
-        md5.append(password == null ? "" : password);
-        md5.append(time);
-        md5.append(platform);
-        md5.append(channel);
-        md5.append(secret);
-
-        if (!MD5Util.getStringMD5(md5.toString()).equals(sign)) {
-            result.put("code", 4);
-            result.put("msg", "md5验证失败");
-            return result;
-        }
-
-        // 验证用户名和密码合法性
-        if (StringUtils.isBlank(username) || !StringUtil.checkUserNameForSelfRegister(username)) {
-            result.put("code", 992);
-            result.put("msg", "账号不合法，字母开头，6到20位");
-            return result;
-        }
-        if (StringUtils.isBlank(nickName)) {
-            result.put("code", 991);
-            result.put("msg", "请输入昵称");
-            return result;
-        }
-        if (nickName.equals(username)) {
-            result.put("code", 991);
-            result.put("msg", "昵称不能与账号相同");
-            return result;
-        }
-        int len = StringUtil.lengthOfNickName(nickName);
-        if (len == 0 || len > 12) {
-            result.put("code", 994);
-            result.put("msg", "昵称过长");
-            return result;
-        }
-        String checkRes = StringUtil.checkPassword(password);
-        if (null != checkRes) {
-            result.put("code", 993);
-            result.put("msg", checkRes);
-            return result;
-        }
-
-        String filt = KeyWordsFilter.getInstance_1().filt(nickName);
-        if (!nickName.equals(filt)) {
-            result.put("code", 1);
-            result.put("msg", "昵称不合法：\n【" + nickName + "】-->【" + filt + "】");
-            return result;
-        }
-
-        RegInfo regInfo;
-        regInfo = this.userDao.getUser(username, platform);
-        if (regInfo != null) {
-            // 用户已存在
-            result.put("code", 1);
-            result.put("msg", "用户名已存在");
-            return result;
-        }
-
-        // 注册成功
-        long maxId = Manager.getInstance().generatePlayerId();
-        regInfo = new RegInfo();
-        regInfo.setFlatId(username);
-        int sex = new Random().nextInt(100) >= 70 ? Constants.SEX_FEMALE : Constants.SEX_MALE;
-        regInfo.setSex(sex);
-        regInfo.setName(nickName);
-        regInfo.setPw(genPw(password));
-        regInfo.setSessCode(genSessCode(username));
-        if (StringUtils.isNotBlank(deviceCode)) {
-            regInfo.setDeviceCode(deviceCode);
-        }
-        if (StringUtils.isNotBlank(headimgurl)) {
-            regInfo.setHeadimgurl(headimgurl);
-        }
-        Manager.getInstance().buildBaseUser(regInfo, platform, maxId);
-        long ret = this.userDao.addUser(regInfo);
-        if (ret <= 0) {
-            result.put("code", 1);
-            result.put("msg", "用户名已存在");
-            return result;
-        }
-        regInfo.setPf(platform);
-        result.put("code", 0);
-        result.put("user", buildUser(regInfo, Collections.<Server>emptyList()));
-        return result;
     }
 
     private Map<String, Object> comRegister() throws Exception {
