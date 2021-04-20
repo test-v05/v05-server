@@ -2287,7 +2287,7 @@ public class TableManager {
             payType = StringUtil.getIntValue(params, 2, 2);
         } else if (GameUtil.isPlaySandh(playType) || GameUtil.isPlayDaTuo(playType) || GameUtil.isPlayPengHuzi(playType)) {
             payType = StringUtil.getIntValue(params, 2, 2);
-        } else if (GameUtil.isPlayNiuShiBie(playType) || GameUtil.isPlayXTBP(playType) || GameUtil.isPlay2renDdz(playType)
+        } else if ( GameUtil.isPlayCxxdz276(playType) ||  GameUtil.isPlayDaDdz(playType) || GameUtil.isPlayNiuShiBie(playType) || GameUtil.isPlayXTBP(playType) || GameUtil.isPlay2renDdz(playType)
                 || GameUtil.isPlayYYBS(playType) || GameUtil.isPlayTcgd(playType) || GameUtil.isPlayHsth(playType) || GameUtil.isPlay2renDdz(playType) || GameUtil.isPlayJingZhouMJ(playType)
                 || GameUtil.isPlayCDTLJ(playType)) {
             payType = StringUtil.getIntValue(params, 2, 2);

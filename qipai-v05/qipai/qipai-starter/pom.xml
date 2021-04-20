@@ -130,6 +130,11 @@
             <artifactId>game-mj-qzmj</artifactId>
             <version>${parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.sy.game.qipai</groupId>
+            <artifactId>game-mj-cxmj</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
         <!--麻将-->
 
         <!--字牌-->
@@ -301,6 +306,16 @@
             <artifactId>game-pk-xtbp</artifactId>
             <version>${parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.sy.game.qipai</groupId>
+            <artifactId>game-pk-daddz</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sy.game.qipai</groupId>
+            <artifactId>game-pk-cxxdz183</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
         <!--扑克-->
 
 
@@ -400,10 +415,7 @@
         <!--            <version>${parent.version}</version>-->
         <!--        </dependency>-->
         <!--        <dependency>-->
-        <!--            <groupId>com.sy.game.qipai</groupId>-->
-        <!--            <artifactId>game-mj-cxmj</artifactId>-->
-        <!--            <version>${parent.version}</version>-->
-        <!--        </dependency>-->
+
         <!--        <dependency>-->
         <!--            <groupId>com.sy.game.qipai</groupId>-->
         <!--            <artifactId>game-mj-tcmj</artifactId>-->

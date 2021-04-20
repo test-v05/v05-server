@@ -137,21 +137,21 @@ public class WebSocketMsgType {
     public static final short sc_gold_chat = 4999;
 
 
-	//活动场,主消息,参数内0: 1刷新活动人数, 2结算消息展示
-	public static final short competition_msg_refresh = 6000;
-	//结算
-	public static final short competition_msg_clearing = 6001;
-	//赛前推送
-	public static final short competition_msg_before_playing = 6002;
-	//开赛推送
-	public static final short competition_msg_begin_playing = 6003;
-	//房间内排名推送
-	public static final short competition_msg_rank = 6004;
-	//回到报名界面
-	public static final short competition_msg_back_sign = 6005;
+    //活动场,主消息,参数内0: 1刷新活动人数, 2结算消息展示
+    public static final short competition_msg_refresh = 6000;
+    //结算
+    public static final short competition_msg_clearing = 6001;
+    //赛前推送
+    public static final short competition_msg_before_playing = 6002;
+    //开赛推送
+    public static final short competition_msg_begin_playing = 6003;
+    //房间内排名推送
+    public static final short competition_msg_rank = 6004;
+    //回到报名界面
+    public static final short competition_msg_back_sign = 6005;
 
-	//流局
-	public static final short competition_msg_case_off = 6006;
+    //流局
+    public static final short competition_msg_case_off = 6006;
 
 
     // ///////////////////////////////////////////////////////////////////
@@ -551,19 +551,19 @@ public class WebSocketMsgType {
      *领取视频奖励
      **/
     public static final int req_code_getVideoAwardMsg = 1126;
-    
-    
+
+
     /**
      * 领取累计胜利奖励
      */
     public static final int res_code_getWinReward=1130;
-    
+
     /**
      * 打开累计胜利数据
      */
     public static final int res_code_getWinRewardInfo=1128;
-    
-    
+
+
     /**
      * 推送可领取累计胜利奖励
      */
@@ -1292,67 +1292,67 @@ public class WebSocketMsgType {
     public static final int req_com_sp_datou = 406;
 ///////////////以下是升级的/////////////////////
 //客户端发送到服务器的消息
-	/**
-	 * 亮主
-	 */
-	public static final int REQ_COM_SJ_LIANGZHU = 90;
-	/**
-	 * 反主
-	 */
-	public static final int REQ_COM_SJ_FANZHU = 91;
-	/**
-	 * 炒底
-	 */
-	public static final int REQ_COM_SJ_CHAODI = 92;
-	/**
-	 * 埋底牌
-	 */
-	public static final int REQ_COM_SJ_MAIDI = 93;
-	/**
-	 * 放弃抄底
-	 */
-	public static final int REQ_COM_SJ_GIVE_CHAODI = 94;
+    /**
+     * 亮主
+     */
+    public static final int REQ_COM_SJ_LIANGZHU = 90;
+    /**
+     * 反主
+     */
+    public static final int REQ_COM_SJ_FANZHU = 91;
+    /**
+     * 炒底
+     */
+    public static final int REQ_COM_SJ_CHAODI = 92;
+    /**
+     * 埋底牌
+     */
+    public static final int REQ_COM_SJ_MAIDI = 93;
+    /**
+     * 放弃抄底
+     */
+    public static final int REQ_COM_SJ_GIVE_CHAODI = 94;
 
-	/**
-	 * 亮主
-	 */
-	public static final int RES_COM_SJ_LIANGZHU = 90;
-	/**
-	 * 自保
-	 */
-	public static final int RES_COM_SJ_SELF_PROTECTED = 91;
-	/**
-	 * 推送底牌给庄家
-	 */
-	public static final int RES_COM_SJ_PUSH_BOTTOM_CARD = 92;
-	/**
-	 * 反主
-	 */
-	public static final int RES_COM_SJ_FANZHU = 93;
-	/**
-	 * 询问反主
-	 */
-	public static final int RES_COM_SJ_ASK_FANZHU = 94;
-	/**
-	 * 推送玩家底牌
-	 */
-	public static final int RES_COM_SJ_BOTTOM_CARD = 95;
-	/**
-	 * 询问炒底
-	 */
-	public static final int RES_COM_SJ_ASK_CHAODI = 96;
-	/**
-	 * 当前牌局打无主
-	 */
-	public static final int RES_COM_SJ_NO_RANK = 97;
-	/**
-	 * 扣底完成
-	 */
-	public static final int RES_COM_SJ_KOUDI = 98;
-	/**
-	 * 开始游戏
-	 */
-	public static final int RES_COM_SJ_START = 99;
+    /**
+     * 亮主
+     */
+    public static final int RES_COM_SJ_LIANGZHU = 90;
+    /**
+     * 自保
+     */
+    public static final int RES_COM_SJ_SELF_PROTECTED = 91;
+    /**
+     * 推送底牌给庄家
+     */
+    public static final int RES_COM_SJ_PUSH_BOTTOM_CARD = 92;
+    /**
+     * 反主
+     */
+    public static final int RES_COM_SJ_FANZHU = 93;
+    /**
+     * 询问反主
+     */
+    public static final int RES_COM_SJ_ASK_FANZHU = 94;
+    /**
+     * 推送玩家底牌
+     */
+    public static final int RES_COM_SJ_BOTTOM_CARD = 95;
+    /**
+     * 询问炒底
+     */
+    public static final int RES_COM_SJ_ASK_CHAODI = 96;
+    /**
+     * 当前牌局打无主
+     */
+    public static final int RES_COM_SJ_NO_RANK = 97;
+    /**
+     * 扣底完成
+     */
+    public static final int RES_COM_SJ_KOUDI = 98;
+    /**
+     * 开始游戏
+     */
+    public static final int RES_COM_SJ_START = 99;
 
     /**
      * 代开房间解散
@@ -1453,12 +1453,12 @@ public class WebSocketMsgType {
      * 金币不足
      **/
     public static final int RES_GOLD_POOR = 1106;
-    
+
     /**
      * 刷新邀请
      **/
     public static final int COMMON_FRESH_APPLY = 1107;
-    
+
 
     /*以下是半边天炸*/
     /**
@@ -1549,10 +1549,10 @@ public class WebSocketMsgType {
     public static final int res_code_chui = 215;
     /** 锤**/
     public static final int req_code_chui = 215;
-    
+
     /** 起始锤**/
     public static final int res_code_chui_start = 216;
-    
+
     /** 杠分**/
     public static final int res_code_gangFen = 212;
     /** 麻将禁止出牌 **/
@@ -1615,7 +1615,7 @@ public class WebSocketMsgType {
     public static final int req_code_zzzp_piaofen=2015;
     public static final int res_code_zzzp_piaofen=2015;
     public static final int res_code_zzzp_broadcast_piaofen=2016;
-   
+
     /**转转麻将牌飘分**/
     public static final int req_code_zzmj_piaofen=2023;
     public static final int res_code_zzmj_piaofen=2023;
@@ -1624,7 +1624,7 @@ public class WebSocketMsgType {
     public static final int req_code_piaoFen=2023;
     public static final int res_code_piaoFen=2023;
     public static final int res_code_broadcast_piaoFen=2024;
-    
+
     /**个子牌飘分**/
     public static final int req_code_hbgzp_piaofen=2301;
     public static final int res_code_hbgzp_piaofen=2301;
@@ -1675,9 +1675,9 @@ public class WebSocketMsgType {
      * 湘乡告胡子坨
      * */
     public static final int REQ_XXGHZ_TUO = 2100;
-    
+
     //------------------三打哈---------------------
-    
+
     /**叫分加拍*/
     public static final int REQ_JIAOFEN=3100;
     /**选主*/
@@ -1690,28 +1690,28 @@ public class WebSocketMsgType {
     public static final int RES_Liushou=3104;
     /**投降*/
     public static final int RES_TOUX=3105;
-    
+
     /**永州王钓麻将飘分**/
     public static final int req_code_yzwdmj_piaofen=2023;
     public static final int res_code_yzwdmj_piaofen=2023;
     public static final int res_code_yzwdmj_broadcast_piaofen=2024;
-    
-  //------------------垫坨---------------------
+
+    //------------------垫坨---------------------
     /**独战*/
     public static final int DUZHAN_DIANTUO=4100;
 
     /**分组消息*/
     public static final int DUZHAN_TEAM=4101;
-    
-    
+
+
     /**获取分*/
     public static final int HUOFEN_DIANTUO=4102;
-    
-    
+
+
     /**队友手牌*/
     public static final int DUIYOU_HAND=4103;
-    
-    
+
+
     /**出单报王*/
     public static final int BAOWANG_HAND=4104;
 
@@ -1724,30 +1724,30 @@ public class WebSocketMsgType {
     public static final int res_code_qf_refreshF=2041;
     public static final int res_code_qf_refreshM=2042;
     public static final int res_code_qf_refreshJ=2043;
-    
+
     //-----------------------碰胡子------------------
     /**分数更新*/
     public static final int RES_FRESH_FEN=5100;
-    
-    
+
+
     /**五福报警*/
     public static final int RES_WUFU_BAOJING=5101;
-    
+
     /**五福选择*/
     public static final int RES_WUFU_XUANZ=5102;
-    
-    
-    
+
+
+
     /** 碰胡子特殊状态：打鸟 **/
     public static final int res_code_table_status_PENGHU_DANAIO = 5103;
     /** 打鸟 */
     public static final int req_code_piao_PENGHU_DANAIO  = 5104;
     /** 打鸟 */
     public static final int res_code_piao_PENGHU_DANAIO = 5104;
-    
+
     /** 换座位 */
     public static final int res_code_piao_PENGHU_CHANGGE_SEAT = 5105;
-    
+
 
     /**楚雄麻将获取杠信息**/
     public static final int res_code_cxmj_gangMsg=2044;
@@ -1793,23 +1793,61 @@ public class WebSocketMsgType {
     public static final int res_code_cqxzmj_finishDq=2087;
 
 
+    /**
+     * 大斗地主
+     */
+    public static final int res_code_pk_dddz_koudi= 2751;
+    /** 发起投降 */
+    public static final int res_code_pk_dddz_dztouxiang= 2752;
+    /** 中途春天 */
+    public static final int res_code_pk_dddz_dzztdct= 2753;
+    /** 甩牌失败 */
+    public static final int res_code_pk_dddz_shuaiPaiFail= 2754;
+    /**   扣底牌 */
+    public static final int res_code_pk_dddz_koudipai= 2755;
+
+    /**楚雄小地主*/
+    //闷抓
+    public static final short com_cxxdz_mengzhua =5201;
+    //抢地主
+    public static final short com_cxxdz_qdz =5202;
+    //通知单个玩家踢一脚
+    public static final short com_cxxdz_t1j =5203;
+    //某个玩家踢一脚操作结果
+    public static final short com_cxxdz_t1j_result =5204;
+    //回一脚
+    public static final short com_cxxdz_h1j =5205;
+    //看牌
+    public static final short com_cxxdz_look =5206;
+    //闷踢
+    public static final short com_cxxdz_menT =5207;
+    //闷T结果
+    public static final short com_cxxdz_menT_result =5208;
+    //结束抢地主操作
+    public static final short com_cxxdz_finishStart =5209;
+    //看底牌
+    public static final short com_cxxdz_lookdp =5210;
+    //看底牌
+    public static final short com_cxxdz_showCard =5211;
+
+
     /** 俱乐部玩家升级**/
     public static final int res_com_group_user_level_up = 2050;
 
 
     /**牛十别 明牌**/
     public static final int req_code_nsb_mingpai=4200;
-    
-    
-    
+
+
+
     /** 自动摸打**/
     public static final int req_code_TDH_AUTO_MD = 6100;
-    
+
     /** 推送报听*/
     public static final int req_code_ts_pao_ting = 6101;
     /** 报听*/
     public static final int res_code_bs_Baoting = 6102;
-    
+
     /** 带跟刷新尾牌*/
     public static final int res_code_deh_TMJ = 6103;
 
@@ -1857,7 +1895,7 @@ public class WebSocketMsgType {
     public static final int res_code_wzq_cost_type_value = 4202;
     /*** 五子棋：认输**/
     public static final int res_code_wzq_giveUp = 4203;
-    
+
     /*** 选择箍臭**/
     public static final int req_code_GU_CHOU = 4204;
     /*** 箍臭消息推送**/
@@ -1881,4 +1919,6 @@ public class WebSocketMsgType {
     public static final int req_code_quanxian_add = 4521;
     /**删除结果*/
     public static final int req_code_quanxian_delete = 4522;
+
+
 }

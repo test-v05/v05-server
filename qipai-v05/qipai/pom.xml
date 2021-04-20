@@ -25,10 +25,10 @@
         <module>game-mj-yzwdmj</module>
         <module>game-mj-nymj</module>
         <module>game-mj-daozmj</module>
-
+        <module>game-mj-cxmj</module>
 <!--        <module>game-bsmj</module>-->
 <!--        <module>game-tdhmj</module>-->
-<!--        <module>game-mj-cxmj</module>-->
+
 <!--        <module>game-mj-nxmj</module>-->
 <!--        <module>game-mj-dehmj</module>-->
 <!--        <module>game-mj-nxkwmj</module>-->
@@ -90,7 +90,8 @@
         <module>game-pk-yybs</module>
         <module>game-pk-yyqf</module>
         <module>game-pk-xtbp</module>
-
+        <module>game-pk-daddz</module>
+        <module>game-pk-cxxdz183</module>
 
 <!--        <module>game-pk-niushibie</module>-->
 <!--        <module>game-pk-tcgd</module>-->

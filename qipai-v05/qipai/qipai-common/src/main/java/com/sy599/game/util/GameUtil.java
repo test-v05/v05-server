@@ -233,12 +233,12 @@ public final class GameUtil {
      * 11张玩法
      **/
     public static final int play_type_11 = 11;
-    
+
     /**
      * 跑得快11张玩法
      **/
     public static final int play_type_1011 = 1011;
-    
+
     /**
      * yz15张玩法
      **/
@@ -281,21 +281,22 @@ public final class GameUtil {
     public static final int game_type_zzpdk = 184;
     /***--------------------麻将  全州麻将------------------------------------**/
     public static final int game_type_qzmj = 183;
-
+    /***--------------------扑克  楚雄小地主------------------------------------**/
+    public static final int game_type_pk_cxxdz276 = 276;
     /**
      * 碰胡子
      **/
     public static final int play_type_penghuzi = 250;
-    
-    
-    
-    
+
+
+
+
     /**
      * 永州扯胡子
      **/
     public static final int play_type_LDSPHZ = 229;
-    
-    
+
+
 //    public static final int play_type_yzphz_4_4 = 36;
 //    public static final int play_type_yzphz_3_2 = 37;
 //    public static final int play_type_yzphz_3_4 = 38;
@@ -304,7 +305,7 @@ public final class GameUtil {
 //    public static final int play_type_yzphz_2_2 = 41;
 //    public static final int play_type_yzphz_2_3 = 42;
 //    public static final int play_type_yzphz_2_4 = 43;
-    
+
     /**
      * 永州扯胡子
      **/
@@ -366,30 +367,30 @@ public final class GameUtil {
      * 沅江鬼胡子玩法
      **/
     public static final int play_type_yjghz = 39;
-   
+
     /***
      * 常德跑胡子
      */
     public static final int play_type_changdephz =  53;
-    
-    
+
+
     /***
      * 溆浦跑胡子
      */
     public static final int play_type_xpphz =  521;
- 
-    
+
+
     /***
      * 红拐弯跑胡子
      */
     public static final int play_type_HGWphz =  252;
-    
-    
+
+
     /***
      * 安乡偎麻雀
      */
     public static final int play_type_Axphz =  254;
-    
+
 
     /**
      * 沅江鬼胡子八软息玩法
@@ -640,21 +641,21 @@ public final class GameUtil {
     public static final int game_type_nxmj = 248;
     /***--------------------邵阳 麻将------------------------------------**/
     public static final int game_type_symj = 223;
-    
+
     /***--------------------保山 麻将------------------------------------**/
     public static final int game_type_bsmj = 225;
 
     /***--------------------衡阳六胡抢------------------------------------**/
     public static final int game_type_hylhq= 226;
-    
-    
+
+
     /***--------------------推倒胡------------------------------------**/
     public static final int game_type_TdhMj= 227;
-    
-    
+
+
     /***--------------------岳阳歪胡子-------------------------------**/
     public static final int game_type_YyWaiHZ= 228;
-    
+
     /***--------------------落地扫-------------------------------**/
     public static final int game_type_LDSPHZ= 229;
 
@@ -663,26 +664,26 @@ public final class GameUtil {
 
     /***--------------------三打哈------------------------------**/
     public static final int game_type_sandh = 231;
-    
+
     /***--------------------打坨------------------------------**/
     public static final int game_type_DATUO = 232;
-    
-    
+
+
     /***--------------------道州 麻将------------------------------------**/
     public static final int game_type_daozmj = 251;
-    
+
     /***--------------------郑州 麻将------------------------------------**/
     public static final int game_type_zhengzmj = 253;
-    
+
     /**
      * 永州扯胡子
      **/
     public static final int play_type_YZPHZ = 230;
 
-	/**
-	 * 永州老戳
-	 * */
-	public static final int play_type_yongzhou_laochuo = 301;
+    /**
+     * 永州老戳
+     * */
+    public static final int play_type_yongzhou_laochuo = 301;
     /**
      * 石门跑胡子
      * */
@@ -775,13 +776,13 @@ public final class GameUtil {
     /***--------------------德宏 麻将------------------------------------**/
     public static final int game_type_dehmj = 239;
 
-	/**2人斗地主*/
-	public static  final int play_type_pk_2renddz = 264;
+    /**2人斗地主*/
+    public static  final int play_type_pk_2renddz = 264;
 
     /**益阳麻将*/
     public static final int play_type265_yymj = 265;
-	/**望城跑胡子*/
-	public static final int play_type266_wcphz = 266;
+    /**望城跑胡子*/
+    public static final int play_type266_wcphz = 266;
 
     /**靖州麻将*/
     public static final int play_type_mj_jzmj = 270;
@@ -792,6 +793,9 @@ public final class GameUtil {
 
     /*** 五子棋***/
     public static final int play_type_wzq = 1000;
+
+    /*** 大斗地主***/
+    public static final int play_type_pk_dddz =275;
 
 
     public static boolean isPlayNewSyPhz(int playType) {
@@ -926,23 +930,23 @@ public final class GameUtil {
         return playType == play_type_shaoyang || playType == play_type_bopi || playType == play_type_kl_shaoyang || playType == play_type_kl_bopi;
     }
     public static boolean isPlayDzbp(int playType) {
-    	return playType == play_type_dazibopi;
+        return playType == play_type_dazibopi;
     }
 
     public static boolean isPlayXtPhz(int playType) {
         return playType == play_type_xiangtan_paohuzi;
     }
     public static boolean isPlayNxPhz(int playType) {
-    	return playType == play_type_ningxiang_paohuzi;
+        return playType == play_type_ningxiang_paohuzi;
     }
     public static boolean isPlayXpLp(int playType) {
-    	return playType == play_type_xupu_laopai;
+        return playType == play_type_xupu_laopai;
     }
     public static boolean isPlayHsPhz(int playType) {
-    	return playType == play_type_hanshou_paohuzi;
+        return playType == play_type_hanshou_paohuzi;
     }
     public static boolean isPlayHbgzp(int playType) {
-    	return playType == play_type_hubai_gezipai;
+        return playType == play_type_hubai_gezipai;
     }
 
     public static boolean isPlayXxGhz(int playType) {
@@ -961,11 +965,11 @@ public final class GameUtil {
     public static boolean isPlayCdPhz(int playType) {
         return playType == play_type_changdephz;
     }
-    
+
     public static boolean isPlayHGWPhz(int playType) {
         return playType == play_type_HGWphz||playType ==play_type_Axphz||playType == play_type_xpphz;
     }
-    
+
 
     public static boolean isPlayTenthirty(int playType) {
         return playType == play_type_tenthirty_taketurn || playType == play_type_tenthirty_bawang || playType == play_type_tenthirty_robwang || playType == play_type_tenthirty_lastwang;
@@ -996,13 +1000,13 @@ public final class GameUtil {
         return playType==game_type_zhz;
     }
     public static boolean isXx2710(int playType) {
-    	return playType==play_type_xiangxi2710_paohuzi;
+        return playType==play_type_xiangxi2710_paohuzi;
     }
     public static boolean isNxghz(int playType) {
-    	return playType==play_type_nxghz;
+        return playType==play_type_nxghz;
     }
     public static boolean isYiYangWhz(int playType) {
-    	return playType==play_type_yiyangwhz;
+        return playType==play_type_yiyangwhz;
     }
     public static boolean isHylhq(int playType) {
         return playType==game_type_hylhq;
@@ -1011,7 +1015,7 @@ public final class GameUtil {
         return playType==game_type_hyshk;
     }
     public static boolean isGlphz(int playType) {
-    	return playType==play_type_guilin_paohuzi;
+        return playType==play_type_guilin_paohuzi;
     }
     public static boolean isYzwdmj(int playType) {
         return playType==game_type_yzwdmj;
@@ -1121,7 +1125,7 @@ public final class GameUtil {
      */
     @Deprecated
     public final static void autoCreateGroupTable(final String groupId, final Class<? extends Player> playerClass) {
-    	autoCreateGroupTable(groupId, playerClass, 0);
+        autoCreateGroupTable(groupId, playerClass, 0);
     }
     @Deprecated
     public final static void autoCreateGroupTable(final String groupId, final Class<? extends Player> playerClass, long configId) {}
@@ -1194,16 +1198,16 @@ public final class GameUtil {
     public static boolean isPlayQzMj(int playType){
         return playType == game_type_qzmj;
     }
-	public static boolean isPlaySandh(int playType) {
-		return playType == game_type_sandh;
-	}
-	public static boolean isPlayDaTuo(int playType) {
-		return playType == game_type_DATUO;
-	}
+    public static boolean isPlaySandh(int playType) {
+        return playType == game_type_sandh;
+    }
+    public static boolean isPlayDaTuo(int playType) {
+        return playType == game_type_DATUO;
+    }
 
-	public static boolean isPlayPengHuzi(int playType) {
-		return playType == play_type_penghuzi;
-	}
+    public static boolean isPlayPengHuzi(int playType) {
+        return playType == play_type_penghuzi;
+    }
 
 
     public static boolean isPlayZzMj(int playType){
@@ -1235,18 +1239,18 @@ public final class GameUtil {
         return playType == game_type_hzmj;
     }
     public static boolean isPlayZjMj(int playType){
-    	return playType == game_type_zjmj;
+        return playType == game_type_zjmj;
     }
     public static boolean isPlayDzMj(int playType){
         return playType == game_type_daozmj||isPlayZhengZmj(playType);
     }
-    
-    
+
+
     public static boolean isPlayZhengZmj(int playType){
         return playType == game_type_zhengzmj;
     }
-    
-    
+
+
     public static boolean isPlaySyMj(int playType){
         return playType == game_type_symj;
     }
@@ -1254,7 +1258,7 @@ public final class GameUtil {
         return playType == game_type_csmj;
     }
     public static boolean isPlayNxMj(int playType){
-    	return playType == game_type_nxmj;
+        return playType == game_type_nxmj;
     }
 
     public static boolean isPlayTjMj(int playType){
@@ -1316,6 +1320,12 @@ public final class GameUtil {
     }
     public static boolean isPlayWcphz(int playType) {
         return playType == play_type266_wcphz;
+    }
+
+    public static boolean isPlayDaDdz(int playType) {
+        return playType == play_type_pk_dddz;
+    }  public static boolean isPlayCxxdz276(int playType) {
+        return playType == game_type_pk_cxxdz276;
     }
 
     /**
