@@ -1,0 +1,50 @@
+package com.sy599.game.qipai.dddz.util;
+
+import java.util.List;
+
+public class CardType {
+
+	/** 单 */
+	public static final int DAN = 1;
+	/** 对 */
+	public static final int DUI = 2;
+	/** 拖拉机 */
+	public static final int TUOLAJI = 3;
+	/*龙牌*/
+	public static final int LONGPAI = 4;
+	/** 甩主 */
+	public static final int SHUAIPAI = 5;
+
+	/** 甩牌 有可能没主 */
+	public static final int SHUAIPAI2 = 6;
+	/***
+	 * 甩对子
+	 */
+	public static final int SHUAI_LIAN_DUI = 7;
+
+
+
+    private List<Integer> cardIds;
+	private int type;
+	
+	
+	public CardType(int type,List<Integer> cardIds) {
+		this.type=type;
+		this.cardIds =cardIds;
+	}
+	
+	public List<Integer> getCardIds() {
+		return cardIds;
+	}
+	public void setCardIds(List<Integer> cardIds) {
+		this.cardIds = cardIds;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	
+	
+}
