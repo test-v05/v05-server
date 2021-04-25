@@ -391,7 +391,22 @@ public class CxMjTable extends BaseTable {
 		Map<Integer, Integer> seatBridMap = new HashMap<>();// 位置,中鸟数
 		int catchBirdSeat = 0;// 抓鸟人座位
         if (winList.size() == 0 && leftMajiangs.size()<=getMaxPlayerCount()) {
-
+            //黄庄，没听牌的给听牌的2分
+            List<CxMjPlayer> tings=new ArrayList<>();
+            List<CxMjPlayer> losers=new ArrayList<>();
+            for (CxMjPlayer player:seatMap.values()) {
+                List<Integer> tingP = TingTool.getTing(player.getHandPais());
+                if(tingP.size()>0)
+                    tings.add(player);
+                else
+                    losers.add(player);
+            }
+            for (CxMjPlayer tingP:tings) {
+                for (CxMjPlayer loseP:losers) {
+                    loseP.changePoint(-2);
+                    tingP.changePoint(2);
+                }
+            }
         } else {
 			// 先判断是自摸还是放炮
             if (winList.size() == 1 && seatMap.get(winList.get(0)).getHandMajiang().size() % 3 == 2 && winList.get(0) == moMajiangSeat) {
@@ -539,7 +554,7 @@ public class CxMjTable extends BaseTable {
         UserPlaylog userLog = new UserPlaylog();
         userLog.setLogId(playType);
         userLog.setTableId(id);
-        userLog.setRes(extendLogDeal(logRes));
+        userLog.setRes(logRes);
         userLog.setTime(now);
         userLog.setTotalCount(totalBureau);
         userLog.setCount(playBureau);
@@ -782,6 +797,8 @@ public class CxMjTable extends BaseTable {
         if (majiang != null) {
             addPlayLog(disCardRound + "_" + player.getSeat() + "_" + CxMjDisAction.action_moMjiang + "_" + majiang.getId() + player.getExtraPlayLog());
             player.moMajiang(majiang);
+          //  System.out.println("mo==>");
+            System.out.println(disCardRound + "_" + player.getSeat() + "_" + CxMjDisAction.action_moMjiang + "_" + majiang.getId() + player.getExtraPlayLog());
         }
 		// 检查摸牌
         clearActionSeatMap();
@@ -796,6 +813,10 @@ public class CxMjTable extends BaseTable {
         List<Integer> arr = player.checkMo(majiang);
 
         if (!arr.isEmpty()) {
+            if(arr.contains(99)){
+                addlogmsg(player,"shuang Gang Hu");
+                return;
+            }
             addActionSeat(player.getSeat(), arr);
         }
         logMoMj(player, majiang, arr);
@@ -816,17 +837,17 @@ public class CxMjTable extends BaseTable {
             }
         }
 
-        if(getLeftMajiangCount()==getMaxPlayerCount()){
-            if(arr.contains(1)){
-                if(arr.get(CxMjConstants.ACTION_INDEX_HU)!=1&&arr.get(CxMjConstants.ACTION_INDEX_MINGGANG)!=1){
-                    calcOver();
-                    return;
-                }
-            }else {
-                calcOver();
-                return;
-            }
-        }
+//        if(getLeftMajiangCount()==getMaxPlayerCount()){
+//            if(arr.contains(1)){
+//                if(arr.get(CxMjConstants.ACTION_INDEX_HU)!=1&&arr.get(CxMjConstants.ACTION_INDEX_MINGGANG)!=1){
+//                    calcOver();
+//                    return;
+//                }
+//            }else {
+//                calcOver();
+//                return;
+//            }
+//        }
         sendTingInfo(player);
         for (Player roomPlayer : roomPlayerMap.values()) {
             MoMajiangRes.Builder copy = res.clone();
@@ -841,6 +862,7 @@ public class CxMjTable extends BaseTable {
         if(player.isAlreadyMoMajiang())
             return;
         player.moMajiang(CxMj.getMajang(id));
+        lastId=id;
         List<Integer> arr = player.checkMo(null);
         addActionSeat(player.getSeat(),arr);
         MoMajiangRes.Builder res = MoMajiangRes.newBuilder();
@@ -873,7 +895,7 @@ public class CxMjTable extends BaseTable {
 	 * @param player
 	 * @param majiangs
 	 */
-    private void hu(CxMjPlayer player, List<CxMj> majiangs, int action) {
+    public void hu(CxMjPlayer player, List<CxMj> majiangs, int action) {
         if (state != table_state.play) {
             return;
         }
@@ -960,7 +982,89 @@ public class CxMjTable extends BaseTable {
         }
     }
 
-    private void buildPlayRes(PlayMajiangRes.Builder builder, Player player, int action, List<CxMj> majiangs) {
+    public void hushuangGangHu(CxMjPlayer player, List<CxMj> majiangs, int action, List<CxMj> huHand) {
+        if (state != table_state.play) {
+            return;
+        }
+        List<Integer> actionList = actionSeatMap.get(player.getSeat());
+        if (actionList == null || (actionList.get(CxMjConstants.ACTION_INDEX_HU) != 1
+                && actionList.get(CxMjConstants.ACTION_INDEX_ZIMO) != 1)) {// 如果集合为空或者第一操作不为胡，则返回
+            return;
+        }
+        if (huConfirmList.contains(player.getSeat())) {
+            return;
+        }
+        PlayMajiangRes.Builder builder = PlayMajiangRes.newBuilder();
+
+
+        CxMj huCard=null;
+        boolean zimo = player.isAlreadyMoMajiang();
+        if(lastId!=0)
+            huCard= CxMj.getMajang(lastId);
+        if(player.getVirtualHu()!=0){
+            huCard=CxMj.getMajang(player.getVirtualHu());
+            zimo=true;
+        }
+//        if(huCard!=null&&!player.getHandMajiang().contains(huCard))
+//            player.getHandMajiang().add(huCard);
+
+        List<Integer> list = MingTang.get(player.getCardTypes(), player.getHandMajiang(),this);
+        player.setHuType(list);
+        if (!zimo) {
+            builder.setFromSeat(disCardSeat);
+        } else {
+            builder.addHuArray(CxMjConstants.HU_ZIMO);
+            player.getHuType().add(MingTang.MINGTANG_ZIMO);
+        }
+
+//        if (moGangHuList.contains(player.getSeat())) {
+//            CxMjPlayer moGangPlayer = seatMap.get(moGangSeat);
+//            if (moGangPlayer == null) {
+//                moGangPlayer = getPlayerByHasMajiang(moGang);
+//            }
+//            if (moGangPlayer == null) {
+//                moGangPlayer = seatMap.get(moMajiangSeat);
+//            }
+//            List<CxMj> moGangMajiangs = new ArrayList<>();
+//            moGangMajiangs.add(moGang);
+//            moGangPlayer.addOutPais(moGangMajiangs, CxMjDisAction.action_chupai, 0);
+//			// 摸杠被人胡了 相当于自己出了一张牌
+//            recordDisMajiang(moGangMajiangs, moGangPlayer);
+////			addPlayLog(disCardRound + "_" + player.getSeat() + "_" + CxMjDisAction.action_chupai + "_" + CxMjHelper.toMajiangStrs(majiangs) + player.getExtraPlayLog());
+//            moGangPlayer.qGangUpdateOutPais(moGang);
+//        }
+        buildPlayRes(builder, player, action, huHand);
+        if (zimo) {
+            builder.setZimo(1);
+        }
+        if (!huConfirmList.isEmpty()) {
+            builder.addExt(StringUtil.implode(huConfirmList, ","));
+        }
+        // 胡
+        for (CxMjPlayer seat : seatMap.values()) {
+            // 推送消息
+            seat.writeSocket(builder.build());
+        }
+        for (Player roomPlayer : roomPlayerMap.values()) {
+            PlayMajiangRes.Builder copy = builder.clone();
+            roomPlayer.writeSocket(copy.build());
+        }
+        // 加入胡牌数组
+        addHuList(player.getSeat());
+        changeDisCardRound(1);
+        List<CxMj> huPai = new ArrayList<>();
+        huPai.add(huHand.get(huHand.size() - 1));
+        addPlayLog(disCardRound + "_" + player.getSeat() + "_" + action + "_" + CxMjHelper.toMajiangStrs(huPai) + "_" + StringUtil.implode(player.getHuType(), ",") + player.getExtraPlayLog());
+        logActionHu(player, majiangs, "");
+        if (isCalcOver()) {
+            // 等待别人胡牌 如果都确认完了，胡
+            calcOver();
+        } else {
+            //removeActionSeat(player.getSeat());
+            player.writeComMessage(WebSocketMsgType.res_com_code_temp_action_skip, action);
+        }
+    }
+    public void buildPlayRes(PlayMajiangRes.Builder builder, Player player, int action, List<CxMj> majiangs) {
         CxMjResTool.buildPlayRes(builder, player, action, majiangs);
         buildPlayRes1(builder);
     }
@@ -1067,7 +1171,6 @@ public class CxMjTable extends BaseTable {
                 action = CxMjDisAction.action_angang;
                 majiangs=majiangs.subList(0,4);
             }
-			// 其他是明杠
         }
         if (!actionSeatMap.containsKey(player.getSeat())) {
             return;
@@ -1121,7 +1224,8 @@ public class CxMjTable extends BaseTable {
                 if (action == CxMjDisAction.action_chi) {
 					majiangs.add(1, disMajiang);// 吃的牌放第二位
                 } else {
-                    majiangs.add(disMajiang);
+                    if(!majiangs.contains(disMajiang))
+                        majiangs.add(disMajiang);
                 }
                 builder.setFromSeat(disCardSeat);
                 seatMap.get(disCardSeat).removeOutPais(nowDisCardIds, action);
@@ -1257,7 +1361,8 @@ public class CxMjTable extends BaseTable {
                     }
                 }
             }
-            player.sendGangMsg();
+
+
             if(gangM1.size()>0&&gangM2.size()>0){
                 //需要传补牌消息
                 for (CxMjPlayer seatPlayer : seatMap.values()) {
@@ -1279,6 +1384,7 @@ public class CxMjTable extends BaseTable {
                     list.add(val);
                 }
                 addActionSeat(player.getSeat(), list);
+                player.sendGangMsg();
                 for (CxMjPlayer seatPlayer : seatMap.values()) {
                     // 推送消息
                     PlayMajiangRes.Builder copy = builder.clone();
@@ -1393,6 +1499,11 @@ public class CxMjTable extends BaseTable {
                 list = p.checkDisMajiang(majiangs.get(0), this.canDianPao());
                 if(list==null||list.isEmpty())
                     continue;
+                if(list.contains(99)){
+                    //有人双杠hu直接返回
+                    addlogmsg(player,"shuang Gang Hu");
+                    return;
+                }
                 if (list.contains(1)) {
 
                     addActionSeat(p.getSeat(), list);
@@ -1411,7 +1522,16 @@ public class CxMjTable extends BaseTable {
 		// 给下一家发牌
         checkMo();
     }
-
+    public void addlogmsg(CxMjPlayer player,String str){
+        StringBuilder sb = new StringBuilder("cxmj");
+        sb.append("|").append(getId());
+        sb.append("|").append(getPlayBureau());
+        sb.append("|").append(player.getUserId());
+        sb.append("|").append(player.getSeat());
+        sb.append("|").append(player.isAutoPlay() ? 1 : 0);
+        sb.append("|"+str);
+        LogUtil.msgLog.info(sb.toString());
+    }
     public List<Integer> getHuSeatByActionMap() {
         List<Integer> huList = new ArrayList<>();
         for (int seat : actionSeatMap.keySet()) {
@@ -1464,6 +1584,19 @@ public class CxMjTable extends BaseTable {
 				// 自己杠的时候被人抢杠胡了 不能做其他操作
                 return;
             }
+        }
+        if (action == CxMjDisAction.action_minggang|| action == CxMjDisAction.action_angang){
+            if(!player.getShuangGangData().isEmpty()){
+                //这里有问题 gangmj变量
+                if(player.isAlreadyMoMajiang()){
+                    player.shuangGangHu();
+                    return;
+                }else{
+                   player.shuangGangHuDis();
+                   return;
+                }
+            }
+            player.getShuangGangData().clear();
         }
 
         if (CxMjDisAction.action_hu == action) {
@@ -2284,19 +2417,15 @@ public class CxMjTable extends BaseTable {
             if (player.getSeat() != getNextDisCardSeat()) {
                 return false;
             }
-            if (handMajiangs.containsAll(majiangs) && pengList.contains(majiangs.get(0).getVal())) {
+            int id = majiangs.get(0).getId();
+            if(id==1004||id==1005)
                 return true;
-            }
-        } else if (majiangs.size() == 3) {
-            if (sameCount != 3) {
-                return false;
-            }
-//            if (nowDisCardIds.size() != 1 || nowDisCardIds.get(0).getVal() != majiangs.get(0).getVal()) {
-//                return false;
-//            }
+            if (handMajiangs.containsAll(majiangs) && pengList.contains(majiangs.get(0).getVal()))
+                return true;
+
+        }else if(sameCount==3){
             return true;
         }
-
         return false;
     }
 
@@ -2446,11 +2575,25 @@ public class CxMjTable extends BaseTable {
             if (winList != null && winList.contains(player.getSeat())) {
                 if (!selfMo) {
 					// 不是自摸
+
                     CxMj huMajiang = nowDisCardIds.get(0);
                     if (!build.getHandPaisList().contains(huMajiang.getId())) {
-                        build.addHandPais(huMajiang.getId());
+                        if(lastId!=0){
+                           // 杠后胡4 5筒
+                        }else{
+                            build.addHandPais(huMajiang.getId());
+                        }
                     }
-                    build.setIsHu(huMajiang.getId());
+                    if(lastId!=0){
+                        if(lastId==1004){//杠后胡4 5筒 设置胡牌// mj13 mj14
+                                build.setIsHu(1004);   ;
+                            }else if(lastId==1005){
+                                build.setIsHu(1005);   ;
+                            }
+                    }else{
+                        build.setIsHu(huMajiang.getId());
+                    }
+
                 } else {
                     build.setIsHu(player.getLastMoMajiang().getId());
                 }
@@ -3079,7 +3222,7 @@ public class CxMjTable extends BaseTable {
 
     public String getTableMsg() {
         Map<String, Object> json = new HashMap<>();
-		json.put("wanFa", "转转麻将");
+		json.put("wanFa", "楚雄麻将");
         if (isGroupRoom()) {
             json.put("roomName", getRoomName());
         }
@@ -3098,6 +3241,6 @@ public class CxMjTable extends BaseTable {
 
     @Override
     public String getGameName() {
-		return "转转麻将";
+		return "楚雄麻将";
     }
 }

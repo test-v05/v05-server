@@ -29,6 +29,21 @@ public class CxMjHelper {
     }
 
     /**
+     * 获取手里面最后一个牌值的麻将
+     * @param majiangs
+     * @param majiangVal
+     * @return
+     */
+    public static CxMj getOneMajiang(List<CxMj> majiangs, int majiangVal) {
+        for (CxMj majiang : majiangs) {
+            if (majiang.getVal() == majiangVal) {
+               return majiang;
+            }
+        }
+        return null;
+    }
+
+    /**
      * 麻将val的List
      *
      * @param majiangs

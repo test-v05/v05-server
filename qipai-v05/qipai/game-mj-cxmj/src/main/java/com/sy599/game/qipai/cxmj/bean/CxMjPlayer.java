@@ -2,6 +2,8 @@ package com.sy599.game.qipai.cxmj.bean;
 
 import java.util.*;
 
+import com.sy599.game.msg.serverPacket.PlayCardResMsg;
+import com.sy599.game.qipai.cxmj.rule.MingTang;
 import com.sy599.game.qipai.cxmj.tool.CxMjTool;
 import com.sy599.game.qipai.cxmj.tool.ting.TingTool;
 import org.apache.commons.lang3.ArrayUtils;
@@ -46,6 +48,7 @@ public class CxMjPlayer extends Player {
     private List<CxMj> mGang;
     private int winCount;
     private int lostCount;
+    private  Map<Object,Object> shuangGangData = new HashMap<>();
     /**
      * 局分
      */
@@ -735,6 +738,7 @@ public class CxMjPlayer extends Player {
         virtualGang.clear();
         gangNum=0;
         buId=0;
+        shuangGangData=new HashMap<>();
     }
 
     @Override
@@ -807,13 +811,31 @@ public class CxMjPlayer extends Player {
             arr[CxMjConstants.ACTION_INDEX_PENG] = 1;// 可以碰
         }
         if (count == 3&&!passGangValList.contains(majiang.getVal())) {
+
+            Map<Object,Object> gangM3 = CxMjTool.checkShuangGang(1,CxMjHelper.toMajiangIds(handPais),CxMjHelper.toMajiangIds(peng),majiang,false);
+            if(gangM3.size()>2){
+                //出的牌可双杠直接胡
+                if(gangM3.get("hu")!=null && (boolean)gangM3.get("hu") ){
+                    shuangGangData = gangM3;
+//                    //shuangGangHuDis(majiang);
+//                    list.add(99);
+//                    virtualGang.clear();
+//                    virtualGang.add(majiang.getId());
+//                    arr[CxMjConstants.ACTION_INDEX_MINGGANG] = 1;// 可以杠
+//                    sendGangMsg();
+//                    return list;
+                }
+            }
+
+
             List<Integer> l = CxMjHelper.dropVal(copy, majiang.getVal());
             l.add(1004);
             Map<Integer,List<Integer>> gangM1 = CxMjTool.checkGang(1, l, CxMjHelper.toMajiangValMap(peng),1004);
             l.remove(l.size()-1);
             l.add(1005);
             Map<Integer,List<Integer>> gangM2 = CxMjTool.checkGang(1, l, CxMjHelper.toMajiangValMap(peng),1005);
-            if(gangM1.size()>0||gangM2.size()>0){
+
+            if(gangM1.size()>0||gangM2.size()>0 ||gangM3.size()>2){
                 virtualGang.clear();
                 virtualGang.add(majiang.getId());
                 arr[CxMjConstants.ACTION_INDEX_MINGGANG] = 1;// 可以杠
@@ -876,7 +898,7 @@ public class CxMjPlayer extends Player {
      * 自己出牌可做的操作
      *
      * @param majiang
-     * @return 0胡 1碰 2明刚 3暗杠
+     * @return 0胡 1碰 2明刚 3暗杠 ,99双杠返回
      */
     public List<Integer> checkMo(CxMj majiang) {
         List<Integer> list = new ArrayList<>();
@@ -890,13 +912,30 @@ public class CxMjPlayer extends Player {
                 buId=handPais.get(handPais.size()-1).getId();
             }
             Map<Integer,List<Integer>> gangM = CxMjTool.checkGang(gangNum, CxMjHelper.toMajiangIds(handPais), CxMjHelper.toMajiangValMap(peng),buId);
-            if(gangM.size()>0)
+            Map<Object,Object> gangM3 = CxMjTool.checkShuangGang(1,CxMjHelper.toMajiangIds(handPais),CxMjHelper.toMajiangIds(peng),majiang,true);
+           if(gangM3.size()>2){
+               //可双杠直接胡
+               if(gangM3.get("hu")!=null && (boolean)gangM3.get("hu") ){
+                   shuangGangData = gangM3;
+                  // shuangGangHu(majiang);
+//                   list.add(99);
+//                   return list;
+                   List<CxMj> gang1 = (List<CxMj>) gangM3.get("gang1");
+                   if(handPais.size()==14 && majiang==null){
+                       gangM.putIfAbsent(gang1.get(0).getId(),CxMjHelper.toMajiangIds(gang1));
+                   }else{
+                       gangM.putIfAbsent(majiang.getId(),CxMjHelper.toMajiangIds(gang1));
+                   }
+
+               }
+           }
+            if(gangM.size()>0||gangM3.size()>0)
                 virtualGang.clear();
             for(Map.Entry<Integer,List<Integer>> entry:gangM.entrySet()){
                 if(entry.getKey()!=0){
                     for (Integer id:entry.getValue()){
                         if(!virtualGang.contains(id))
-                            virtualGang.add(id);
+                            virtualGang.add(id);//102
                         //明杠和暗杠都发明杠消息
                         arr[CxMjConstants.ACTION_INDEX_MINGGANG] = 1;// 可以杠
                     }
@@ -912,6 +951,328 @@ public class CxMjPlayer extends Player {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * 自摸双杠胡
+     * @param
+     */
+    public  void  shuangGangHu(){
+        Map<Object, Object> gangM3 = shuangGangData;;
+        CxMjTable table = getPlayingTable(CxMjTable.class);
+        int dcr = table.getDisCardRound();
+        List<CxMj> g1 =(List<CxMj>) gangM3.get("gang1");
+        CxMj majiang = g1.get(0);
+
+//        PlayCardResMsg.MoMajiangRes.Builder mobuild = PlayCardResMsg.MoMajiangRes.newBuilder();
+//        mobuild.setMajiangId(majiang.getId());
+//        mobuild.setUserId(String.valueOf(getUserId()));
+//        mobuild.setSeat(getSeat());
+//        mobuild.setRemain(table.getLeftMajiangCount());
+
+        //gang1
+        List<CxMj> handMjNum = CxMjHelper.getMajiangList(getHandMajiang(), majiang.getVal());
+        int size = handMjNum.size();
+
+
+        PlayCardResMsg.PlayMajiangRes.Builder gangBuilder = PlayCardResMsg.PlayMajiangRes.newBuilder();
+        gangBuilder.setFromSeat(getSeat());
+        gangBuilder.setUserId(String.valueOf(getUserId()));
+        System.out.println("==>");
+        System.out.println("gang =" +g1);
+        if(size==4){
+            table.buildPlayRes(gangBuilder, this, CxMjDisAction.action_angang,g1);
+            table.addPlayLog((dcr++) + "_" + getSeat() + "_" +4+ "_" + CxMjHelper.toMajiangStrs(g1) + getExtraPlayLog());
+        }else {
+            List<CxMj> _data = new ArrayList<>();
+            _data.add(g1.get(0));
+            int countnum =CxMjHelper.getMajiangCount(handPais,g1.get(0).getVal());
+            if(countnum==1){
+                CxMj hm= CxMjHelper.getOneMajiang(handPais,g1.get(0).getVal());
+                _data.clear();
+                _data.add(hm);
+                table.buildPlayRes(gangBuilder, this, CxMjDisAction.action_minggang, _data);
+                table.addPlayLog((dcr++) + "_" + getSeat() + "_" +3+ "_" + CxMjHelper.toMajiangStrs(_data) + getExtraPlayLog());
+            }else{
+                table.buildPlayRes(gangBuilder, this, CxMjDisAction.action_minggang, g1);
+                table.addPlayLog((dcr++) + "_" + getSeat() + "_" +3+ "_" + CxMjHelper.toMajiangStrs(g1) + getExtraPlayLog());
+            }
+       }
+        addOutPais(g1, size==4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
+
+//        peng.removeAll(g1);
+//        outPais.removeAll(g1);
+        //mo1
+        PlayCardResMsg.MoMajiangRes.Builder mo1build = PlayCardResMsg.MoMajiangRes.newBuilder();
+        mo1build.setMajiangId((Integer) gangM3.get("mo1"));
+        mo1build.setUserId(String.valueOf(getUserId()));
+        mo1build.setSeat(getSeat());
+        mo1build.setRemain(table.getLeftMajiangCount());
+        System.out.println("mo1 =" + CxMj.getMajang((Integer) gangM3.get("mo1")));
+        table.addPlayLog((dcr++) + "_" + getSeat() + "_" + CxMjDisAction.action_moMjiang + "_" +   gangM3.get("mo1") + getExtraPlayLog());
+        getHandMajiang().add(CxMj.getMajang((Integer) gangM3.get("mo1")));
+        //gang2
+        List<CxMj> g2 =(List<CxMj>) gangM3.get("gang2");
+        size = CxMjHelper.getMajiangList(getHandMajiang(), g2.get(0).getVal()).size();
+
+        PlayCardResMsg.PlayMajiangRes.Builder gang2Builder = PlayCardResMsg.PlayMajiangRes.newBuilder();
+        gang2Builder.setFromSeat(getSeat());
+        gang2Builder.setUserId(String.valueOf(getUserId()));
+        if(size==4){
+            table.buildPlayRes(gang2Builder, this, CxMjDisAction.action_angang,g2);
+            table.addPlayLog((dcr++) + "_" + getSeat() + "_" +4+ "_" + CxMjHelper.toMajiangStrs(g2) + getExtraPlayLog());
+        }else {
+            List<CxMj> _data = new ArrayList<>();
+            _data.add(g2.get(0));
+            int countnum =CxMjHelper.getMajiangCount(handPais,g2.get(0).getVal());
+            if(countnum==1){
+                CxMj hm= CxMjHelper.getOneMajiang(handPais,g2.get(0).getVal());
+                _data.clear();
+                _data.add(hm);
+                table.buildPlayRes(gang2Builder, this, CxMjDisAction.action_minggang, _data);
+                table.addPlayLog((dcr++) + "_" + getSeat() + "_" +3+ "_" + CxMjHelper.toMajiangStrs(_data) + getExtraPlayLog());
+            }else {
+                table.buildPlayRes(gang2Builder, this, CxMjDisAction.action_minggang, g2);
+                table.addPlayLog((dcr++) + "_" + getSeat() + "_" +3+ "_" + CxMjHelper.toMajiangStrs(g2) + getExtraPlayLog());
+            }
+       }
+        addOutPais((List<CxMj>) gangM3.get("gang2"),  size==4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
+
+        System.out.println("gang2 =" + g2);
+        //mo1
+        PlayCardResMsg.MoMajiangRes.Builder mo2build = PlayCardResMsg.MoMajiangRes.newBuilder();
+        mo2build.setMajiangId((Integer) gangM3.get("mo2"));
+        mo2build.setUserId(String.valueOf(getUserId()));
+        mo2build.setSeat(getSeat());
+        mo2build.setRemain(table.getLeftMajiangCount());
+        getHandMajiang().add(CxMj.getMajang((Integer) gangM3.get("mo2")));
+        table.addPlayLog((dcr++) + "_" + getSeat() + "_" + CxMjDisAction.action_hu + "_" +   gangM3.get("mo2") + getExtraPlayLog());
+
+
+        List<CxMj> _mj = new ArrayList<>();
+        _mj.add(CxMj.getMajang((Integer) gangM3.get("mo2")));
+        System.out.println("gang2 =" + CxMj.getMajang((Integer) gangM3.get("mo2")));
+        PlayCardResMsg.PlayMajiangRes.Builder hubuilder = PlayCardResMsg.PlayMajiangRes.newBuilder();
+        hubuilder.setFromSeat(getSeat());
+        hubuilder.addHuArray(CxMjConstants.HU_ZIMO);
+
+        hubuilder.setSeat(getSeat());
+        hubuilder.setAction(CxMjDisAction.action_hu);
+        hubuilder.setZimo(1);
+
+
+
+        CxMj mj1 = g1.get(0);
+        CxMj mj2 =  g2.get(0);
+        getHandMajiang().add(mj1);
+        getHandMajiang().add(mj2);
+        setVirtualHu((Integer) gangM3.get("mo2"));
+        handPais = (List<CxMj>)gangM3.get("hand");
+
+//        Object qs1 = gangM3.get("qishouShuangGangHu");
+//        if(null!=qs1){
+//            boolean qs2 = (boolean)qs1;
+//            if(qs2){
+//                CxMjCardDisType dis =  new CxMjCardDisType();
+//                dis.setAction(0);
+//                addCardType(0,(List<CxMj>)gangM3.get("hand"),0,0);
+//            }
+//        }
+        //处理出牌
+        List<CxMjCardDisType > cp = new ArrayList<>();
+        for (CxMjCardDisType disType : cardTypes) {
+            if(disType.getAction()==CxMjDisAction.action_peng ){
+                if (disType.isHasCardVal(mj1)) {
+                    cp.add(disType);
+                }
+                if (disType.isHasCardVal(mj2)) {
+                    cp.add(disType);
+                }
+            }
+        }
+        cardTypes.removeAll(cp);
+
+        List<Integer> list = MingTang.get(getCardTypes(),getHandMajiang(),table);
+        setHuType(list);
+        getHuType().add(MingTang.MINGTANG_ZIMO);
+
+        table.buildPlayRes(hubuilder,this,CxMjDisAction.action_hu,getHandMajiang());
+
+        for (Player pl:table.getSeatMap().values()  ) {
+
+          //  pl.writeSocket(mobuild.build());
+            pl.writeSocket(gangBuilder.build());
+            pl.writeSocket(mo1build.build());
+            pl.writeSocket(gang2Builder.build());
+            pl.writeSocket(mo2build.build());
+            pl.writeSocket(hubuilder.build());
+        }
+
+        List<Integer> act = table.getActionSeatMap().get(getSeat());
+        if(null==act)act=Arrays.asList(0,0,0,0,0,0);
+        act.set(CxMjConstants.ACTION_INDEX_HU,1);
+        table.getActionSeatMap().put(getSeat(),act);
+        table.clearHuList();
+       table.addHuList(getSeat());
+    //     table.hu(this,_mj , CxMjDisAction.action_hu);
+         table.calcOver();
+
+    }
+
+    /**
+     * 出牌后双杠
+     * @param
+     */
+  public  void  shuangGangHuDis(){
+        Map<Object, Object> gangM3 = shuangGangData;;
+        CxMjTable table = getPlayingTable(CxMjTable.class);
+        int dcr = table.getDisCardRound();
+        int disSeat = table.getNowDisCardSeat();
+       List<CxMj> g1 =(List<CxMj>) gangM3.get("gang1");
+       CxMj majiang = g1.get(0);
+
+     //  PlayCardResMsg.PlayMajiangRes.Builder chuBuilder = PlayCardResMsg.PlayMajiangRes.newBuilder();
+       //  List<CxMj> chu = new ArrayList<>();
+        // chu.add(majiang);
+        // table.buildPlayRes(chuBuilder, table.getSeatMap().get(disSeat), CxMjDisAction.action_chupai, chu);
+
+
+        //gang1
+        List<CxMj> handMjNum = CxMjHelper.getMajiangList(getHandMajiang(), majiang.getVal());
+        int size = handMjNum.size();
+        PlayCardResMsg.PlayMajiangRes.Builder gangBuilder = PlayCardResMsg.PlayMajiangRes.newBuilder();
+        gangBuilder.setFromSeat(disSeat);
+        gangBuilder.setUserId(String.valueOf(getUserId()));
+        if(size==4){
+            table.buildPlayRes(gangBuilder, this, CxMjDisAction.action_angang,g1);
+            table.addPlayLog((dcr++) + "_" + getSeat() + "_" +4+ "_" + CxMjHelper.toMajiangStrs(g1) + getExtraPlayLog());
+        }else {
+            List<CxMj> _data = new ArrayList<>();
+            _data.add(g1.get(0));
+            int countnum =CxMjHelper.getMajiangCount(handPais,g1.get(0).getVal());
+            if(countnum==1){
+                CxMj hm= CxMjHelper.getOneMajiang(handPais,g1.get(0).getVal());
+                _data.clear();
+                _data.add(hm);
+                table.buildPlayRes(gangBuilder, this, CxMjDisAction.action_minggang, _data);
+                table.addPlayLog((dcr++) + "_" + getSeat() + "_" +3+ "_" + CxMjHelper.toMajiangStrs(g1) + getExtraPlayLog());
+            }else{
+                table.buildPlayRes(gangBuilder, this, CxMjDisAction.action_minggang, g1);
+                table.addPlayLog((dcr++) + "_" + getSeat() + "_" +3+ "_" + CxMjHelper.toMajiangStrs(g1) + getExtraPlayLog());
+            }
+
+      }
+       addOutPais(g1, size==4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
+
+        PlayCardResMsg.MoMajiangRes.Builder mo1build = PlayCardResMsg.MoMajiangRes.newBuilder();
+        mo1build.setMajiangId((Integer) gangM3.get("mo1"));
+        mo1build.setUserId(String.valueOf(getUserId()));
+        mo1build.setSeat(getSeat());
+        mo1build.setRemain(table.getLeftMajiangCount());
+        table.addPlayLog((dcr++) + "_" + getSeat() + "_" + CxMjDisAction.action_moMjiang + "_" +   gangM3.get("mo1") + getExtraPlayLog());
+        getHandMajiang().add(CxMj.getMajang((Integer) gangM3.get("mo1")));
+
+        //gang2
+        List<CxMj> g2 =(List<CxMj>) gangM3.get("gang2");
+        size = CxMjHelper.getMajiangList(getHandMajiang(), g2.get(0).getVal()).size();
+
+       PlayCardResMsg.PlayMajiangRes.Builder gang2Builder = PlayCardResMsg.PlayMajiangRes.newBuilder();
+        gang2Builder.setFromSeat(getSeat());
+        gang2Builder.setUserId(String.valueOf(getUserId()));
+        if(size==4){
+            table.buildPlayRes(gang2Builder, this, CxMjDisAction.action_angang,g2);
+            table.addPlayLog((dcr++) + "_" + getSeat() + "_" + 4 + "_" + CxMjHelper.toMajiangStrs(g2) + getExtraPlayLog());
+        }else {
+            List<CxMj> _data = new ArrayList<>();
+            _data.add(g2.get(0));
+            int countnum =CxMjHelper.getMajiangCount(handPais,g2.get(0).getVal());
+            if(countnum==1){
+                CxMj hm= CxMjHelper.getOneMajiang(handPais,g2.get(0).getVal());
+                _data.clear();
+                _data.add(hm);
+                table.buildPlayRes(gang2Builder, this, CxMjDisAction.action_minggang, _data);
+                table.addPlayLog((dcr++) + "_" + getSeat() + "_" + 3 + "_" + CxMjHelper.toMajiangStrs(_data) + getExtraPlayLog());
+            }else{
+
+                table.buildPlayRes(gang2Builder, this, CxMjDisAction.action_minggang, g2);
+                table.addPlayLog((dcr++) + "_" + getSeat() + "_" + 3 + "_" + CxMjHelper.toMajiangStrs(g2) + getExtraPlayLog());
+            }
+
+        }
+        addOutPais((List<CxMj>) gangM3.get("gang2"),  size==4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
+
+      //mo1
+        PlayCardResMsg.MoMajiangRes.Builder mo2build = PlayCardResMsg.MoMajiangRes.newBuilder();
+        mo2build.setMajiangId((Integer) gangM3.get("mo2"));
+        mo2build.setUserId(String.valueOf(getUserId()));
+        mo2build.setSeat(getSeat());
+        mo2build.setRemain(table.getLeftMajiangCount());
+        table.addPlayLog((dcr++) + "_" + getSeat() + "_" + CxMjDisAction.action_hu + "_" +   gangM3.get("mo2") + getExtraPlayLog());
+        List<CxMj> _mj = new ArrayList<>();
+        _mj.add(CxMj.getMajang((Integer) gangM3.get("mo2")));
+        getHandMajiang().add(CxMj.getMajang((Integer) gangM3.get("mo2")));
+
+        PlayCardResMsg.PlayMajiangRes.Builder hubuilder = PlayCardResMsg.PlayMajiangRes.newBuilder();
+        hubuilder.setFromSeat(getSeat());
+        hubuilder.addHuArray(CxMjConstants.HU_ZIMO);
+
+        hubuilder.setSeat(getSeat());
+        hubuilder.setAction(CxMjDisAction.action_hu);
+        hubuilder.setZimo(1);
+
+//        getHuType().add(MingTang.MINGTANG_SGANGSHANGHUA);
+
+
+        CxMj mj1 = g1.get(0);
+        CxMj mj2 =  g2.get(0);
+        getHandMajiang().add(mj1);
+        getHandMajiang().add(mj2);
+        setVirtualHu((Integer) gangM3.get("mo2"));
+        handPais = (List<CxMj>)gangM3.get("hand");
+        //处理出牌
+        List<CxMjCardDisType > cp = new ArrayList<>();
+        for (CxMjCardDisType disType : cardTypes) {
+            if(disType.getAction()==CxMjDisAction.action_peng ){
+                if (disType.isHasCardVal(mj1)) {
+                    cp.add(disType);
+                }
+                if (disType.isHasCardVal(mj2)) {
+                    cp.add(disType);
+                }
+            }
+        }
+        System.out.println(cardTypes);
+        System.out.println(cp);
+        cardTypes.removeAll(cp);
+
+      List<Integer> list = MingTang.get(getCardTypes(),getHandMajiang(),table);
+      setHuType(list);
+      getHuType().add(MingTang.MINGTANG_ZIMO);
+
+        table.buildPlayRes(hubuilder,this,CxMjDisAction.action_hu,getHandMajiang());
+
+        for (Player pl:table.getSeatMap().values()  ) {
+
+           // pl.writeSocket(chuBuilder.build());
+            pl.writeSocket(gangBuilder.build());
+            pl.writeSocket(mo1build.build());
+            pl.writeSocket(gang2Builder.build());
+            pl.writeSocket(mo2build.build());
+
+            pl.writeSocket(hubuilder.build());
+        }
+        System.out.println("==>");
+
+        System.out.println(getHandMajiang() );
+        List<Integer> act = table.getActionSeatMap().get(getSeat());
+        if(null==act)act=Arrays.asList(0,0,0,0,0,0);
+        act.set(CxMjConstants.ACTION_INDEX_HU,1);
+        table.getActionSeatMap().put(getSeat(),act);
+        table.clearHuList();
+       table.addHuList(getSeat());
+//        table.hu(this,_mj , CxMjDisAction.action_hu);
+        table.calcOver();
+
     }
 
     /**
@@ -934,6 +1295,9 @@ public class CxMjPlayer extends Player {
             }
         }
         if(sb.length()>0)
+            System.out.println("res_code_cxmj_gangMsg=>");
+            System.out.println(sb.toString());
+            // minggang
             writeComMessage(WebSocketMsgType.res_code_cxmj_gangMsg, sb.toString());
     }
 
@@ -1275,5 +1639,13 @@ public class CxMjPlayer extends Player {
      */
     public String getExtraPlayLog() {
         return "_" + (isAutoPlay() ? 1 : 0) + "," + (isAutoPlaySelf() ? 1 : 0);
+    }
+
+    public Map<Object, Object> getShuangGangData() {
+        return shuangGangData;
+    }
+
+    public void setShuangGangData(Map<Object, Object> shuangGangData) {
+        this.shuangGangData = shuangGangData;
     }
 }
