@@ -635,10 +635,10 @@ public class CxMjTool {
         return result;
     }
 
-    public static void main(String[] args) {
-        List<Integer> hand =Arrays.asList(21, 48, 75, 11, 38, 65, 92, 14, 19, 46, 73, 13, 40);
-        checkShuangGang(1,hand,new ArrayList<>(),CxMj.getMajang(102),false);
-    }
+//    public static void main(String[] args) {
+//        List<Integer> hand =Arrays.asList(21, 48, 75, 11, 38, 65, 92, 14, 19, 46, 73, 13, 40);
+//        checkShuangGang(1,hand,new ArrayList<>(),CxMj.getMajang(102),false);
+//    }
 
     /**
      *
@@ -742,20 +742,20 @@ public class CxMjTool {
                       //  System.out.println("ids " + CxMjHelper.toMajiang(ids));
                     }
                     List<Integer> handPais2 = new ArrayList<>(ids);
-                    handPais2.add(1005);
-                    handPais2.add(1005);
-//                    System.out.println("==>");
-//                    System.out.println(CxMjHelper.toMajiang(handPais2));
-                    if (TingTool.isHu(handPais2)) {
-                        result.put("hu", true);
-                        result.put("gang1", CxMjHelper.toMajiang(gang1));
-                        result.put("mo1", 1005);
-                        result.put("gang2", CxMjHelper.toMajiang(gang2));
-                        result.put("mo2", 1005);
-                        result.put("hand", CxMjHelper.toMajiang(handPais2));
-                        //result.put("qishouShuangGangHu",  qishouShuangGangHu);
-                        return result;
-                    }
+//                    handPais2.add(1005);
+//                    handPais2.add(1005);
+////                    System.out.println("==>");
+////                    System.out.println(CxMjHelper.toMajiang(handPais2));
+//                    if (TingTool.isHu(handPais2)) {
+//                        result.put("hu", true);
+//                        result.put("gang1", CxMjHelper.toMajiang(gang1));
+//                        result.put("mo1", 1005);
+//                        result.put("gang2", CxMjHelper.toMajiang(gang2));
+//                        result.put("mo2", 1005);
+//                        result.put("hand", CxMjHelper.toMajiang(handPais2));
+//                        //result.put("qishouShuangGangHu",  qishouShuangGangHu);
+//                        return result;
+//                    }
 
                     handPais2 = new ArrayList<>(ids);
                     handPais2.add(1004);
@@ -771,19 +771,19 @@ public class CxMjTool {
                         return result;
                     }
 
-                    handPais2 = new ArrayList<>(ids);
-                    handPais2.add(1004);
-                    handPais2.add(1004);
-                    if (TingTool.isHu(handPais2)) {
-                        result.put("hu", true);
-                        result.put("gang1", CxMjHelper.toMajiang(gang1));
-                        result.put("mo1", 1004);
-                        result.put("gang2", CxMjHelper.toMajiang(gang2));
-                        result.put("mo2", 1004);
-                        result.put("hand", CxMjHelper.toMajiang(handPais2));
-                       // result.put("qishouShuangGangHu",  qishouShuangGangHu);
-                        return result;
-                    }
+//                    handPais2 = new ArrayList<>(ids);
+//                    handPais2.add(1004);
+//                    handPais2.add(1004);
+//                    if (TingTool.isHu(handPais2)) {
+//                        result.put("hu", true);
+//                        result.put("gang1", CxMjHelper.toMajiang(gang1));
+//                        result.put("mo1", 1004);
+//                        result.put("gang2", CxMjHelper.toMajiang(gang2));
+//                        result.put("mo2", 1004);
+//                        result.put("hand", CxMjHelper.toMajiang(handPais2));
+//                       // result.put("qishouShuangGangHu",  qishouShuangGangHu);
+//                        return result;
+//                    }
                 }else if(gangList.size()==1 && tong4num==3){
                     ary.add(1004);
                     ary.add(1005);

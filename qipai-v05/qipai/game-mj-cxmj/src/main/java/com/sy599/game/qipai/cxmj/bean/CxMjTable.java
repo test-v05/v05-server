@@ -386,12 +386,15 @@ public class CxMjTable extends BaseTable {
     @Override
     public void calcOver() {
         List<Integer> winList = new ArrayList<>(huConfirmList);
+        addlogmsg(seatMap.get(winList.get(0)),"|start|calcOver");
         boolean selfMo = false;
+        int replay =0;
 		List<Integer> cardsId = null;// 鸟牌ID
 		Map<Integer, Integer> seatBridMap = new HashMap<>();// 位置,中鸟数
 		int catchBirdSeat = 0;// 抓鸟人座位
         if (winList.size() == 0 && leftMajiangs.size()<=getMaxPlayerCount()) {
             //黄庄，没听牌的给听牌的2分
+            addlogmsg(seatMap.get(winList.get(0)),(replay++)+"|黄庄，没听牌的给听牌的2分");
             List<CxMjPlayer> tings=new ArrayList<>();
             List<CxMjPlayer> losers=new ArrayList<>();
             for (CxMjPlayer player:seatMap.values()) {
@@ -405,6 +408,8 @@ public class CxMjTable extends BaseTable {
                 for (CxMjPlayer loseP:losers) {
                     loseP.changePoint(-2);
                     tingP.changePoint(2);
+                    addlogmsg(loseP,(replay++)+"|没听-2");
+                    addlogmsg(tingP,(replay++)+"|听+2");
                 }
             }
         } else {
@@ -419,48 +424,61 @@ public class CxMjTable extends BaseTable {
             if (selfMo) {
 				// 自摸
                 CxMjPlayer winner = seatMap.get(winList.get(0));
+                addlogmsg( winner,(replay++)+"|自摸="+selfMo);
                 int winFen=0;
                 int loseFen= MingTang.getMingTangFen(winner.getHuType(),diFen);
+                addlogmsg( winner,(replay++)+"|赢|diFen="+diFen+"|名堂loseFen="+loseFen);
                 if(fangGangSeat!=0){
                     loseFen*=(getMaxPlayerCount()-1);
                     CxMjPlayer fgPlayer = seatMap.get(fangGangSeat);
                     fgPlayer.changePoint(-loseFen);
                     winFen+=loseFen;
+                    addlogmsg( fgPlayer,(replay++)+"|放杠输"+loseFen+"fen");
                 }else {
                     for (int seat : seatMap.keySet()) {
                         if (!winList.contains(seat)) {
                             CxMjPlayer player = seatMap.get(seat);
                             player.changePoint(-loseFen);
                             winFen+=loseFen;
+                            addlogmsg( player,(replay++)+"|输"+loseFen+"fen");
                         }
                     }
                 }
                 winner.changePoint(winFen);
                 winner.addZiMoNum(1);
+                addlogmsg( winner,(replay++)+"|赢"+winFen+"fen");
             } else {
 				// 小胡接炮 每人1分
 				// 如果庄家输牌失分翻倍
                 CxMjPlayer losePlayer = seatMap.get(disCardSeat);
+                addlogmsg( losePlayer,(replay++)+"|小胡接炮每人1分");
                 losePlayer.addDianPaoNum(1);
                 int loseFen=0;
                 for (int winnerSeat : winList) {
                     CxMjPlayer winPlayer = seatMap.get(winnerSeat);
                     int winFen = MingTang.getMingTangFen( winPlayer.getHuType(), diFen);
+                    addlogmsg( winPlayer,(replay++)+"|赢名堂winFen="+winFen+"fen|difen="+diFen);
                     winPlayer.changePoint(winFen);
                     winPlayer.addJiePaoNum(1);
                     loseFen+=winFen;
                 }
                 losePlayer.changePoint(-loseFen);
+                addlogmsg( losePlayer,(replay++)+"|输"+loseFen+"分" );
             }
 			// 非流局的情况下算飘分
             for(int seat:seatMap.keySet()){
                 CxMjPlayer player = seatMap.get(seat);
+                addlogmsg( player,(replay++)+"|得"+player.getPoint()+"分" );
+                addlogmsg( player,(replay++)+"|飘"+player.getWinLostPiaoFen()+"分" );
                 player.setPoint(player.getPoint()+player.getWinLostPiaoFen());
                 player.changeTotalPoint(player.getWinLostPiaoFen());
+                addlogmsg( player,(replay++)+"|总Point="+player.getPoint()+"分" );
+                addlogmsg( player,(replay++)+"|总TotalPoint="+player.getTotalPoint()+"分" );
             }
+
         }
-        
-        
+
+        addlogmsg(seatMap.get(winList.get(0)),"|End|calcOver");
         boolean over = playBureau == totalBureau;
         if(autoPlayGlob >0) {
 			// //是否解散
@@ -1529,6 +1547,7 @@ public class CxMjTable extends BaseTable {
         sb.append("|").append(player.getUserId());
         sb.append("|").append(player.getSeat());
         sb.append("|").append(player.isAutoPlay() ? 1 : 0);
+        sb.append("|"+player.getName());
         sb.append("|"+str);
         LogUtil.msgLog.info(sb.toString());
     }
