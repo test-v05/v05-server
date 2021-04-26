@@ -386,7 +386,10 @@ public class CxMjTable extends BaseTable {
     @Override
     public void calcOver() {
         List<Integer> winList = new ArrayList<>(huConfirmList);
-        addlogmsg(seatMap.get(winList.get(0)),"|start|calcOver");
+        StringBuilder sb = new StringBuilder("cxmj");
+        sb.append("|").append(getId());
+        sb.append("|").append(getPlayBureau());
+        LogUtil.msgLog.info( sb.toString()+"|start|calcOver");
         boolean selfMo = false;
         int replay =0;
 		List<Integer> cardsId = null;// 鸟牌ID
@@ -394,7 +397,7 @@ public class CxMjTable extends BaseTable {
 		int catchBirdSeat = 0;// 抓鸟人座位
         if (winList.size() == 0 && leftMajiangs.size()<=getMaxPlayerCount()) {
             //黄庄，没听牌的给听牌的2分
-            addlogmsg(seatMap.get(winList.get(0)),(replay++)+"|黄庄，没听牌的给听牌的2分");
+            LogUtil.msgLog.info( sb.toString()+"|黄庄，没听牌的给听牌的2分");
             List<CxMjPlayer> tings=new ArrayList<>();
             List<CxMjPlayer> losers=new ArrayList<>();
             for (CxMjPlayer player:seatMap.values()) {
@@ -477,8 +480,7 @@ public class CxMjTable extends BaseTable {
             }
 
         }
-
-        addlogmsg(seatMap.get(winList.get(0)),"|End|calcOver");
+        LogUtil.msgLog.info( sb.toString()+"|End|calcOver");
         boolean over = playBureau == totalBureau;
         if(autoPlayGlob >0) {
 			// //是否解散
@@ -1527,8 +1529,24 @@ public class CxMjTable extends BaseTable {
                     addActionSeat(p.getSeat(), list);
                     p.setLastCheckTime(System.currentTimeMillis());
                     logChuPaiActList(p, majiangs.get(0), list);
-                    if(list.get(CxMjConstants.ACTION_INDEX_MINGGANG)==1)
-                        fangGangSeat=player.getSeat();
+                    if(list.get(CxMjConstants.ACTION_INDEX_MINGGANG)==1){
+                        if(getMaxPlayerCount()==4){
+                            if(getLeftMajiangCount()<=8){
+                                fangGangSeat=player.getSeat();//4个人剩下8
+                            }
+                        }
+                        if(getMaxPlayerCount()==3){
+                            if(getLeftMajiangCount()<=6){
+                                fangGangSeat=player.getSeat();//3个人剩下6
+                            }
+                        }
+                         if(getMaxPlayerCount()==2){
+                            if(getLeftMajiangCount()<=4){
+                                fangGangSeat=player.getSeat();//2个人剩下4
+                            }
+                        }
+                    }
+
                 }
             }
         }
