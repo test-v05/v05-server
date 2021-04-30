@@ -1,6 +1,7 @@
 package com.sy.sanguo.common.executor.task;
 
 import com.sy.sanguo.game.pdkuai.util.LogUtil;
+import com.sy599.sanguo.util.GameConfigUtil;
 import com.sy599.sanguo.util.GroupConfigUtil;
 import com.sy599.sanguo.util.ResourcesConfigsUtil;
 import com.sy599.sanguo.util.SysPartitionUtil;
@@ -40,5 +41,12 @@ public class OneMinuteFixedRateTask extends TimerTask {
         } catch (Exception e) {
             LogUtil.e("Exception:" + e.getMessage(), e);
         }
+
+        try {
+            GameConfigUtil.initFromResourceConfig();
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+
     }
 }

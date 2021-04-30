@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSONObject;
 import com.sy.sanguo.common.util.OutputUtil;
 import com.sy.sanguo.game.utils.BjdUtil;
+import com.sy599.sanguo.util.GameConfigUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.struts2.StrutsStatics;
@@ -27,6 +29,8 @@ import com.sy.sanguo.common.util.MD5Util;
 import com.sy599.game.util.Md5CheckUtil;
 
 public class GameStrutsAction extends ActionSupport implements SessionAware, ServletRequestAware, ServletResponseAware {
+
+	private static final Map<String,Integer> frequencyMap = new ConcurrentHashMap<>();
 
 	private static final long serialVersionUID = 1L;
 	/**
@@ -298,4 +302,25 @@ public class GameStrutsAction extends ActionSupport implements SessionAware, Ser
         OutputUtil.output(code, message, getRequest(), getResponse(), false);
     }
 
+
+	public boolean isHttpFrequencyLimit(String sessCode) {
+		if (!GameConfigUtil.checkHttpFrequency()) {
+			return false;
+		}
+		if (StringUtils.isBlank(sessCode)) {
+			return false;
+		}
+		if (frequencyMap.containsKey(sessCode)) {
+			return true;
+		} else {
+			frequencyMap.put(sessCode, 0);
+			return false;
+		}
+	}
+
+	public void cleanHttpFrequency(String sessCode) {
+		if (StringUtils.isNotBlank(sessCode)) {
+			frequencyMap.remove(sessCode);
+		}
+	}
 }
