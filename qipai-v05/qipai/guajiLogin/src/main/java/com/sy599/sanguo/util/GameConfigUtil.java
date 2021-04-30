@@ -1,11 +1,9 @@
 package com.sy599.sanguo.util;
 
-import com.sy.sanguo.common.util.StringUtil;
 import com.sy.sanguo.game.pdkuai.util.LogUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,10 +18,12 @@ public final class GameConfigUtil {
     private static Map<Integer, String> GAME_MAP = new ConcurrentHashMap<>();
     private static Map<Integer, String> SHARE_FREE_GAME_MAP = new ConcurrentHashMap<>();
     public static int groupToQinYouQuan = 0;
+    private static volatile boolean checkHttpFrequency = false;
 
     static {
         loadOpenGameTypes();
         loadShareFreeGames();
+        initFromResourceConfig();
     }
 
     /**
@@ -342,6 +342,14 @@ public final class GameConfigUtil {
             LogUtil.e("gold_auto is not found or config error:key=" + key + ",value=[]");
             return Collections.emptyList();
         }
+    }
+
+    public static void initFromResourceConfig() {
+        checkHttpFrequency = "1".equals(ResourcesConfigsUtil.loadServerPropertyValue("switch_checkHttpFrequency", "0"));
+    }
+
+    public static boolean checkHttpFrequency() {
+        return checkHttpFrequency;
     }
 
 }

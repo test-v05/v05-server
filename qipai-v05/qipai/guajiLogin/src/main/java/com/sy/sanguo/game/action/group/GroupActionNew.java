@@ -8,19 +8,15 @@ import com.sy.sanguo.common.struts.GameStrutsAction;
 import com.sy.sanguo.common.util.*;
 import com.sy.sanguo.common.util.lenovo.DateUtil;
 import com.sy.sanguo.common.util.user.GameUtil;
-import com.sy.sanguo.game.bean.Activity;
 import com.sy.sanguo.game.bean.RegInfo;
 import com.sy.sanguo.game.bean.group.*;
 import com.sy.sanguo.game.constants.GroupConstants;
 import com.sy.sanguo.game.constants.GroupUserTree;
-import com.sy.sanguo.game.dao.ActivityDao;
 import com.sy.sanguo.game.dao.DataStatisticsDao;
 import com.sy.sanguo.game.dao.UserDaoImpl;
 import com.sy.sanguo.game.dao.group.GroupDao;
 import com.sy.sanguo.game.dao.group.GroupDaoNew;
 import com.sy.sanguo.game.dao.group.GroupWarnDao;
-import com.sy.sanguo.game.pdkuai.db.bean.RedPacketRecord;
-import com.sy.sanguo.game.pdkuai.db.dao.RedPacketDao;
 import com.sy.sanguo.game.pdkuai.db.dao.TableLogDao;
 import com.sy.sanguo.game.pdkuai.db.dblock.DbLockEnum;
 import com.sy.sanguo.game.pdkuai.db.dblock.DbLockUtil;
@@ -179,11 +175,18 @@ public class GroupActionNew extends GameStrutsAction {
      * 获取亲友圈列表信息
      */
     public void loadGroupList() {
+        Map<String, String> params = null;
+        String sessCode = null;
         try {
-            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            params = UrlParamUtil.getParameters(getRequest());
             LOGGER.info("loadGroupList|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toLong(params.get("userId"), 0);
@@ -227,6 +230,8 @@ public class GroupActionNew extends GameStrutsAction {
             OutputUtil.output(0, json, getRequest(), getResponse(), false);
         } catch (Exception e) {
             LOGGER.error("Exception:" + e.getMessage(), e);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -1896,11 +1901,18 @@ public class GroupActionNew extends GameStrutsAction {
      * 列表
      */
     public void loadTablePlayLogs() {
+        Map<String, String> params = null;
+        String sessCode = null;
         try {
-            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            params = UrlParamUtil.getParameters(getRequest());
             LOGGER.info("loadTablePlayLogs|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toLong(params.get("userId"), 0);
@@ -2085,6 +2097,8 @@ public class GroupActionNew extends GameStrutsAction {
             OutputUtil.output(0, json, getRequest(), getResponse(), false);
         } catch (Exception e) {
             LOGGER.error("Exception:" + e.getMessage(), e);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -2092,11 +2106,18 @@ public class GroupActionNew extends GameStrutsAction {
      * 战绩详情
      */
     public void loadTableRecord() {
+        Map<String, String> params = null;
+        String sessCode = null;
         try {
-            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            params = UrlParamUtil.getParameters(getRequest());
             LOGGER.info("loadTableRecord|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toLong(params.get("userId"), 0);
@@ -2146,6 +2167,8 @@ public class GroupActionNew extends GameStrutsAction {
 
         } catch (Exception e) {
             LOGGER.error("Exception:" + e.getMessage(), e);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -2156,11 +2179,17 @@ public class GroupActionNew extends GameStrutsAction {
      */
     public void userListForLogDetail() {
         Map<String, String> params = null;
+        String sessCode = null;
         try {
             params = UrlParamUtil.getParameters(getRequest());
             LOGGER.debug("userListForLog|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toLong(params.get("userId"), 0);
@@ -2244,6 +2273,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("userListForLog|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -2253,11 +2284,17 @@ public class GroupActionNew extends GameStrutsAction {
      */
     public void creditLogList() {
         Map<String, String> params = null;
+        String sessCode = null;
         try {
             params = UrlParamUtil.getParameters(getRequest());
             LOGGER.debug("creditLogList|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toLong(params.get("userId"), 0);
@@ -2328,6 +2365,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("creditLogList|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -2599,11 +2638,17 @@ public class GroupActionNew extends GameStrutsAction {
      */
     public void commissionLog() {
         Map<String, String> params = null;
+        String sessCode = null;
         try {
             params = UrlParamUtil.getParameters(getRequest());
             LOGGER.debug("commissionLog|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toLong(params.get("userId"), -1);
@@ -2654,6 +2699,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("commissionLog|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -2663,11 +2710,17 @@ public class GroupActionNew extends GameStrutsAction {
      */
     public void commissionLogNextLevel() {
         Map<String, String> params = null;
+        String sessCode = null;
         try {
             params = UrlParamUtil.getParameters(getRequest());
             LOGGER.debug("commissionLogNextLevel|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toLong(params.get("userId"), -1);
@@ -2742,6 +2795,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("commissionLogNextLevel|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -2751,11 +2806,17 @@ public class GroupActionNew extends GameStrutsAction {
      */
     public void rankList() {
         Map<String, String> params = null;
+        String sessCode = null;
         try {
             params = UrlParamUtil.getParameters(getRequest());
             LOGGER.debug("rankList|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toLong(params.get("userId"), -1);
@@ -2841,6 +2902,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("rankList|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -3426,11 +3489,18 @@ public class GroupActionNew extends GameStrutsAction {
      * 信用分上下分记录
      */
     public void loadCreditLog() {
+        Map<String, String> params = null;
+        String sessCode = null;
         try {
-            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            params = UrlParamUtil.getParameters(getRequest());
             LOGGER.info("loadCreditLog|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toInt(params.get("userId"), 0);
@@ -3516,6 +3586,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("loadCreditLog|error|" + e.getMessage(), e);
             OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -3589,11 +3661,18 @@ public class GroupActionNew extends GameStrutsAction {
      * 局数统计
      */
     public void loadTableCount() {
+        Map<String, String> params = null;
+        String sessCode = null;
         try {
-            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            params = UrlParamUtil.getParameters(getRequest());
             LOGGER.info("loadTableCount|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             String groupId = params.get("groupId");
@@ -3668,6 +3747,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
             LOGGER.error("Exception:" + e.getMessage(), e);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -3676,11 +3757,17 @@ public class GroupActionNew extends GameStrutsAction {
      */
     public void loadCreditCommissionLog() {
         Map<String, String> params = null;
+        String sessCode = null;
         try {
             params = UrlParamUtil.getParameters(getRequest());
             LOGGER.debug("loadCreditCommissionLog|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toInt(params.get("userId"), 0);
@@ -3781,6 +3868,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("loadCreditCommissionLog|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -3790,11 +3879,17 @@ public class GroupActionNew extends GameStrutsAction {
      */
     public void loadCreditCommissionLogByUser() {
         Map<String, String> params = null;
+        String sessCode = null;
         try {
             params = UrlParamUtil.getParameters(getRequest());
             LOGGER.debug("loadCreditCommissionLogByUser|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toInt(params.get("userId"), 0);
@@ -3894,6 +3989,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("loadCreditCommissionLogByUser|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -3902,11 +3999,17 @@ public class GroupActionNew extends GameStrutsAction {
      */
     public void searchCreditCommissionLog() {
         Map<String, String> params = null;
+        String sessCode = null;
         try {
             params = UrlParamUtil.getParameters(getRequest());
             LOGGER.debug("searchCreditCommissionLog|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toInt(params.get("userId"), 0);
@@ -3968,6 +4071,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("searchCreditCommissionLog|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
@@ -4311,11 +4416,17 @@ public class GroupActionNew extends GameStrutsAction {
      */
     public void loadCommissionDetailForTable() {
         Map<String, String> params = null;
+        String sessCode = null;
         try {
             params = UrlParamUtil.getParameters(getRequest());
             LOGGER.debug("loadCommissionDetailForTable|params:{}", params);
             if (!checkSign(params)) {
                 OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            sessCode = params.get("sessCode");
+            if (isHttpFrequencyLimit(sessCode)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_27), getRequest(), getResponse(), false);
                 return;
             }
             long userId = NumberUtils.toInt(params.get("userId"), 0);
@@ -4351,6 +4462,8 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("loadCommissionDetailForTable|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        } finally {
+            cleanHttpFrequency(sessCode);
         }
     }
 
