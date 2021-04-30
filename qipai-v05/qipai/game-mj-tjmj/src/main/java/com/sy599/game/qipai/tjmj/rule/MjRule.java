@@ -1,6 +1,5 @@
 package com.sy599.game.qipai.tjmj.rule;
 
-import com.sy599.game.GameServerConfig;
 import com.sy599.game.qipai.tjmj.bean.*;
 import com.sy599.game.qipai.tjmj.constant.MjAction;
 import com.sy599.game.qipai.tjmj.constant.MjConstants;
@@ -9,12 +8,9 @@ import com.sy599.game.qipai.tjmj.tool.MjQipaiTool;
 import com.sy599.game.util.DataMapUtil;
 import com.sy599.game.util.LogUtil;
 import org.apache.commons.collections.CollectionUtils;
-import org.w3c.dom.ls.LSException;
-import sun.security.krb5.internal.ktab.KeyTabInputStream;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MjRule {
