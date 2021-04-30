@@ -522,6 +522,14 @@ public class CxxdzPlayer extends Player {
 		extList.add(h1j);//13 是否回一脚
 		extList.add(lookCard);//14 看牌
 		extList.add(menT);//15 	闷T
+		if(getHandPais().isEmpty()|| getHandPais().size()>2){
+			extList.add(0);
+		}else if( getHandPais().size()==1){
+			extList.add(1);
+		}else if( getHandPais().size()==2){
+			extList.add(2);
+		}
+
 		res.addAllExt(extList);
 
 		//信用分

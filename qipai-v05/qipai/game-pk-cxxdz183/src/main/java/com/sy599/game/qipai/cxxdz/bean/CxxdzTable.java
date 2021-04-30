@@ -75,6 +75,7 @@ public class CxxdzTable extends BaseTable {
 	private int op_bujiabei;
 	private int op_dipaijiabei;
 	private int op_lunliuJiao;
+	private int boomSuan2Fen;
 	private int jiaBei;
 	private int jiaBeiFen;
 	private int jiaBeiShu;
@@ -171,6 +172,7 @@ public class CxxdzTable extends BaseTable {
 	private int dizhuSeat=0;
 
 
+
 	public boolean createTable(CreateTableInfo createTableInfo)
 			throws Exception {
 		Player player = createTableInfo.getPlayer();
@@ -224,9 +226,10 @@ public class CxxdzTable extends BaseTable {
 			belowAdd = StringUtil.getIntValue(params, 17, 0);
 			below = StringUtil.getIntValue(params, 18, 0);
 		}
-		fjbkd=StringUtil.getIntValue(params, 19, 0);//飞机不可带
-		sdssc=StringUtil.getIntValue(params, 20, 0);//四代随时出
-		sdwssc=StringUtil.getIntValue(params, 21, 0);//三带王随时出
+		fjbkd= StringUtil.getIntValue(params, 19, 0);//飞机不可带
+		sdssc= StringUtil.getIntValue(params, 20, 0);//四代随时出
+		sdwssc= StringUtil.getIntValue(params, 21, 0);//三带王随时出
+		boomSuan2Fen = StringUtil.getIntValue(params, 22, 0);//炸弹算2分
 		setLastActionTime(TimeUtil.currentTimeMillis());
 		return true;
 	}
@@ -276,6 +279,7 @@ public class CxxdzTable extends BaseTable {
 		wrapper.putInt(48, dizhuSeat);
 		wrapper.putInt(49, passQdz);
 		wrapper.putString(50, StringUtil.implode(canTiSeat,","));
+		wrapper.putInt(51, boomSuan2Fen);
 		return wrapper;
 	}
 	@Override
@@ -344,6 +348,7 @@ public class CxxdzTable extends BaseTable {
 		String canTiSeat=wrapper.getString(50);
 		if(canTiSeat!=null&&!"".equals(canTiSeat))
 			this.canTiSeat = StringUtil.explodeToIntList(canTiSeat);
+		boomSuan2Fen =wrapper.getInt(51, 0);
 	}
 
 	@Override
@@ -791,8 +796,14 @@ public class CxxdzTable extends BaseTable {
 	public void sendUniformByTableStatus(){
 		switch (tableStatus){
 			case CxxdzConstants.TABLE_STATUS_MZ:
-				for (CxxdzPlayer p : seatMap.values()) {
-					p.writeComMessage(WebSocketMsgType.com_cxxdz_mengzhua,dizhuSeat);
+			 	if(getPassCount()==2){
+				 	for (CxxdzPlayer p : seatMap.values()) {
+						p.writeComMessage(WebSocketMsgType.com_cxxdz_mustMengzhua,dizhuSeat);
+					}
+				}else{
+					for (CxxdzPlayer p : seatMap.values()) {
+						p.writeComMessage(WebSocketMsgType.com_cxxdz_mengzhua,dizhuSeat);
+					}
 				}
 				break;
 			case CxxdzConstants.TABLE_STATUS_QDZ:
@@ -825,6 +836,9 @@ public class CxxdzTable extends BaseTable {
 		switch (tableStatus){
 			case CxxdzConstants.TABLE_STATUS_MZ:
 				player.writeComMessage(WebSocketMsgType.com_cxxdz_mengzhua,dizhuSeat);
+				if(getPassCount()==2){
+					player.writeComMessage(WebSocketMsgType.com_cxxdz_mustMengzhua,dizhuSeat);
+				}
 				break;
 			case CxxdzConstants.TABLE_STATUS_QDZ:
 				player.writeComMessage(WebSocketMsgType.com_cxxdz_qdz,dizhuSeat,-1,mustQdz(player)?1:0);
@@ -845,9 +859,10 @@ public class CxxdzTable extends BaseTable {
 		addPlayLog(addCxxdzPlayLog(player.getSeat(),msgCode,act,null,false));
 		for (Player p:seatMap.values()) {
 			p.writeComMessage(msgCode,player.getSeat(),act,countBeiShuFD(p.getSeat()));
-//			System.out.println("-------------"+p.getName()+"|"+msgCode+"|"+act+"|"+countBeiShuFD(p.getSeat()));
+			System.out.println("-------------"+p.getName()+"|"+msgCode+"|"+act+"|"+countBeiShuFD(p.getSeat()));
 		}
 	}
+
 
 	public synchronized void menzhua(int param,CxxdzPlayer player){
 		if(player.getDizhu()==1||player.getLookCard()==1)
@@ -861,7 +876,8 @@ public class CxxdzTable extends BaseTable {
 			confirmDz(player);
 			player.lookdp();
 			changeLoaclTableStatus(CxxdzConstants.TABLE_STATUS_T1J);
-		}else{//看牌
+		}else{
+			//看牌
 			broadcastMsg(WebSocketMsgType.com_cxxdz_mengzhua,player,param);
 			changeLoaclTableStatus(CxxdzConstants.TABLE_STATUS_QDZ);
 		}
@@ -899,8 +915,9 @@ public class CxxdzTable extends BaseTable {
 		}else {
 			if(player.getPassDz()==1)
 				return;
-			if(mustQdz(player))
+			if(mustQdz(player)){
 				return;
+			}
 			setPassQdz(passQdz+1);
 			broadcastMsg(WebSocketMsgType.com_cxxdz_qdz,player,param);
 			changeLoaclTableStatus(CxxdzConstants.TABLE_STATUS_ZERO);
@@ -987,7 +1004,6 @@ public class CxxdzTable extends BaseTable {
 	}
 
 	public boolean mustQdz(CxxdzPlayer player){
-
 		int countFen=0;
 		int num2=0;
 		for (Integer id:player.getHandPais()) {
@@ -999,7 +1015,9 @@ public class CxxdzTable extends BaseTable {
 				num2++;
 			}
 		}
-		countFen+=DdzSfNew.getBoomNum(player.getHandPais());
+		if(boomSuan2Fen ==1){
+			countFen+=DdzSfNew.getBoomNum(player.getHandPais());
+		}
 		if(countFen>=4||(san2bq==1&&num2>=3))
 			return true;
 		if(maxPlayerCount==3&&passQdz==2)
@@ -1007,8 +1025,24 @@ public class CxxdzTable extends BaseTable {
 		return false;
 	}
 
-
-
+	/**
+	 * 看牌且不抢地主人数
+	 * @return
+	 */
+	public int getPassCount(){
+		if(maxPlayerCount==3){
+			int passCount =0;
+			for (CxxdzPlayer p:seatMap.values() ) {
+				if(p.getPassDz()==1 && p.getMengzhua()==0){
+					//不抢 且 看牌人数
+					passCount++;
+				}
+			}
+			return passCount;
+		}else{
+			return 0;
+		}
+	}
 
 
 
@@ -1259,6 +1293,15 @@ public class CxxdzTable extends BaseTable {
 		res.setUserId(player.getUserId() + "");
 		res.setSeat(player.getSeat());
 		res.setIsPlay(2);
+		if(player.getHandPais().isEmpty() || player.getHandPais().size()>2){
+			res.setIsBt(0);//0 1 2
+		}else if( player.getHandPais().size()==2){
+			res.setIsBt(2);//0 1 2
+		}else if( player.getHandPais().size()==1){
+			res.setIsBt(1);//0 1 2
+		}
+//		System.out.println("==>");
+//		System.out.println(res.build().toString());
 		setReplayDisCard();
 		if(isOver){
 			res.setIsClearDesk(0);
@@ -2379,5 +2422,4 @@ public class CxxdzTable extends BaseTable {
 	public boolean isJiaofenMoshi(){
 		return op_gametype == 2;
 	}
-
 }
