@@ -1829,6 +1829,8 @@ public class WebSocketMsgType {
     public static final short com_cxxdz_lookdp =5210;
     //看底牌
     public static final short com_cxxdz_showCard =5211;
+    //必须mengzhua
+    public static final short com_cxxdz_mustMengzhua =5212;
 
 
     /** 俱乐部玩家升级**/

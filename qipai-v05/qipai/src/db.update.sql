@@ -2572,3 +2572,6 @@ ADD COLUMN `count3`  int(10) NULL COMMENT '亲友圈3人玩法局数' AFTER `cou
 ADD COLUMN `count4`  int(10) NULL COMMENT '亲友圈4人玩法局数' AFTER `count3`,
 ADD COLUMN `countTotal`  int(10) NULL COMMENT '亲友圈玩法总局数' AFTER `count4`;
 
+ALTER TABLE `t_group_warn`
+ADD COLUMN `updateTime`  timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `createTime`;
+
