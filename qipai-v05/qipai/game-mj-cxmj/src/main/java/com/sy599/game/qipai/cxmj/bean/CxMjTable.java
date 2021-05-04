@@ -535,6 +535,27 @@ public class CxMjTable extends BaseTable {
 
     }
 
+    public int calcGAutoGangHuWinFen(CxMjPlayer winplayer,List<Integer> vir_hand){
+            // 自摸
+            List<CxMj> mj = CxMjHelper.toMajiang(vir_hand);
+            List<Integer> list = MingTang.get(winplayer.getCardTypes(),mj,this);
+//            setHuType(list);
+           // CxMjPlayer winner = winplayer;
+            int winSeat = winplayer.getSeat();
+            int winFen=0;
+            int loseFen= MingTang.getMingTangFen(list,diFen);
+            if(fangGangSeat!=0){
+                loseFen*=(getMaxPlayerCount()-1);
+                winFen+=loseFen;
+            }else {
+                for (int seat : seatMap.keySet()) {
+                    if (seat!=winSeat) {
+                        winFen+=loseFen;
+                    }
+                }
+            }
+            return  winFen;
+    }
 	private boolean checkAuto3() {
 		boolean diss = false;
 		// if(autoPlayGlob==3) {
@@ -1384,13 +1405,33 @@ public class CxMjTable extends BaseTable {
 
 
             if(gangM1.size()>0&&gangM2.size()>0){
-                //需要传补牌消息
+                //需要传补牌消息 选择45筒进行
                 for (CxMjPlayer seatPlayer : seatMap.values()) {
                     // 推送消息
                     seatPlayer.writeSocket(builder.build());
                 }
-                player.writeComMessage(WebSocketMsgType.res_code_cxmj_gangBu);
-            }else {
+//                player.writeComMessage(WebSocketMsgType.res_code_cxmj_gangBu);
+                List<Integer> hand4 = new ArrayList<>(player.getHandPais());
+                hand4.add(1004);
+                List<Integer> hand5 = new ArrayList<>(player.getHandPais());
+                hand5.add(1005);
+                List<Integer> actionList_ = Arrays.asList(0,0,0,0,0,0);
+                actionList_.set(CxMjConstants.ACTION_INDEX_HU,1);
+
+                int fen4= calcGAutoGangHuWinFen(player,hand4);
+                int fen5 =calcGAutoGangHuWinFen(player,hand5);
+                actionSeatMap.put(player.getSeat(),actionList_);
+
+                if(fen4>=fen5){
+                    player.dealHandPais(CxMjHelper.toMajiang(hand4));
+                    hu(player,CxMjHelper.toMajiang(hand4),CxMjDisAction.action_hu);
+                }else{
+                    player.dealHandPais(CxMjHelper.toMajiang(hand5));
+                    hu(player,CxMjHelper.toMajiang(hand5),CxMjDisAction.action_hu);
+                }
+
+            }
+            else {
                 int nowBu;
                 if(gangM2.size()==0){
                     nowBu=1004;
