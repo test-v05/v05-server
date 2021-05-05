@@ -661,11 +661,11 @@ public class CxMjTool {
         }
 //        TingResouce.init();
         try {
-            System.out.println("hand " + CxMjHelper.toMajiang(handPais));
-            System.out.println("hand ar " + handPais);
-            System.out.println("peng " + CxMjHelper.toMajiang(peng));
-            System.out.println("peng ar " + peng);
-            System.out.println("gangMj " + gangMj );
+//            System.out.println("hand " + CxMjHelper.toMajiang(handPais));
+//            System.out.println("hand ar " + handPais);
+//            System.out.println("peng " + CxMjHelper.toMajiang(peng));
+//            System.out.println("peng ar " + peng);
+//            System.out.println("gangMj " + gangMj );
             //自摸 hand 58 7 34 14 90 peng 21 48 75 9 36 63 4 31 85
 
             //fangpao
