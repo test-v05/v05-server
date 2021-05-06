@@ -1423,11 +1423,15 @@ public class CxMjTable extends BaseTable {
                 actionSeatMap.put(player.getSeat(),actionList_);
 
                 if(fen4>=fen5){
-                    player.dealHandPais(CxMjHelper.toMajiang(hand4));
-                    hu(player,CxMjHelper.toMajiang(hand4),CxMjDisAction.action_hu);
+                   // player.dealHandPais(CxMjHelper.toMajiang(hand4));
+                   // hu(player,CxMjHelper.toMajiang(hand4),CxMjDisAction.action_hu);
+                    player.setVirtualHu(1004);
+                    hu(player,new ArrayList<>(),CxMjDisAction.action_hu);
                 }else{
-                    player.dealHandPais(CxMjHelper.toMajiang(hand5));
-                    hu(player,CxMjHelper.toMajiang(hand5),CxMjDisAction.action_hu);
+                  //  player.dealHandPais(CxMjHelper.toMajiang(hand5));
+                    player.setVirtualHu(1005);
+                    hu(player,new ArrayList<>(),CxMjDisAction.action_hu);
+//                    hu(player,CxMjHelper.toMajiang(hand5),CxMjDisAction.action_hu);
                 }
 
             }
