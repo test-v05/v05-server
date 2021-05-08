@@ -65,7 +65,15 @@ public class MingTang {
                 duiNum++;
                 if(duiNum>1)
                     return false;
+            }else if(count==5){
+                //BUG  [6条, 6条, 6条, 5筒, 5筒, 5筒, 5筒, 5筒]
+                duiNum++;
+                if(duiNum>1){
+                    return false;
+                }
+                continue;
             }else {
+
                 return false;
             }
         }

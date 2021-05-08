@@ -917,9 +917,6 @@ public class CxMjPlayer extends Player {
                //可双杠直接胡
                if(gangM3.get("hu")!=null && (boolean)gangM3.get("hu") ){
                    shuangGangData = gangM3;
-                  // shuangGangHu(majiang);
-//                   list.add(99);
-//                   return list;
                    List<CxMj> gang1 = (List<CxMj>) gangM3.get("gang1");
                    if(handPais.size()==14 && majiang==null){
                        gangM.putIfAbsent(gang1.get(0).getId(),CxMjHelper.toMajiangIds(gang1));
@@ -1083,8 +1080,13 @@ public class CxMjPlayer extends Player {
                 if (disType.isHasCardVal(mj2)) {
                     cp.add(disType);
                 }
+                List<CxMj> _mj2 = CxMjHelper.toMajiang(disType.getCardIds());
+                if(handPais.containsAll(_mj2)){
+                    handPais.removeAll(_mj2);
+                }
             }
         }
+        //
         cardTypes.removeAll(cp);
 
         List<Integer> list = MingTang.get(getCardTypes(),getHandMajiang(),table);
@@ -1233,6 +1235,10 @@ public class CxMjPlayer extends Player {
                 }
                 if (disType.isHasCardVal(mj2)) {
                     cp.add(disType);
+                }
+                List<CxMj> _mj2 = CxMjHelper.toMajiang(disType.getCardIds());
+                if(handPais.containsAll(_mj2)){
+                    handPais.removeAll(_mj2);
                 }
             }
         }
