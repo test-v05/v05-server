@@ -838,8 +838,7 @@ public class CxMjTable extends BaseTable {
         if (majiang != null) {
             addPlayLog(disCardRound + "_" + player.getSeat() + "_" + CxMjDisAction.action_moMjiang + "_" + majiang.getId() + player.getExtraPlayLog());
             player.moMajiang(majiang);
-          //  System.out.println("mo==>");
-            System.out.println(disCardRound + "_" + player.getSeat() + "_" + CxMjDisAction.action_moMjiang + "_" + majiang.getId() + player.getExtraPlayLog());
+            //System.out.println(disCardRound + "_" + player.getSeat() + "_" + CxMjDisAction.action_moMjiang + "_" + majiang.getId() + player.getExtraPlayLog());
         }
 		// 检查摸牌
         clearActionSeatMap();
@@ -1668,19 +1667,17 @@ public class CxMjTable extends BaseTable {
             }
         }
         if (action == CxMjDisAction.action_minggang|| action == CxMjDisAction.action_angang){
-            if(!player.getShuangGangData().isEmpty()){
-                //这里有问题 gangmj变量
+            if(player.getShuangGangData().size()>0 || player.checkCanShuangGangHu()){
                 if(player.isAlreadyMoMajiang()){
                     player.shuangGangHu();
-                    return;
                 }else{
                    player.shuangGangHuDis();
-                   return;
                 }
             }
-            player.getShuangGangData().clear();
         }
-
+        if(table_state.over ==state){
+            return;
+        }
         if (CxMjDisAction.action_hu == action) {
             hu(player, majiangs, action);
             return;
@@ -3324,5 +3321,9 @@ public class CxMjTable extends BaseTable {
     @Override
     public String getGameName() {
 		return "楚雄麻将";
+    }
+
+    public List<CxMj> getNowDisCardIds() {
+        return nowDisCardIds;
     }
 }

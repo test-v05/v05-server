@@ -978,8 +978,6 @@ public class CxMjPlayer extends Player {
         PlayCardResMsg.PlayMajiangRes.Builder gangBuilder = PlayCardResMsg.PlayMajiangRes.newBuilder();
         gangBuilder.setFromSeat(getSeat());
         gangBuilder.setUserId(String.valueOf(getUserId()));
-        System.out.println("==>");
-        System.out.println("gang =" +g1);
         if(size==4){
             table.buildPlayRes(gangBuilder, this, CxMjDisAction.action_angang,g1);
             table.addPlayLog((dcr++) + "_" + getSeat() + "_" +4+ "_" + CxMjHelper.toMajiangStrs(g1) + getExtraPlayLog());
@@ -1008,7 +1006,6 @@ public class CxMjPlayer extends Player {
         mo1build.setUserId(String.valueOf(getUserId()));
         mo1build.setSeat(getSeat());
         mo1build.setRemain(table.getLeftMajiangCount());
-        System.out.println("mo1 =" + CxMj.getMajang((Integer) gangM3.get("mo1")));
         table.addPlayLog((dcr++) + "_" + getSeat() + "_" + CxMjDisAction.action_moMjiang + "_" +   gangM3.get("mo1") + getExtraPlayLog());
         getHandMajiang().add(CxMj.getMajang((Integer) gangM3.get("mo1")));
         //gang2
@@ -1038,7 +1035,6 @@ public class CxMjPlayer extends Player {
        }
         addOutPais((List<CxMj>) gangM3.get("gang2"),  size==4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
 
-        System.out.println("gang2 =" + g2);
         //mo1
         PlayCardResMsg.MoMajiangRes.Builder mo2build = PlayCardResMsg.MoMajiangRes.newBuilder();
         mo2build.setMajiangId((Integer) gangM3.get("mo2"));
@@ -1051,7 +1047,6 @@ public class CxMjPlayer extends Player {
 
         List<CxMj> _mj = new ArrayList<>();
         _mj.add(CxMj.getMajang((Integer) gangM3.get("mo2")));
-        System.out.println("gang2 =" + CxMj.getMajang((Integer) gangM3.get("mo2")));
         PlayCardResMsg.PlayMajiangRes.Builder hubuilder = PlayCardResMsg.PlayMajiangRes.newBuilder();
         hubuilder.setFromSeat(getSeat());
         hubuilder.addHuArray(CxMjConstants.HU_ZIMO);
@@ -1241,8 +1236,6 @@ public class CxMjPlayer extends Player {
                 }
             }
         }
-        System.out.println(cardTypes);
-        System.out.println(cp);
         cardTypes.removeAll(cp);
 
       List<Integer> list = MingTang.get(getCardTypes(),getHandMajiang(),table);
@@ -1261,9 +1254,7 @@ public class CxMjPlayer extends Player {
 
             pl.writeSocket(hubuilder.build());
         }
-        System.out.println("==>");
 
-        System.out.println(getHandMajiang() );
         List<Integer> act = table.getActionSeatMap().get(getSeat());
         if(null==act)act=Arrays.asList(0,0,0,0,0,0);
         act.set(CxMjConstants.ACTION_INDEX_HU,1);
@@ -1295,8 +1286,6 @@ public class CxMjPlayer extends Player {
             }
         }
         if(sb.length()>0)
-            System.out.println("res_code_cxmj_gangMsg=>");
-            System.out.println(sb.toString());
             // minggang
             writeComMessage(WebSocketMsgType.res_code_cxmj_gangMsg, sb.toString());
     }
@@ -1648,4 +1637,37 @@ public class CxMjPlayer extends Player {
     public void setShuangGangData(Map<Object, Object> shuangGangData) {
         this.shuangGangData = shuangGangData;
     }
+
+    public boolean checkCanShuangGangHu() {
+        if (isAlreadyMoMajiang()) {
+            if (shuangGangData.isEmpty()) {
+                //断线重连异常处理
+                shuangGangData = CxMjTool.checkShuangGang(1, CxMjHelper.toMajiangIds(handPais), CxMjHelper.toMajiangIds(peng), getLastMoMajiang(), true);
+                //.println("MoCheck==>");
+                //System.err.println(shuangGangData);
+                if (shuangGangData.size() < 2) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        } else {
+            CxMjTable table = getPlayingTable(CxMjTable.class);
+            if (!table.getNowDisCardIds().isEmpty()) {
+                CxMj majiang = table.getNowDisCardIds().get(0);
+                if (shuangGangData.isEmpty()) {
+                    shuangGangData = CxMjTool.checkShuangGang(1, CxMjHelper.toMajiangIds(handPais), CxMjHelper.toMajiangIds(peng), majiang, false);
+                    //System.err.println("DisCheck==>");
+                    //System.err.println(shuangGangData);
+                    if (shuangGangData.size() < 2) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 }

@@ -660,7 +660,7 @@ public class CxMjTool {
             result.put("hu", false);
             return result;
         }
-        TingResouce.init();
+        //TingResouce.init();
         try {
 //            System.out.println("hand " + CxMjHelper.toMajiang(handPais));
 //            System.out.println("hand ar " + handPais);
