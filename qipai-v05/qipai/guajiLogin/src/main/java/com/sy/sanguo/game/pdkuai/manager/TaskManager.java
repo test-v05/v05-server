@@ -80,6 +80,10 @@ public class TaskManager {
 
                 clearUserStatistics();
 
+                clearRoomcardConsumeStatistics();
+
+                clearRoomgoldConsumeStatistics();
+
             }
         }, c5.getTime(), 24 * 60 * 60 * 1000);
 
@@ -722,6 +726,34 @@ public class TaskManager {
                 delSql = "delete from t_user_statistics where keyId <= " + maxKeyId;
                 deleteDataForLogin(delName, delSql, delLimit);
             }
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearRoomcardConsumeStatistics() {
+        String clearDate = TimeUtil.formatXxDays_00(-30, "yyyyMMdd");
+        String delName = "";
+        String delSql = "";
+        try {
+            // ----------------------------- roomcard_consume_statistics ----------------------------------
+            delName = "clearRoomcardConsumeStatistics";
+            delSql = "delete from roomcard_consume_statistics where consumeDate <= " + clearDate;
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearRoomgoldConsumeStatistics() {
+        String clearDate = TimeUtil.formatXxDays_00(-30, "yyyyMMdd");
+        String delName = "";
+        String delSql = "";
+        try {
+            // ----------------------------- roomgold_consume_statistics ----------------------------------
+            delName = "clearRoomgoldConsumeStatistics";
+            delSql = "delete from roomgold_consume_statistics where consumeDate <= " + clearDate;
+            deleteDataForLogin(delName, delSql, delLimit);
         } catch (Exception e) {
             LogUtil.e("Exception:" + e.getMessage(), e);
         }
