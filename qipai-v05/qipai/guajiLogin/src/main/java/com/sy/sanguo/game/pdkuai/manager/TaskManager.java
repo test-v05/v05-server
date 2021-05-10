@@ -863,13 +863,13 @@ public class TaskManager {
     }
 
     private void clearRoomcardConsumeStatistics() {
-        String clearDate = TimeUtil.formatXxDays_00(-15, "yyyyMMdd");
+        String clearDate = TimeUtil.formatXxDays_00(-15, "yyyy-MM-dd");
         String delName = "";
         String delSql = "";
         try {
             // ----------------------------- roomcard_consume_statistics ----------------------------------
             delName = "clearRoomcardConsumeStatistics";
-            delSql = "delete from roomcard_consume_statistics where consumeDate <= " + clearDate;
+            delSql = "delete from roomcard_consume_statistics where consumeDate <= '" + clearDate + "'";
             deleteDataForLogin(delName, delSql, delLimit);
         } catch (Exception e) {
             LogUtil.e("Exception:" + e.getMessage(), e);
@@ -877,13 +877,13 @@ public class TaskManager {
     }
 
     private void clearRoomgoldConsumeStatistics() {
-        String clearDate = TimeUtil.formatXxDays_00(-15, "yyyyMMdd");
+        String clearDate = TimeUtil.formatXxDays_00(-15, "yyyy-MM-dd");
         String delName = "";
         String delSql = "";
         try {
             // ----------------------------- roomgold_consume_statistics ----------------------------------
             delName = "clearRoomgoldConsumeStatistics";
-            delSql = "delete from roomgold_consume_statistics where consumeDate <= " + clearDate;
+            delSql = "delete from roomgold_consume_statistics where consumeDate <= '" + clearDate + "'";
             deleteDataForLogin(delName, delSql, delLimit);
         } catch (Exception e) {
             LogUtil.e("Exception:" + e.getMessage(), e);
