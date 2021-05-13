@@ -48,7 +48,7 @@ public class CxMjPlayer extends Player {
     private List<CxMj> mGang;
     private int winCount;
     private int lostCount;
-    private  Map<Object,Object> shuangGangData = new HashMap<>();
+    private  HashMap<Object,Object> shuangGangData = new HashMap<>();
     /**
      * 局分
      */
@@ -626,6 +626,7 @@ public class CxMjPlayer extends Player {
         virtualGang.clear();
         gangNum=0;
         buId=0;
+        shuangGangData.clear();
     }
 
     /**
@@ -738,7 +739,7 @@ public class CxMjPlayer extends Player {
         virtualGang.clear();
         gangNum=0;
         buId=0;
-        shuangGangData=new HashMap<>();
+        shuangGangData.clear();
     }
 
     @Override
@@ -812,7 +813,7 @@ public class CxMjPlayer extends Player {
         }
         if (count == 3&&!passGangValList.contains(majiang.getVal())) {
 
-            Map<Object,Object> gangM3 = CxMjTool.checkShuangGang(1,CxMjHelper.toMajiangIds(handPais),CxMjHelper.toMajiangIds(peng),majiang,false);
+            HashMap<Object,Object> gangM3 = CxMjTool.checkShuangGang(1,CxMjHelper.toMajiangIds(handPais),CxMjHelper.toMajiangIds(peng),majiang,false);
             if(gangM3.size()>2){
                 //出的牌可双杠直接胡
                 if(gangM3.get("hu")!=null && (boolean)gangM3.get("hu") ){
@@ -912,7 +913,7 @@ public class CxMjPlayer extends Player {
                 buId=handPais.get(handPais.size()-1).getId();
             }
             Map<Integer,List<Integer>> gangM = CxMjTool.checkGang(gangNum, CxMjHelper.toMajiangIds(handPais), CxMjHelper.toMajiangValMap(peng),buId);
-            Map<Object,Object> gangM3 = CxMjTool.checkShuangGang(1,CxMjHelper.toMajiangIds(handPais),CxMjHelper.toMajiangIds(peng),majiang,true);
+            HashMap<Object,Object> gangM3 = CxMjTool.checkShuangGang(1,CxMjHelper.toMajiangIds(handPais),CxMjHelper.toMajiangIds(peng),majiang,true);
            if(gangM3.size()>2){
                //可双杠直接胡
                if(gangM3.get("hu")!=null && (boolean)gangM3.get("hu") ){
@@ -1105,6 +1106,15 @@ public class CxMjPlayer extends Player {
             pl.writeSocket(hubuilder.build());
         }
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("CxMj");
+        sb.append("|").append(table.getId());
+        sb.append("|").append(table.getPlayBureau());
+        sb.append("|").append(getUserId());
+        sb.append("|").append(getSeat());
+        sb.append("|").append("ShuangGangZimo");
+        sb.append("|").append(shuangGangData);
+        LogUtil.msgLog.info(sb.toString());
         List<Integer> act = table.getActionSeatMap().get(getSeat());
         if(null==act)act=Arrays.asList(0,0,0,0,0,0);
         act.set(CxMjConstants.ACTION_INDEX_HU,1);
@@ -1260,6 +1270,16 @@ public class CxMjPlayer extends Player {
 
             pl.writeSocket(hubuilder.build());
         }
+
+          StringBuilder sb = new StringBuilder();
+          sb.append("CxMj");
+          sb.append("|").append(table.getId());
+          sb.append("|").append(table.getPlayBureau());
+          sb.append("|").append(getUserId());
+          sb.append("|").append(getSeat());
+          sb.append("|").append("ShuangGangZimo");
+          sb.append("|").append(shuangGangData);
+          LogUtil.msgLog.info(sb.toString());
 
         List<Integer> act = table.getActionSeatMap().get(getSeat());
         if(null==act)act=Arrays.asList(0,0,0,0,0,0);
@@ -1636,12 +1656,14 @@ public class CxMjPlayer extends Player {
         return "_" + (isAutoPlay() ? 1 : 0) + "," + (isAutoPlaySelf() ? 1 : 0);
     }
 
-    public Map<Object, Object> getShuangGangData() {
+    public HashMap<Object, Object> getShuangGangData() {
         return shuangGangData;
     }
 
-    public void setShuangGangData(Map<Object, Object> shuangGangData) {
+    public void setShuangGangData(  HashMap<Object,Object> shuangGangData) {
         this.shuangGangData = shuangGangData;
+    } public void clearShuangGangData( ) {
+        this.shuangGangData.clear();
     }
 
     public boolean checkCanShuangGangHu() {

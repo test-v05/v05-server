@@ -386,7 +386,7 @@ public class CxMjTable extends BaseTable {
     @Override
     public void calcOver() {
         List<Integer> winList = new ArrayList<>(huConfirmList);
-        StringBuilder sb = new StringBuilder("cxmj");
+        StringBuilder sb = new StringBuilder("CxMj");
         sb.append("|").append(getId());
         sb.append("|").append(getPlayBureau());
         LogUtil.msgLog.info( sb.toString()+"|start|calcOver");
@@ -527,6 +527,7 @@ public class CxMjTable extends BaseTable {
         for (CxMjPlayer player : seatMap.values()) {
             if (player.isAutoPlaySelf()) {
                 player.setAutoPlay(false, false);
+                //player.clearShuangGangData();
             }
         }
         for (Player player : seatMap.values()) {
@@ -1667,7 +1668,10 @@ public class CxMjTable extends BaseTable {
             }
         }
         if (action == CxMjDisAction.action_minggang|| action == CxMjDisAction.action_angang){
-            if(player.getShuangGangData().size()>0 || player.checkCanShuangGangHu()){
+            if(player == null){
+                return;
+            }
+            if( null!=player.getShuangGangData() && (player.getShuangGangData().size()>0 || player.checkCanShuangGangHu())){
                 if(player.isAlreadyMoMajiang()){
                     player.shuangGangHu();
                 }else{

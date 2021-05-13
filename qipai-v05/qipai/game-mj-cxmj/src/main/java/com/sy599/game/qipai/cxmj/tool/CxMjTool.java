@@ -654,8 +654,8 @@ public class CxMjTool {
      * @param ismo 是否已摸牌
      * @return 能否双杠直接胡 map
      */
-    public static Map<Object, Object> checkShuangGang(int ver, List<Integer> handPais, List<Integer> peng, CxMj gangMj, boolean ismo) {
-        Map<Object, Object> result = new HashMap<>();
+    public static   HashMap<Object,Object> checkShuangGang(int ver, List<Integer> handPais, List<Integer> peng, CxMj gangMj, boolean ismo) {
+        HashMap<Object,Object> result = new HashMap<>();
         if (null == gangMj && handPais.size()!=14) {
             result.put("hu", false);
             return result;
