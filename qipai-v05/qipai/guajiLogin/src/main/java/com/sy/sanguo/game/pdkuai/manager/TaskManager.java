@@ -72,13 +72,33 @@ public class TaskManager {
 
                 clearOnlineData();
 
-                clearRoomCardConsumeData();
-
                 clearLoginData();
 
                 clearLogGroupUserAlert();
 
                 clearUserStatistics();
+
+                clearFirstmyth();
+
+                clearSystemUserCountLogin();
+
+                clearUserMessage();
+
+                clearUserShare();
+
+                clearUserDataStatistics();
+
+                clearItemExchange();
+
+                clearGroupReview();
+
+                clearStatisticsPlatform();
+
+                clearLogActivityReward();
+
+                clearRoomcardConsumeStatistics();
+
+                clearRoomgoldConsumeStatistics();
 
             }
         }, c5.getTime(), 24 * 60 * 60 * 1000);
@@ -613,68 +633,39 @@ public class TaskManager {
         String currentDate = TimeUtil.formatXxDays_00(-15, "yyyyMMddHHmm");
 
         String delName = "";
-        String maxKeyIdSql = "";
-        long maxKeyId = 0;
         String delSql = "";
 
         try {
             // ----------------------------- t_online_data ----------------------------------
             delName = "clearOnlineData";
-            maxKeyIdSql = " select COALESCE( MAX(keyId),0 ) from t_online_data where currentTime = " + currentDate + "";
-            maxKeyId = loadMaxKeyIdForLogin(maxKeyIdSql);
-            if (maxKeyId > 0) {
-                delSql = "delete from t_online_data where keyId <= " + maxKeyId;
-                deleteDataForLogin(delName, delSql, delLimit);
-            }
-        } catch (Exception e) {
-            LogUtil.e("Exception:" + e.getMessage(), e);
-        }
-    }
-
-
-    private void clearRoomCardConsumeData() {
-        String clearDate = TimeUtil.formatXxDays_00(-15, "yyyy-MM-dd");
-
-        String delName = "";
-        String delSql = "";
-
-        try {
-            // ----------------------------- roomcard_consume_statistics ----------------------------------
-            delName = "clearRoomCardConsumeData";
-            delSql = "delete from roomcard_consume_statistics where consumeDate <= '" + clearDate + "'";
+            delSql = "delete from t_online_data where currentTime <= " + currentDate + "";
             deleteDataForLogin(delName, delSql, delLimit);
+
+
+
+            // ----------------------------- online_data ----------------------------------
+            currentDate = TimeUtil.formatXxDays_00(-15, "yyyyMMdd");
+
+            delName = "clearOnlineData";
+            delSql = "delete from online_data where dateTime <= " + currentDate + "";
+            deleteDataForLogin(delName, delSql, delLimit);
+
         } catch (Exception e) {
             LogUtil.e("Exception:" + e.getMessage(), e);
         }
     }
 
     private void clearLoginData() {
-        String clearDate = TimeUtil.formatXxDays_00(-15, "yyyyMMdd");
+        String currentDate = TimeUtil.formatXxDays_00(-15, "yyyyMMdd");
 
         String delName = "";
-        String maxKeyIdSql = "";
-        long maxKeyId = 0;
         String delSql = "";
 
         try {
-            // ----------------------------- system_user_countlogin ----------------------------------
-            delName = "clearSystemUserCountLogin";
-            delSql = "delete from system_user_countlogin where logintime <= " + clearDate;
-            deleteDataForLogin(delName, delSql, delLimit);
-        } catch (Exception e) {
-            LogUtil.e("Exception:" + e.getMessage(), e);
-        }
-
-        clearDate = TimeUtil.formatXxDays_00(-15, "yyyyMMdd");
-        try {
             // ----------------------------- t_login_data ----------------------------------
-            delName = "clearTLoginData";
-            maxKeyIdSql = " select COALESCE( MAX(keyId),0 ) from t_login_data where currentDate < " + clearDate + "";
-            maxKeyId = loadMaxKeyIdForLogin(maxKeyIdSql);
-            if (maxKeyId > 0) {
-                delSql = "delete from t_login_data where keyId <= " + maxKeyId;
-                deleteDataForLogin(delName, delSql, delLimit);
-            }
+            delName = "clearLoginData";
+            delSql = "delete from t_login_data where currentDate <= " + currentDate + "";
+            deleteDataForLogin(delName, delSql, delLimit);
         } catch (Exception e) {
             LogUtil.e("Exception:" + e.getMessage(), e);
         }
@@ -722,6 +713,178 @@ public class TaskManager {
                 delSql = "delete from t_user_statistics where keyId <= " + maxKeyId;
                 deleteDataForLogin(delName, delSql, delLimit);
             }
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearFirstmyth() {
+        String currentDate = TimeUtil.formatXxDays_00(-15, "yyyyMMdd");
+
+        String delName = "";
+        String delSql = "";
+
+        try {
+            // ----------------------------- user_firstmyth ----------------------------------
+            delName = "clearFirstmyth";
+            delSql = "delete from user_firstmyth where recordDate <= " + currentDate;
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearSystemUserCountLogin() {
+        String currentDate = TimeUtil.formatXxDays_00(-15, "yyyyMMdd");
+
+        String delName = "";
+        String delSql = "";
+
+        try {
+            // ----------------------------- system_user_countlogin ----------------------------------
+            delName = "clearSystemUserCountLogin";
+            delSql = "delete from system_user_countlogin where logintime <= " + currentDate;
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearUserMessage() {
+        String currentDate = TimeUtil.formatXxDays_00(-5);
+
+        String delName = "";
+        String delSql = "";
+
+        try {
+            // ----------------------------- user_message ----------------------------------
+            delName = "clearUserMessage";
+            delSql = "delete from user_message where time <= '" + currentDate + "'";
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearUserShare() {
+        String currentDate = TimeUtil.formatXxDays_00(-5);
+
+        String delName = "";
+        String delSql = "";
+
+        try {
+            // ----------------------------- user_share ----------------------------------
+            delName = "clearUserShare";
+            delSql = "delete from user_share where shareDate  <= '" + currentDate + "'";
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearUserDataStatistics() {
+        String currentDate = TimeUtil.formatXxDays_00(-15, "yyyyMMdd");
+
+        String delName = "";
+        String delSql = "";
+
+        try {
+            // ----------------------------- t_user_statistics ----------------------------------
+            delName = "clearUserDataStatistics";
+            delSql = "delete from t_user_statistics where currentDate  <= " + currentDate;
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearItemExchange() {
+        String currentDate = TimeUtil.formatXxDays_00(-7);
+
+        String delName = "";
+        String delSql = "";
+
+        try {
+            // ----------------------------- t_item_exchange ----------------------------------
+            delName = "clearItemExchange";
+            delSql = "delete from t_item_exchange where createdTime <=  '" + currentDate + "'";
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearGroupReview() {
+        String currentDate = TimeUtil.formatXxDays_00(-7);
+
+        String delName = "";
+        String delSql = "";
+
+        try {
+            // ----------------------------- t_group_review ----------------------------------
+            delName = "clearGroupReview";
+            delSql = "delete from t_group_review where createdTime <=  '" + currentDate + "'";
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearStatisticsPlatform() {
+        String currentDate = TimeUtil.formatXxDays_00(-7, "yyyyMMdd");
+
+        String delName = "";
+        String delSql = "";
+
+        try {
+            // ----------------------------- statistics_platform ----------------------------------
+            delName = "clearStatisticsPlatform";
+            delSql = "delete from statistics_platform where dateTime <=  " + currentDate;
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearLogActivityReward() {
+        String currentDate = TimeUtil.formatXxDays_00(-14);
+
+        String delName = "";
+        String delSql = "";
+
+        try {
+            // ----------------------------- log_activity_reward ----------------------------------
+            delName = "clearLogActivityReward";
+            delSql = "delete from log_activity_reward where activityType in(-1000,-1001,-1002,-1003,-1004) and createdTime <=  '" + currentDate + "'";
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearRoomcardConsumeStatistics() {
+        String clearDate = TimeUtil.formatXxDays_00(-15, "yyyy-MM-dd");
+        String delName = "";
+        String delSql = "";
+        try {
+            // ----------------------------- roomcard_consume_statistics ----------------------------------
+            delName = "clearRoomcardConsumeStatistics";
+            delSql = "delete from roomcard_consume_statistics where consumeDate <= '" + clearDate + "'";
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+    private void clearRoomgoldConsumeStatistics() {
+        String clearDate = TimeUtil.formatXxDays_00(-15, "yyyy-MM-dd");
+        String delName = "";
+        String delSql = "";
+        try {
+            // ----------------------------- roomgold_consume_statistics ----------------------------------
+            delName = "clearRoomgoldConsumeStatistics";
+            delSql = "delete from roomgold_consume_statistics where consumeDate <= '" + clearDate + "'";
+            deleteDataForLogin(delName, delSql, delLimit);
         } catch (Exception e) {
             LogUtil.e("Exception:" + e.getMessage(), e);
         }
