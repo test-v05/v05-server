@@ -1660,11 +1660,6 @@ public class CxMjPlayer extends Player {
         return shuangGangData;
     }
 
-    public void setShuangGangData(  HashMap<Object,Object> shuangGangData) {
-        this.shuangGangData = shuangGangData;
-    } public void clearShuangGangData( ) {
-        this.shuangGangData.clear();
-    }
 
     public boolean checkCanShuangGangHu() {
         if (isAlreadyMoMajiang()) {

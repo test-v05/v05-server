@@ -1016,8 +1016,9 @@ public class CxxdzTable extends BaseTable {
 			}
 		}
 		if(boomSuan2Fen ==1){
-			countFen+=DdzSfNew.getBoomNum(player.getHandPais());
+			countFen += DdzSfNew.getBoomNum(player.getHandPais()) * 2;
 		}
+		System.err.println(player.getName()+":"+countFen);
 		if(countFen>=4||(san2bq==1&&num2>=3))
 			return true;
 		if(maxPlayerCount==3&&passQdz==2)
