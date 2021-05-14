@@ -166,6 +166,8 @@
 		<action class="com.sy.sanguo.game.pdkuai.action.PdkAction" name="vpc3kbx1" method="checkIp" />
 		<!-- 509 -->
 		<action class="com.sy.sanguo.game.pdkuai.action.PdkAction" name="e3rsnhig" method="share" />
+		<!-- 510 -->
+		<action class="com.sy.sanguo.game.pdkuai.action.PdkAction" name="M8UuFtrY" method="checkIp" />
 
 		<!-- 600 -->
 		<action class="com.sy.sanguo.game.action.UserAction" name="y8vtpfqc" method="updateUser" />
