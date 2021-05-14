@@ -1892,23 +1892,24 @@ public class PdkAction extends GameStrutsAction {
     /**
      * 通过玩家ip查询地址信息
      */
-    public String getAddressFromIp() {
-        long userId = this.getLong("userId");
-        Map<String, Object> result = new HashMap<>();
-        if (!checkPdkSign()) {
-            this.writeMsg(-1, result);
-            result.put("msg", "验证失败");
-            return StringResultType.RETURN_ATTRIBUTE_NAME;
-        }
+    public void getAddressFromIp() {
+		Map<String, Object> result = new HashMap<>();
         try {
-            if (!checkSessCode(userId, this.getString("sessCode"))) {
-                return StringResultType.RETURN_ATTRIBUTE_NAME;
+			Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+			long userId =  NumberUtils.toLong(params.get("userId"), 0);
+			if (!checkPdkSign(params)) {
+				this.writeMsg(-1, result);
+				result.put("msg", "验证失败");
+				return;
+			}
+            if (!checkSessCode(userId, params.get("sessCode"))) {
+                return;
             }
             RegInfo user = userDao.getUserForceMaster(userId);
             if (user == null) {
                 result.put("msg", "没有找到ID:" + userId + "的玩家");
                 this.writeMsg(-1, result);
-                return StringResultType.RETURN_ATTRIBUTE_NAME;
+                return;
             }
 
             String ip = IpUtil.getIpAddr(request);
@@ -1938,7 +1939,6 @@ public class PdkAction extends GameStrutsAction {
             this.writeMsg(-1, result);
             GameBackLogger.SYS_LOG.error("error", e);
         }
-        return StringResultType.RETURN_ATTRIBUTE_NAME;
     }
 
     /**
