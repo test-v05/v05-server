@@ -871,9 +871,7 @@ public class CxxdzTable extends BaseTable {
 	public synchronized void menzhua(int param,CxxdzPlayer player){
 		if(player.getDizhu()==1||player.getLookCard()==1)
 			return;
-		if(menzhua==0){
-			player.lookCard();
-		}
+
 		canTiSeat.remove((Integer) player.getSeat());
 		//选择闷抓
 		if(param==1){
@@ -887,6 +885,7 @@ public class CxxdzTable extends BaseTable {
 			changeLoaclTableStatus(CxxdzConstants.TABLE_STATUS_T1J);
 		}else{
 			//看牌
+			player.lookCard();
 			broadcastMsg(WebSocketMsgType.com_cxxdz_mengzhua,player,param);
 			changeLoaclTableStatus(CxxdzConstants.TABLE_STATUS_QDZ);
 		}
