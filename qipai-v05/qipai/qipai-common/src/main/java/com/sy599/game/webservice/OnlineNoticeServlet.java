@@ -898,7 +898,7 @@ public class OnlineNoticeServlet extends HttpServlet {
         if (NumberUtils.isDigits(userId) && message != null && GeneralHelper.isStrIPAddress(message)) {
             Player player = PlayerManager.getInstance().getPlayer(Long.valueOf(userId));
             if (player != null) {
-                player.setIp(message, false);
+                player.setIp(message, true);
                 writeMsg(response, "1");
             } else {
                 writeMsg(response, "0");
