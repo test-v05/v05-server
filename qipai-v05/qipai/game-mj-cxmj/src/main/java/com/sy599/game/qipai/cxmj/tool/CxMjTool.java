@@ -643,8 +643,17 @@ public class CxMjTool {
 //        List<Integer> hand =Arrays.asList(14, 41, 68, 15, 16, 18, 45, 93);
 //        List<Integer> peng =Arrays.asList(12, 39, 66, 13, 40, 67);
 //        checkShuangGang(1,hand,peng,CxMj.getMajang(93),true);
-        List<Integer> hand =Arrays.asList(12, 39, 13, 40, 14, 41, 68, 15, 16, 18, 45, 66, 93, 67);
-        checkShuangGang(1,hand,new ArrayList<>(),CxMj.getMajang(93),true);
+
+        List<Integer> hand =Arrays.asList(25, 52, 14, 41, 68, 15, 16, 5, 32, 59, 95);
+        List<Integer> peng =Arrays.asList(13, 40, 67);
+        checkShuangGang(1,hand,peng,CxMj.getMajang(95),true);
+
+        //
+//        hand [7万, 7万, 5筒, 5筒, 5筒, 6筒, 7筒, 5条, 5条, 5条, 5筒]
+//        hand ar [25, 52, 14, 41, 68, 15, 16, 5, 32, 59, 95]
+//        peng [4筒, 4筒, 4筒]
+//        peng ar [13, 40, 67]
+//        gangMj 5筒
     }
 
     /**
@@ -792,7 +801,7 @@ public class CxMjTool {
 //                        return result;
 //                    }
                 }
-                else if(gangList.size()==1 && tong4num==3 && tong5num<3){
+                else if((gangList.size()==1 && tong4num==3 && (tong5num<3 ||tong5num==4)) ){
                     ary.add(1004);
                     ary.add(1005);
                     List<Integer> cop = new ArrayList<>(ary);
@@ -815,7 +824,7 @@ public class CxMjTool {
                         //移除杠的牌，
                         ids = CxMjHelper.dropValById(copy, gangV);
                         copy = ids;
-                        //  System.out.println("ids " + CxMjHelper.toMajiang(ids));
+                          System.out.println("ids " + CxMjHelper.toMajiang(ids));
 
                     }
                     if (TingTool.isHu(copy)){
@@ -827,7 +836,7 @@ public class CxMjTool {
                         result.put("hand", CxMjHelper.toMajiang(copy));
                     }
                 }
-                else if(gangList.size()==1 && tong5num==3 && tong4num<3){
+                else if(gangList.size()==1 && tong5num==3 && (tong4num<3||tong4num==4)){
                     ary.add(1005);
                     ary.add(1004);
                     List<Integer> cop = new ArrayList<>(ary);
@@ -997,6 +1006,21 @@ public class CxMjTool {
 
                         }
                     }
+                }
+            }
+            if(result.size()>3){
+                //特殊牌型处理      List<Integer> hand =Arrays.asList(25, 52, 14, 41, 68, 15, 16, 5, 32, 59, 95);
+                //        List<Integer> peng =Arrays.asList(13, 40, 67);
+                //        checkShuangGang(1,hand,peng,CxMj.getMajang(95),true);
+                // 杠的list 把全部同牌放进去了 做下处理
+                List<CxMj>  rg1 = (List<CxMj>) result.get("gang1");
+                List<CxMj> rg2 = (List<CxMj>) result.get("gang2");
+                if(rg1.size()>=5){
+                    rg1=rg1.subList(0,4);
+                    result.put("gang1",rg1);
+                } if(rg2.size()>=5){
+                    rg2=rg2.subList(0,4);
+                    result.put("gang2",rg2);
                 }
             }
             return result;

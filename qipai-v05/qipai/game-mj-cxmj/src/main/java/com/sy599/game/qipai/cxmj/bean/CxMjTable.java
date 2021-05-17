@@ -397,24 +397,28 @@ public class CxMjTable extends BaseTable {
 		int catchBirdSeat = 0;// 抓鸟人座位
         if (winList.size() == 0 && leftMajiangs.size()<=getMaxPlayerCount()) {
             //黄庄，没听牌的给听牌的2分
-            LogUtil.msgLog.info( sb.toString()+"|黄庄，没听牌的给听牌的2分");
-            List<CxMjPlayer> tings=new ArrayList<>();
-            List<CxMjPlayer> losers=new ArrayList<>();
-            for (CxMjPlayer player:seatMap.values()) {
-                List<Integer> tingP = TingTool.getTing(player.getHandPais());
-                if(tingP.size()>0)
-                    tings.add(player);
-                else
-                    losers.add(player);
-            }
-            for (CxMjPlayer tingP:tings) {
-                for (CxMjPlayer loseP:losers) {
-                    loseP.changePoint(-2);
-                    tingP.changePoint(2);
-                    addlogmsg(loseP,(replay++)+"|没听-2");
-                    addlogmsg(tingP,(replay++)+"|听+2");
-                }
-            }
+                //2021年5月17日 去掉
+                //            LogUtil.msgLog.info( sb.toString()+"|黄庄，没听牌的给听牌的2分");
+                //            List<CxMjPlayer> tings=new ArrayList<>();
+                //            List<CxMjPlayer> losers=new ArrayList<>();
+                //            for (CxMjPlayer player:seatMap.values()) {
+                //                List<Integer> tingP = TingTool.getTing(player.getHandPais());
+                //                if(tingP.size()>0)
+                //                    tings.add(player);
+                //                else
+                //                    losers.add(player);
+                //            }
+                //            for (CxMjPlayer tingP:tings) {
+                //                for (CxMjPlayer loseP:losers) {
+                //                    loseP.changePoint(-2);
+                //                    tingP.changePoint(2);
+                //                    addlogmsg(loseP,(replay++)+"|没听-2");
+                //                    addlogmsg(tingP,(replay++)+"|听+2");
+                //                }
+                //            }
+                            for (CxMjPlayer p:seatMap.values()) {
+                                p.changePoint(0);
+                            }
         } else {
 			// 先判断是自摸还是放炮
             if (winList.size() == 1 && seatMap.get(winList.get(0)).getHandMajiang().size() % 3 == 2 && winList.get(0) == moMajiangSeat) {
@@ -2668,10 +2672,12 @@ public class CxMjTable extends BaseTable {
                         }
                     }
                     if(lastId!=0){
-                        if(lastId==1004){//杠后胡4 5筒 设置胡牌// mj13 mj14
+                            if(lastId==1004){//杠后胡4 5筒 设置胡牌// mj13 mj14
                                 build.setIsHu(1004);   ;
                             }else if(lastId==1005){
                                 build.setIsHu(1005);   ;
+                            }else{
+                                build.setIsHu(huMajiang.getId());
                             }
                     }else{
                         build.setIsHu(huMajiang.getId());

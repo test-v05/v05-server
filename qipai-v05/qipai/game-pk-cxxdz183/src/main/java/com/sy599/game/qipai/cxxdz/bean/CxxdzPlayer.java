@@ -488,12 +488,15 @@ public class CxxdzPlayer extends Player {
 			}else{
 				extList.add(getJiaodizhu());//1  叫地主
 			}
-		}else{
+		}
+		else{
 			if(table.getTableStatus()==3){//牌桌状态3=叫地主
 				extList.add(getJiaodizhu());//1  叫地主
-			}else if(table.getTableStatus()==4){//牌桌状态4=抢地主
+			}
+			else if(table.getTableStatus()==4){//牌桌状态4=抢地主
 			    extList.add(getQiangdizhu());
-			}else if(table.getTableStatus()==5){//牌桌状态5= 加倍
+			}
+			else if(table.getTableStatus()==5){//牌桌状态5= 加倍
 				if(getSelJaiBei()==2){
 					extList.add(4);
 				}else if( getSelJaiBei()==1){
@@ -512,7 +515,11 @@ public class CxxdzPlayer extends Player {
 		extList.add(isAutoPlay() && !isRobot() ? 1 : 0);//3
 		extList.add(getGameFen());//4
 		extList.add(actionS<0?0:actionS);// 5
-		extList.add(lookdp);//6
+		if(table.getMenzhua() ==1 && table.getTableStatus()>=15){
+			extList.add(1);//6
+		}else{
+			extList.add(lookdp);//6
+		}
 		extList.add(rank);// 7排名
 		extList.add(handPais.size());// 8
 		extList.add(autoPlay ? 1 : 0);//9 是否托管状态

@@ -155,6 +155,9 @@ public class CxxdzTable extends BaseTable {
 	private int wzbc =0;
 	//三个2必抢
 	private int san2bq =0;
+
+
+
 	//闷抓
 	private int menzhua =0;
 	//四代两对
@@ -826,6 +829,7 @@ public class CxxdzTable extends BaseTable {
 				break;
 			case CxxdzConstants.TABLE_STATUS_FINISH:
 				for (CxxdzPlayer p : seatMap.values()) {
+					p.lookCard();
 					p.writeComMessage(WebSocketMsgType.com_cxxdz_finishStart,dizhuSeat,countBeiShuFD(p.getSeat()));
 				}
 				break;
@@ -859,7 +863,7 @@ public class CxxdzTable extends BaseTable {
 		addPlayLog(addCxxdzPlayLog(player.getSeat(),msgCode,act,null,false));
 		for (Player p:seatMap.values()) {
 			p.writeComMessage(msgCode,player.getSeat(),act,countBeiShuFD(p.getSeat()));
-			System.out.println("-------------"+p.getName()+"|"+msgCode+"|"+act+"|"+countBeiShuFD(p.getSeat()));
+			//System.out.println("-------------"+p.getName()+"|"+msgCode+"|"+act+"|"+countBeiShuFD(p.getSeat()));
 		}
 	}
 
@@ -867,14 +871,19 @@ public class CxxdzTable extends BaseTable {
 	public synchronized void menzhua(int param,CxxdzPlayer player){
 		if(player.getDizhu()==1||player.getLookCard()==1)
 			return;
-		player.lookCard();
+		if(menzhua==0){
+			player.lookCard();
+		}
 		canTiSeat.remove((Integer) player.getSeat());
 		//选择闷抓
 		if(param==1){
 			player.setMengzhua(1);
 			broadcastMsg(WebSocketMsgType.com_cxxdz_mengzhua,player,param);
 			confirmDz(player);
-			player.lookdp();
+			if(menzhua==0){
+				//勾选闷抓 调整为轮到地主出牌前才能看牌（保证地主在选闷回时看不到牌）
+				player.lookdp();
+			}
 			changeLoaclTableStatus(CxxdzConstants.TABLE_STATUS_T1J);
 		}else{
 			//看牌
@@ -998,7 +1007,11 @@ public class CxxdzTable extends BaseTable {
 					player.setH1j(1,p);
 			}
 		}
-
+		if(menzhua==1){
+			player.lookCard();
+			//调整为轮到地主出牌前才能看牌（保证地主在选闷回时看不到牌）
+			player.lookdp();
+		}
 		broadcastMsg(WebSocketMsgType.com_cxxdz_h1j,player,param);
 		changeLoaclTableStatus(CxxdzConstants.TABLE_STATUS_FINISH);
 	}
@@ -2422,5 +2435,9 @@ public class CxxdzTable extends BaseTable {
 
 	public boolean isJiaofenMoshi(){
 		return op_gametype == 2;
+	}
+
+	public int getMenzhua() {
+		return menzhua;
 	}
 }
