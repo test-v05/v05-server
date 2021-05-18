@@ -408,6 +408,8 @@ public class CxxdzTable extends BaseTable {
 	 * 一局结束
 	 */
 	public void calcOver() {
+		//
+
 		boolean isOver = playBureau >= totalBureau;
 		boolean dizhuWin=false;
 		if(seatMap.get(dizhuSeat).getHandPais().size()==0){
@@ -502,6 +504,17 @@ public class CxxdzTable extends BaseTable {
 			calcGoldRoom();
 		}
 		calcAfter();
+
+		//流程变更 如果地主闷抓  结算发送农民底牌消息
+		if(seatMap.get(dizhuSeat).getMengzhua()==1){
+			System.err.println("地主闷抓 发送结算前底牌 "+dplist);
+			for (CxxdzPlayer p : seatMap.values()) {
+				if(p.getSeat()!=dizhuSeat){
+					ComRes.Builder dipaiMsg = SendMsgUtil.buildComRes(WebSocketMsgType.REQ_2RenDDZ_DIPAIMSG,dizhuSeat,countBeiShuFD(dizhuSeat),dplist);
+					p.writeSocket(dipaiMsg.build());
+				}
+			}
+		}
 		ClosingInfoRes.Builder res = sendAccountsMsg(isOver, false, dizhuWin);
 		saveLog(isOver, 0, res.build());
 		if (isOver) {
@@ -899,10 +912,22 @@ public class CxxdzTable extends BaseTable {
 		player.setDizhu(1);
 		setNowDisCardSeat(dizhuSeat);
 
+		CxxdzPlayer dizhup = seatMap.get(dizhuSeat);
 		for (CxxdzPlayer p : seatMap.values()) {
-			ComRes.Builder dipaiMsg = SendMsgUtil.buildComRes(WebSocketMsgType.REQ_2RenDDZ_DIPAIMSG,dizhuSeat,countBeiShuFD(dizhuSeat),dplist);
-			p.writeSocket(dipaiMsg.build());
+			if(dizhup.getMengzhua()==1){
+				//xiugai 闷抓 地主可以看到底牌，但不允许农民看到底牌
+				if(p.getSeat() == dizhuSeat){
+					ComRes.Builder dipaiMsg = SendMsgUtil.buildComRes(WebSocketMsgType.REQ_2RenDDZ_DIPAIMSG,dizhuSeat,countBeiShuFD(dizhuSeat),dplist);
+					p.writeSocket(dipaiMsg.build());
+				}
+				continue;
+			}else{
+				ComRes.Builder dipaiMsg = SendMsgUtil.buildComRes(WebSocketMsgType.REQ_2RenDDZ_DIPAIMSG,dizhuSeat,countBeiShuFD(dizhuSeat),dplist);
+				p.writeSocket(dipaiMsg.build());
+			}
+
 		}
+
 		addPlayLog(addCxxdzPlayLog(dizhuSeat,WebSocketMsgType.REQ_2RenDDZ_DIPAIMSG,null,dplist,false));
 	}
 
@@ -1233,6 +1258,8 @@ public class CxxdzTable extends BaseTable {
 			res.addExt(boomBeiShu);//19 炸弹番数
 			res.addExt(sel_jiabeiBeiShu);//21 选择加倍番数
 			res.addExt(boomBeiShu*sel_jiabeiBeiShu*bankRangPaiNumBeiShu);  // 22总倍数
+
+
 			if(getTableStatus()>CxxdzConstants.TABLE_STATUS_ZERO){
 				res.addStrExt(StringUtil.implode(dplist,","));
 			}else{

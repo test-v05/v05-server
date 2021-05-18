@@ -269,7 +269,7 @@ public class DddzTable extends BaseTable {
                         }
                     }
                 }
-            } else if (score <= jiaoFen && dzdct == 1 && isJiaoCt == 0 && pzct == 0) {
+            } else if ( dzdct == 1 && isJiaoCt == 0 && pzct == 0) {
                 //	8、如果地主未达到叫分,但是每手牌都大过农民,打出春天,则每人赔地主4	倍。
                // 2020年9月23日 add 如果地主在结束时刚好达到叫分，但是每手牌都大过农民,打出春天,则每人赔地主4倍。
                 calcType = 7;

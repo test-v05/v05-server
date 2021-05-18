@@ -470,6 +470,7 @@ public class CxxdzPlayer extends Player {
 		List<Integer> extList = new ArrayList<>();
 		if(table.getMasterId() == userId){
 			extList.add(1);//0
+
 		}else{
 			extList.add(0);
 		}
@@ -515,8 +516,14 @@ public class CxxdzPlayer extends Player {
 		extList.add(isAutoPlay() && !isRobot() ? 1 : 0);//3
 		extList.add(getGameFen());//4
 		extList.add(actionS<0?0:actionS);// 5
+
 		if(table.getMenzhua() ==1 && table.getTableStatus()>=15){
-			extList.add(1);//6
+			CxxdzPlayer dizhu = (CxxdzPlayer) table.getSeatMap().get(table.getDizhuSeat());
+			if(table.getDizhuSeat()!=getSeat() && dizhu.getMengzhua()==1){
+				extList.add(0);//6
+			}else{
+				extList.add(1);//6
+			}
 		}else{
 			extList.add(lookdp);//6
 		}
@@ -536,7 +543,7 @@ public class CxxdzPlayer extends Player {
 		}else if( getHandPais().size()==2){
 			extList.add(2);
 		}
-
+		//
 		res.addAllExt(extList);
 
 		//信用分
