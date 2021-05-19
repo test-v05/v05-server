@@ -915,12 +915,15 @@ public class CxxdzTable extends BaseTable {
 		CxxdzPlayer dizhup = seatMap.get(dizhuSeat);
 		for (CxxdzPlayer p : seatMap.values()) {
 			if(dizhup.getMengzhua()==1){
-				//xiugai 闷抓 地主可以看到底牌，但不允许农民看到底牌
+				//xiugai 闷抓 地主可以看到底牌，但不允许农民看到底牌,
 				if(p.getSeat() == dizhuSeat){
 					ComRes.Builder dipaiMsg = SendMsgUtil.buildComRes(WebSocketMsgType.REQ_2RenDDZ_DIPAIMSG,dizhuSeat,countBeiShuFD(dizhuSeat),dplist);
 					p.writeSocket(dipaiMsg.build());
+				}else{
+					List<Integer> dp = Arrays.asList(0,0,0);
+					ComRes.Builder dipaiMsg = SendMsgUtil.buildComRes(WebSocketMsgType.REQ_2RenDDZ_DIPAIMSG,dizhuSeat,countBeiShuFD(dizhuSeat),dp);
+					p.writeSocket(dipaiMsg.build());
 				}
-				continue;
 			}else{
 				ComRes.Builder dipaiMsg = SendMsgUtil.buildComRes(WebSocketMsgType.REQ_2RenDDZ_DIPAIMSG,dizhuSeat,countBeiShuFD(dizhuSeat),dplist);
 				p.writeSocket(dipaiMsg.build());
@@ -1055,7 +1058,6 @@ public class CxxdzTable extends BaseTable {
 		if(boomSuan2Fen ==1){
 			countFen += DdzSfNew.getBoomNum(player.getHandPais()) * 2;
 		}
-		System.err.println(player.getName()+":"+countFen);
 		if(countFen>=4||(san2bq==1&&num2>=3))
 			return true;
 		if(maxPlayerCount==3&&passQdz==2)

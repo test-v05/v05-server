@@ -141,9 +141,9 @@ public class DddzTable extends BaseTable {
     private int bankerClickedTouXiang = 0;
 
     /**
-     * 牌中春天
+     * 牌中春天 默认-1 打牌中春天=1 不打=0
      */
-    private int pzct = 0;
+    private int pzct = -1;
 
     /** 地主不扣底牌 算分X2*/
     private int bankerKouDiPai=1;
@@ -152,7 +152,7 @@ public class DddzTable extends BaseTable {
         bankGetScore = 0;
         deskSyScore = 160;
         dzdct = 1;
-        pzct = 0;
+        pzct = -1;
         isJiaoCt = 0;
         isKill = 0;
         bankerClickedZTCT = 0;
@@ -269,7 +269,8 @@ public class DddzTable extends BaseTable {
                         }
                     }
                 }
-            } else if ( dzdct == 1 && isJiaoCt == 0 && pzct == 0) {
+                //score>=jiaofen
+            } else if ( dzdct == 1 && isJiaoCt == 0 && pzct == -1) {
                 //	8、如果地主未达到叫分,但是每手牌都大过农民,打出春天,则每人赔地主4	倍。
                // 2020年9月23日 add 如果地主在结束时刚好达到叫分，但是每手牌都大过农民,打出春天,则每人赔地主4倍。
                 calcType = 7;
@@ -1015,7 +1016,7 @@ public class DddzTable extends BaseTable {
             }
 
             //牌中春天:如果地主捡分达到所叫分,并且之前每轮牌都大过农民,则可以	  选择是否继续打春天,不打则直接结束。若打春天,则后面只要被压过一次	  就算春天失败。
-            if (bankGetScore >= jiaoFen && dzdct == 1 && bankerClickedZTCT == 0 && pzct == 0) {
+            if (bankGetScore >= jiaoFen && dzdct == 1 && bankerClickedZTCT == 0 && pzct == -1) {
                 //选择是否继续打春天
                 setNowDisCardSeat(banker);
                 ComRes.Builder builder = SendMsgUtil.buildComRes(WebSocketMsgType.res_code_pk_dddz_dzztdct, banker, -1);
@@ -1791,7 +1792,7 @@ public class DddzTable extends BaseTable {
         bankGetScore = 0;
         deskSyScore = 160;
         dzdct = 1;
-        pzct = 0;
+        pzct = -1;
         isKill = 0;
         bankerClickedZTCT = 0;
         bankerClickedTouXiang = 0;
