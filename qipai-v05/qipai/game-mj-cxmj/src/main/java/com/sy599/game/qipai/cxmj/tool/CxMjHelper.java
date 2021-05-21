@@ -72,6 +72,17 @@ public class CxMjHelper {
         return list;
     }
 
+    public  static List<CxMj>   canGang(List<CxMj> majiangs, int majiangVal) {
+        int num=0;
+        List<CxMj> list = new ArrayList<>();
+        for (CxMj majiang : majiangs) {
+            if (majiang.getVal() == majiangVal) {
+                list.add(majiang);
+            }
+        }
+        return list;
+    }
+
 
     /**
      * 麻将转化为majiangIds

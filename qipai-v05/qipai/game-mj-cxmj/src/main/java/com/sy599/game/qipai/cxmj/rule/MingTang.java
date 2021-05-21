@@ -24,6 +24,26 @@ public class MingTang {
     public static final int MINGTANG_WUMEIHUA = 10;//五梅花 2番
     public static final int MINGTANG_SGANGWUMEIHUA = 11;//双杠五梅花 3番
 
+    public static   boolean isPingHu(List<Integer> list){
+        if(list.isEmpty()){
+            return false;
+        }
+        if(     list.contains(MINGTANG_MENQING)||
+                list.contains(MINGTANG_PENGPENG)||
+                list.contains(MINGTANG_QINGYISE)||
+                list.contains(MINGTANG_XIAOQIDUI)||
+                list.contains(MINGTANG_LONGAOQIDUI)||
+                list.contains(MINGTANG_SLONGAOQIDUI)||
+                list.contains(MINGTANG_GANGSHANGHUA)||
+                list.contains(MINGTANG_SGANGSHANGHUA)||
+                list.contains(MINGTANG_WUMEIHUA)||
+                list.contains(MINGTANG_SGANGWUMEIHUA)
+        ){
+            return false;
+        }else{
+            return true;
+        }
+    }
     public static List<Integer> get(List<CxMjCardDisType> disTypes, List<CxMj> handCards, CxMjTable table){
         List<Integer> mts=new ArrayList<>();
         checkQiDui(handCards,mts);

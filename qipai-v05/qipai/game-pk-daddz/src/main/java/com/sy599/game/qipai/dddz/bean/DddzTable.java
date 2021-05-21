@@ -1025,6 +1025,10 @@ public class DddzTable extends BaseTable {
                 }
                 setTableStatus(DddzConstants.TABLE_STATUS_SELZTCT);
             }
+            //当地主捡分大于叫分时且打不了春天的时候，直接结束牌局
+            if(bankGetScore >= jiaoFen && dzdct == 0){
+                isOver = true;
+            }
         }
 
         if (isOver) {
