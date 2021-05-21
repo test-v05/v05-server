@@ -779,7 +779,11 @@ public class CxMjTable extends BaseTable {
             if (lastWinSeat == tablePlayer.getSeat()) {
                 List<Integer> actionList = tablePlayer.checkMo(null);
                 if(isQiHu2Fen(tablePlayer.getSeat(), actionList)){
-                    actionList.clear();
+                    //actionList.clear();
+                    if(!actionList.contains(1)){
+                        //2分起胡清空胡之后 剩下的如果没动作 清空动作列表
+                        actionList.clear();
+                    }
                 }
                 if (!actionList.isEmpty()) {
                     addActionSeat(tablePlayer.getSeat(), actionList);
@@ -866,7 +870,11 @@ public class CxMjTable extends BaseTable {
         setMoMajiangSeat(player.getSeat());
         List<Integer> arr = player.checkMo(majiang);
         if(isQiHu2Fen(player.getSeat(), arr)){
-            arr.clear();
+            //arr.clear();
+            if(!arr.contains(1)){
+                //2分起胡清空胡之后 剩下的如果没动作 清空动作列表
+                arr.clear();
+            }
         }
         if (!arr.isEmpty()) {
             if(arr.contains(99)){
@@ -921,7 +929,6 @@ public class CxMjTable extends BaseTable {
         lastId=id;
         List<Integer> arr = player.checkMo(null);
 
-        isQiHu2Fen(player.getSeat(), arr);
         addActionSeat(player.getSeat(),arr);
         MoMajiangRes.Builder res = MoMajiangRes.newBuilder();
         res.setUserId(player.getUserId() + "");
@@ -1318,7 +1325,11 @@ public class CxMjTable extends BaseTable {
 			// 推送消息
             List<Integer> hu = seatPlayer.checkDisMajiang(majiangs.get(0), this.canGangHu() || dianGangKeHu == 1);
             if(isQiHu2Fen(player.getSeat(), hu)){
-                hu.clear();
+                //hu.clear();
+                if(!hu.contains(1)){
+                    //2分起胡清空胡之后 剩下的如果没动作 清空动作列表
+                    hu.clear();
+                }
             }
             if (!hu.isEmpty() && hu.get(0) == 1) {
                 addActionSeat(seatPlayer.getSeat(), hu);
@@ -1351,7 +1362,11 @@ public class CxMjTable extends BaseTable {
         setNowDisCardSeat(player.getSeat());
         List<Integer> list = player.checkMo(null);
         if(isQiHu2Fen(player.getSeat(), list)){
-            list.clear();
+            //list.clear();
+            if(!list.contains(1)){
+                //2分起胡清空胡之后 剩下的如果没动作 清空动作列表
+                list.clear();
+            }
         }
         if (!list.isEmpty()&&list.size()>0) {
             list.set(0,0);
@@ -1471,7 +1486,6 @@ public class CxMjTable extends BaseTable {
                 for (int val : arr) {
                     list.add(val);
                 }
-                isQiHu2Fen(player.getSeat(), list);
                 addActionSeat(player.getSeat(), list);
                 player.sendGangMsg();
                 for (CxMjPlayer seatPlayer : seatMap.values()) {
@@ -1507,7 +1521,6 @@ public class CxMjTable extends BaseTable {
             for (int val : arr) {
                 list.add(val);
             }
-            isQiHu2Fen(player.getSeat(), list);
             addActionSeat(player.getSeat(), list);
             for (CxMjPlayer seatPlayer : seatMap.values()) {
                 // 推送消息
@@ -1594,7 +1607,7 @@ public class CxMjTable extends BaseTable {
                     addlogmsg(player,"shuang Gang Hu");
                     return;
                 }
-                isQiHu2Fen(p.getSeat(), list);
+                isQiHu2FenDis(p.getSeat(), list ,majiangs.get(0));
                 if (list.contains(1)) {
                     addActionSeat(p.getSeat(), list);
                     p.setLastCheckTime(System.currentTimeMillis());
@@ -2269,9 +2282,37 @@ public class CxMjTable extends BaseTable {
         }
         if(qiHu2Fen==1){
             if(actionlist.get(0)==1){
-                System.err.println("===="+actionlist);
+                //System.err.println("===="+actionlist);
                 //有胡。
                 List<Integer> list = MingTang.get(seatMap.get(seat).getCardTypes(),seatMap.get(seat).getHandMajiang(),this);
+                int fen =MingTang.getMingTangFen(list,diFen);
+                //System.err.println("name:"+  seatMap.get(seat).getName()+" 平胡变无ma :"+fen);
+                if(fen <2 ){
+                    //System.err.println("name:"+  seatMap.get(seat).getName()+" 平胡变无");
+                    actionlist.set(0,0);//清空胡
+                    return true;
+                }
+            }
+        }else{
+            return false;
+        }
+        return false;
+    }
+
+    private boolean isQiHu2FenDis(int seat, List<Integer> actionlist,  CxMj cxMj) {
+        if(null==actionlist || actionlist.isEmpty()){
+            return false;
+        }
+        if(null==actionlist.get(0)){
+            return false;
+        }
+        if(qiHu2Fen==1){
+            if(actionlist.get(0)==1){
+                System.err.println("===="+actionlist);
+                //有胡。
+                List<CxMj> mjList = new ArrayList<>(seatMap.get(seat).getHandMajiang());
+                mjList.add(cxMj);
+                List<Integer> list = MingTang.get(seatMap.get(seat).getCardTypes(),mjList,this);
                 int fen =MingTang.getMingTangFen(list,diFen);
                 System.err.println("name:"+  seatMap.get(seat).getName()+" 平胡变无ma :"+fen);
                 if(fen <2 ){
@@ -2285,6 +2326,7 @@ public class CxMjTable extends BaseTable {
         }
         return false;
     }
+
     public void clearActionSeatMap() {
         if (!actionSeatMap.isEmpty()) {
             actionSeatMap.clear();
