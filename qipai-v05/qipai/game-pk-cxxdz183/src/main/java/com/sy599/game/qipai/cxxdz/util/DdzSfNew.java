@@ -3020,17 +3020,16 @@ public class DdzSfNew {
 			}
 		}
 		if(fjNum>1){
+			//AAA222 不能当飞机
+			int _val14 = valAndNum.get(14)==null?0: valAndNum.get(14);
+			int _val15 = valAndNum.get(15)==null?0: valAndNum.get(15);
+			if(_val14>=3 && _val15>=3){
+				return "";
+			}
 			if(otherNum==0){
 				return "fjd0";
 			}else if(otherNum==fjNum){
-				//AAA222 不能当飞机
-				 int _val14 = valAndNum.get(14)==null?0: valAndNum.get(14);
-				 int _val15 = valAndNum.get(15)==null?0: valAndNum.get(15);
-				 if(_val14>=3 && _val15>=3){
-				 	return "";
-				 }else{
-				    return "fjddan";
-				 }
+			  return "fjddan";
 			}else if(otherNum==2*fjNum&&fjNum==duiNum){
 				return "fjddui";
 			}
