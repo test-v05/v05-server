@@ -1229,6 +1229,12 @@ public class DdzSfNew {
 		return l;
 	}
 
+//	public static void main(String[] args) {
+//		List<Integer> cpdesk = Arrays.asList(215,315,115,214,314,114,208,107);
+//		String deskType =  DdzSfNew.getCpType2(DdzSfNew.intCardToStringCard(cpdesk),1,1,0);
+//		System.err.println(deskType);
+//
+//	}
 
 	/**
 	 * 获取出牌类型
@@ -2878,20 +2884,6 @@ public class DdzSfNew {
 		return bool;
 	}
 
-	public static void main(String[] args) {
-		long  s = System.currentTimeMillis();
-		List<String> pai = new ArrayList<>();
-		pai.add("B13");
-		pai.add("B13");
-		pai.add("R14");
-		pai.add("R14");
-		pai.add("B12");
-		pai.add("B12");
-		System.out.println("---");
-//		System.out.println("type::" +getCpType2(pai,1,1,1));
-		long  e = System.currentTimeMillis();
-		System.out.println("runtime:"+(e-s));
-	}
 	public static String[] listToStringAry(List<String> pai) {
 		String[] a = new String[pai.size()];
 		int i=0;
@@ -3031,7 +3023,14 @@ public class DdzSfNew {
 			if(otherNum==0){
 				return "fjd0";
 			}else if(otherNum==fjNum){
-				return "fjddan";
+				//AAA222 不能当飞机
+				 int _val14 = valAndNum.get(14)==null?0: valAndNum.get(14);
+				 int _val15 = valAndNum.get(15)==null?0: valAndNum.get(15);
+				 if(_val14>=3 && _val15>=3){
+				 	return "";
+				 }else{
+				    return "fjddan";
+				 }
 			}else if(otherNum==2*fjNum&&fjNum==duiNum){
 				return "fjddui";
 			}
@@ -3083,4 +3082,5 @@ public class DdzSfNew {
 		}
 		return resultNum;
 	}
+
 }
