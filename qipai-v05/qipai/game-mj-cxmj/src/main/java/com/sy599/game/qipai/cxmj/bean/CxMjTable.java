@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.sy599.game.qipai.cxmj.rule.MingTang;
 import com.sy599.game.qipai.cxmj.tool.ting.TingTool;
-import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -37,7 +36,6 @@ import com.sy599.game.db.dao.UserDao;
 import com.sy599.game.manager.PlayerManager;
 import com.sy599.game.manager.TableManager;
 import com.sy599.game.msg.serverPacket.ComMsg;
-import com.sy599.game.msg.serverPacket.ComMsg.ComRes;
 import com.sy599.game.msg.serverPacket.PlayCardResMsg.DaPaiTingPaiInfo;
 import com.sy599.game.msg.serverPacket.PlayCardResMsg.DaPaiTingPaiRes;
 import com.sy599.game.msg.serverPacket.PlayCardResMsg.MoMajiangRes;
@@ -45,7 +43,6 @@ import com.sy599.game.msg.serverPacket.PlayCardResMsg.PlayMajiangRes;
 import com.sy599.game.msg.serverPacket.PlayCardResMsg.TingPaiRes;
 import com.sy599.game.msg.serverPacket.TableMjResMsg.ClosingMjInfoRes;
 import com.sy599.game.msg.serverPacket.TableMjResMsg.ClosingMjPlayerInfoRes;
-import com.sy599.game.msg.serverPacket.TableRes;
 import com.sy599.game.msg.serverPacket.TableRes.CreateTableRes;
 import com.sy599.game.msg.serverPacket.TableRes.DealInfoRes;
 import com.sy599.game.msg.serverPacket.TableRes.PlayerInTableRes;
@@ -63,7 +60,6 @@ import com.sy599.game.util.JacksonUtil;
 import com.sy599.game.util.JsonWrapper;
 import com.sy599.game.util.LangHelp;
 import com.sy599.game.util.LogUtil;
-import com.sy599.game.util.PayConfigUtil;
 import com.sy599.game.util.SendMsgUtil;
 import com.sy599.game.util.StringUtil;
 import com.sy599.game.util.TimeUtil;
@@ -166,6 +162,8 @@ public class CxMjTable extends BaseTable {
     private int lastId=0;
     //放杠座位号
     private int fangGangSeat=0;
+    //1不封顶 0封顶
+    private int bufengding =0;
 
 
 
@@ -203,6 +201,7 @@ public class CxMjTable extends BaseTable {
         canDianPao = StringUtil.getIntValue(params, 4, 1);// 0:是否可点炮胡
         nian5 = StringUtil.getIntValue(params, 5, 0);// 0:是否可点炮胡
         qiHu2Fen =  StringUtil.getIntValue(params, 15, 0);// 2分起胡‘
+        bufengding =StringUtil.getIntValue(params, 16, 0);// 1不封顶 0封顶
         isAutoPlay = StringUtil.getIntValue(params, 8, 0);// 托管时间
         if(isAutoPlay==1) {
             // 默认1分钟
@@ -222,16 +221,6 @@ public class CxMjTable extends BaseTable {
             }
 
         }
-
-
-
-
-
-
-
-
-
-
 
         changeExtend();
         if (!isJoinPlayerAllotSeat()) {
@@ -279,6 +268,7 @@ public class CxMjTable extends BaseTable {
         wrapper.putInt(27, lastId);
         wrapper.putInt(28, fangGangSeat);
         wrapper.putInt(29, qiHu2Fen);
+        wrapper.putInt(30, bufengding);
         return wrapper;
     }
 
@@ -333,6 +323,7 @@ public class CxMjTable extends BaseTable {
         lastId= wrapper.getInt(27,0);
         fangGangSeat= wrapper.getInt(28,0);
         qiHu2Fen= wrapper.getInt(29,0);
+        bufengding= wrapper.getInt(30,0);
     }
 
 
@@ -439,7 +430,7 @@ public class CxMjTable extends BaseTable {
                 CxMjPlayer winner = seatMap.get(winList.get(0));
                 addlogmsg( winner,(replay++)+"|自摸="+selfMo);
                 int winFen=0;
-                int loseFen= MingTang.getMingTangFen(winner.getHuType(),diFen);
+                int loseFen= MingTang.getMingTangFen(winner.getHuType(),diFen, bufengding);
                 addlogmsg( winner,(replay++)+"|赢|diFen="+diFen+"|名堂loseFen="+loseFen);
                 if(fangGangSeat!=0){
                     loseFen*=(getMaxPlayerCount()-1);
@@ -469,7 +460,7 @@ public class CxMjTable extends BaseTable {
                 int loseFen=0;
                 for (int winnerSeat : winList) {
                     CxMjPlayer winPlayer = seatMap.get(winnerSeat);
-                    int winFen = MingTang.getMingTangFen( winPlayer.getHuType(), diFen);
+                    int winFen = MingTang.getMingTangFen( winPlayer.getHuType(), diFen, bufengding);
                     addlogmsg( winPlayer,(replay++)+"|赢名堂winFen="+winFen+"fen|difen="+diFen);
                     winPlayer.changePoint(winFen);
                     winPlayer.addJiePaoNum(1);
@@ -554,7 +545,7 @@ public class CxMjTable extends BaseTable {
            // CxMjPlayer winner = winplayer;
             int winSeat = winplayer.getSeat();
             int winFen=0;
-            int loseFen= MingTang.getMingTangFen(list,diFen);
+            int loseFen= MingTang.getMingTangFen(list,diFen, bufengding);
             if(fangGangSeat!=0){
                 loseFen*=(getMaxPlayerCount()-1);
                 winFen+=loseFen;
@@ -2286,7 +2277,7 @@ public class CxMjTable extends BaseTable {
                 //System.err.println("===="+actionlist);
                 //有胡。
                 List<Integer> list = MingTang.get(seatMap.get(seat).getCardTypes(),seatMap.get(seat).getHandMajiang(),this);
-                int fen =MingTang.getMingTangFen(list,diFen);
+                int fen =MingTang.getMingTangFen(list,diFen, bufengding);
                 //System.err.println("name:"+  seatMap.get(seat).getName()+" 平胡变无ma :"+fen);
                 if(fen <2 ){
                     //System.err.println("name:"+  seatMap.get(seat).getName()+" 平胡变无");
@@ -2314,7 +2305,7 @@ public class CxMjTable extends BaseTable {
                 List<CxMj> mjList = new ArrayList<>(seatMap.get(seat).getHandMajiang());
                 mjList.add(cxMj);
                 List<Integer> list = MingTang.get(seatMap.get(seat).getCardTypes(),mjList,this);
-                int fen =MingTang.getMingTangFen(list,diFen);
+                int fen =MingTang.getMingTangFen(list,diFen, bufengding);
                 System.err.println("name:"+  seatMap.get(seat).getName()+" 平胡变无ma :"+fen);
                 if(fen <2 ){
                     System.err.println("name:"+  seatMap.get(seat).getName()+" 平胡变无");

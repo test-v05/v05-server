@@ -23,6 +23,7 @@ public class MingTang {
     public static final int MINGTANG_SGANGSHANGHUA = 9;//双杠上花 2番
     public static final int MINGTANG_WUMEIHUA = 10;//五梅花 2番
     public static final int MINGTANG_SGANGWUMEIHUA = 11;//双杠五梅花 3番
+    public static final int MINGTANG_SANLONGAOQIDUI = 12;//3龙七对 5番
 
     public static   boolean isPingHu(List<Integer> list){
         if(list.isEmpty()){
@@ -37,7 +38,8 @@ public class MingTang {
                 list.contains(MINGTANG_GANGSHANGHUA)||
                 list.contains(MINGTANG_SGANGSHANGHUA)||
                 list.contains(MINGTANG_WUMEIHUA)||
-                list.contains(MINGTANG_SGANGWUMEIHUA)
+                list.contains(MINGTANG_SGANGWUMEIHUA)||
+                list.contains(MINGTANG_SANLONGAOQIDUI)
         ){
             return false;
         }else{
@@ -136,7 +138,9 @@ public class MingTang {
                 return;
             }
         }
-        if(count4>=2){
+        if(count4>=3){
+            mts.add(MINGTANG_SANLONGAOQIDUI);
+        }else if(count4>=2){
             mts.add(MINGTANG_SLONGAOQIDUI);
         }else if(count4==1){
             mts.add(MINGTANG_LONGAOQIDUI);
@@ -226,7 +230,7 @@ public class MingTang {
 
 
 
-    public static int getMingTangFen(List<Integer> mts,int fen){
+    public static int getMingTangFen(List<Integer> mts,int fen,int bufengding){
         if(mts==null||mts.size()==0)
             return fen;
         int fan=0;
@@ -262,10 +266,17 @@ public class MingTang {
                 case MINGTANG_SGANGWUMEIHUA:
                     fan+=3;
                     break;
+                case MINGTANG_SANLONGAOQIDUI:
+                    fan+=5;
+                    break;
             }
         }
-        if(fan> 4)
-            fan=4;
+        if(bufengding==0){
+            //封顶 限番
+            if(fan> 4)
+                fan=4;
+        }
+
         return fen*((int)Math.pow(2,fan));
     }
 
