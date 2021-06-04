@@ -982,7 +982,8 @@ public class DddzTable extends BaseTable {
             // 3.报副状态设置
             isOver = turnOver(res, player, cards);
         } else {
-            setNowDisCardSeat(getNextDisCardSeat());
+            setNowDisCardSeat(nextSeat);
+            changeExtend();
             addPlayLog(addSandhPlayLog(player.getSeat(), DddzConstants.TABLE_STATUS_PLAY, cards, false, bankGetScore, null, getNextDisCardSeat()));
         }
 
@@ -2364,7 +2365,6 @@ public class DddzTable extends BaseTable {
                             disList.addAll(curList.subList(0, size));
                         }
                         playMaipai(player, disList);
-
                     }
 
                 }
@@ -2514,7 +2514,115 @@ public class DddzTable extends BaseTable {
                             disList.addAll(cards.subList(0, list.size() - dui.size()));
                         }
                     }
+                }else if(type == CardType.SHUAIPAI){
+                    //甩主
+                    cards = CardUtils.getZhu(curList, zhuColor);
+                    int shuaiColor =zhuColor;
+                    //有对
+                    int hasDuiNum = CardUtils.getDuiCards(list).size()/2;
+                    List<Integer> dianpai = cards;
+                    List<Integer>   dianpaiDuiList = new ArrayList<>();
+                    if(hasDuiNum>0){
+                        dianpaiDuiList = CardUtils.getDuiCards(dianpai);
+                    }
+                    int needFu = list.size();
+                    if(dianpaiDuiList.size()/2>0 && hasDuiNum>0){
+                        //  甩中含对 且自己 可垫对
+                        if(dianpaiDuiList.size()<hasDuiNum*2){
+                            //有对但是对子不够垫
+                            needFu = list.size()-dianpaiDuiList.size();
+                            disList.addAll(dianpaiDuiList);
+                            dianpai.removeAll(dianpaiDuiList);
+                        }else{
+                            List<Integer> d1 = dianpaiDuiList.subList(0,hasDuiNum*2);
+                            disList.addAll(d1);
+                            dianpai.removeAll(d1);
+                            needFu = needFu - hasDuiNum*2;
+                        }
+                    }
 
+                    if(dianpai.size()>=needFu){
+                        //所垫花色牌够
+                        disList.addAll(dianpai.subList(0,needFu));
+                    }else{
+                        //所垫花色牌不够
+                        disList.addAll(dianpai);
+                        int neednum = needFu-dianpai.size();
+                        disList.addAll(curList.subList(0,neednum));
+                    }
+                }
+                else if(type == CardType.SHUAIPAI2){
+                      // 甩牌 有可能没主 甩副//4321 黑红没房
+                        int shuaiColor = CardUtils.loadCardColor(list.get(0));
+                        //有对
+                        int hasDuiNum = CardUtils.getDuiCards(list).size()/2;
+                        List<Integer> dianpai = CardUtils.getColorCards(curList,shuaiColor);
+
+                        List<Integer>   dianpaiDuiList = new ArrayList<>();
+                        if(hasDuiNum>0){
+                             dianpaiDuiList = CardUtils.getDuiCards(dianpai);
+                        }
+                        int needFu=list.size();
+                        if(dianpaiDuiList.size()/2>0 && hasDuiNum>1){
+                            //甩中含对 且自己 可垫对
+                            List<Integer> d1 = dianpaiDuiList.subList(0,hasDuiNum*2);
+                            disList.addAll(d1);
+                            dianpai.removeAll(d1);
+                            needFu= needFu-hasDuiNum*2;
+                        }
+
+                        if(dianpai.size()>=needFu){
+                            //所垫花色牌够
+                            disList.addAll(dianpai.subList(0,needFu));
+                        }else{
+                            //所垫花色牌不够
+                            disList.addAll(dianpai);
+                            curList.removeAll(dianpai);
+                            int neednum = needFu-dianpai.size();
+                            disList.addAll(curList.subList(0,neednum));
+                        }
+                }else if(type == CardType.SHUAI_LIAN_DUI) {
+                    //甩对子。
+                    int shuaiColor = CardUtils.loadCardColor(list.get(0));
+                    //有对
+                    int hasDuiNum = list.size()/2;
+                    List<Integer> dianpai = CardUtils.getColorCards(curList,shuaiColor);
+
+                    List<Integer>  dianpaiDuiList = new ArrayList<>();
+                    if(hasDuiNum>0){
+                        dianpaiDuiList = CardUtils.getDuiCards(dianpai);
+                    }
+                    //有对子垫对子。没对子垫其他
+                    //甩对子数量》垫牌对子
+                    if(list.size()-dianpaiDuiList.size()==0){
+                        disList.addAll(dianpaiDuiList);
+                    }else if(list.size()>dianpaiDuiList.size()){
+                        //还需 补的数量
+                        int neednum = list.size()-dianpaiDuiList.size();
+                        int  dsy =dianpai.size()-dianpaiDuiList.size();
+                        if(dsy>=neednum){
+                            //同花色够补
+                            disList.addAll(dianpaiDuiList);
+                            dianpai.removeAll(dianpaiDuiList);
+                            disList.addAll(dianpai.subList(0,neednum));
+                        }else{
+                            //dsy<neednum;
+                            //同花色不够
+                            List<Integer> copyDian = new ArrayList<>(dianpai);
+                            List<Integer> copyDian2 = new ArrayList<>(dianpai);
+                            List<Integer> copycurList= new ArrayList<>(curList);
+                            disList.addAll(copyDian);
+                            copycurList.removeAll(copyDian2);
+                            neednum = curList.size()-dianpai.size();
+                            disList.addAll(copycurList.subList(0, neednum));
+                        }
+                    }else{
+                        // list.size()<dianpaiDuiList
+                        disList.addAll(dianpaiDuiList.subList(0,list.size()));
+                    }
+                    System.out.println(list);
+                    System.out.println("==>");
+                    System.out.println(disList);
                 }
 
             }
@@ -2524,7 +2632,95 @@ public class DddzTable extends BaseTable {
         playCommand(player, 0, disList);
     }
 
+    public static void main(String[] args) {
+        List<Integer> list = Arrays.asList(502, 502, 501, 501, 415);
+        List<Integer> curList = Arrays.asList(215, 115, 315, 414, 114, 313, 113, 213, 112, 312, 412, 412, 311, 211, 110, 110);
+        List<Integer> disList =  new ArrayList<>();
+        //甩主
+        int zhuColor = 4;
+        List<Integer> cards = CardUtils.getZhu(curList, zhuColor);
+        int shuaiColor =zhuColor;
+        //有对
+        int hasDuiNum = CardUtils.getDuiCards(list).size()/2;
+        List<Integer> dianpai = cards;
+        List<Integer>   dianpaiDuiList = new ArrayList<>();
+        if(hasDuiNum>0){
+            dianpaiDuiList = CardUtils.getDuiCards(dianpai);
+        }
+        int needFu = list.size();
+        if(dianpaiDuiList.size()/2>0 && hasDuiNum>0){
+            //  甩中含对 且自己 可垫对
+            if(dianpaiDuiList.size()<hasDuiNum*2){
+                //有对但是对子不够垫
+                needFu = list.size()-dianpaiDuiList.size();
+                disList.addAll(dianpaiDuiList);
+                dianpai.removeAll(dianpaiDuiList);
+            }else{
+                List<Integer> d1 = dianpaiDuiList.subList(0,hasDuiNum*2);
+                disList.addAll(d1);
+                dianpai.removeAll(d1);
+                needFu = needFu - hasDuiNum*2;
+            }
+        }
 
+        if(dianpai.size()>=needFu){
+            //所垫花色牌够
+            disList.addAll(dianpai.subList(0,needFu));
+        }else{
+            //所垫花色牌不够
+            disList.addAll(dianpai);
+            int neednum = needFu-dianpai.size();
+            disList.addAll(curList.subList(0,neednum));
+        }
+    }
+    public static void main2(String[] args) {
+        {
+            List<Integer> list = Arrays.asList(502, 502, 501, 501, 415);
+            List<Integer> curList = Arrays.asList(215, 115, 315, 414, 114, 313, 113, 213, 112, 312, 412, 412, 311, 211, 110, 110);
+            List<Integer> disList =  new ArrayList<>();
+            //甩对子。
+            int shuaiColor = CardUtils.loadCardColor(list.get(0));
+            //有对
+            int hasDuiNum = list.size()/2;
+            List<Integer> dianpai = CardUtils.getColorCards(curList,shuaiColor);
+
+            List<Integer>  dianpaiDuiList = new ArrayList<>();
+            if(hasDuiNum>0){
+                dianpaiDuiList = CardUtils.getDuiCards(dianpai);
+            }
+            //有对子垫对子。没对子垫其他
+            //甩对子数量》垫牌对子
+            if(list.size()-dianpaiDuiList.size()==0){
+                disList.addAll(dianpaiDuiList);
+            }else if(list.size()>dianpaiDuiList.size()){
+                //还需 补的数量
+                int neednum = list.size()-dianpaiDuiList.size();
+                int  dsy =dianpai.size()-dianpaiDuiList.size();
+                if(dsy>=neednum){
+                    //同花色够补
+                    disList.addAll(dianpaiDuiList);
+                    dianpai.removeAll(dianpaiDuiList);
+                    disList.addAll(dianpai.subList(0,neednum));
+                }else{
+                    //dsy<neednum;
+                    //同花色不够
+                    List<Integer> copyDian = new ArrayList<>(dianpai);
+                    List<Integer> copyDian2 = new ArrayList<>(dianpai);
+                    List<Integer> copycurList= new ArrayList<>(curList);
+                    disList.addAll(copyDian);
+                    copycurList.removeAll(copyDian2);
+                    neednum = curList.size()-dianpai.size();
+                    disList.addAll(copycurList.subList(0, neednum));
+                }
+            }else{
+                    // list.size()<dianpaiDuiList
+                disList.addAll(dianpaiDuiList.subList(0,list.size()));
+            }
+            System.out.println(list);
+            System.out.println("==>");
+            System.out.println(disList);
+        }
+    }
     public boolean checkPlayerAuto(DddzPlayer player, int timeout) {
         if (player.isAutoPlay()) {
             return true;
@@ -2741,12 +2937,5 @@ public class DddzTable extends BaseTable {
         changeExtend();
     }
 
-    public static void main(String[] args) {
-        // System.out.println(11);
-        List<Integer> a = new ArrayList<>();
-        a.add(111);
-        a.add(113);
-        int b = -20;
 
-    }
 }

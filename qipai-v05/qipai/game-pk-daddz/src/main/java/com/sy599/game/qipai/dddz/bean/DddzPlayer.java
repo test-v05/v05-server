@@ -159,7 +159,7 @@ public class DddzPlayer extends Player {
 		}
 
 		if(addLog) {
-			StringBuilder sb = new StringBuilder("HeTianBaoPai");
+			StringBuilder sb = new StringBuilder("DaDouDiZhu");
 			if (table != null) {
 				sb.append("|").append(table.getId());
 				sb.append("|").append(table.getPlayBureau());

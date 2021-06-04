@@ -577,6 +577,20 @@ public final class CardUtils {
             }
         }
         return duis;
+    }   public static List<Integer> getDuiCards(List<Integer> hands) {
+        HashSet<Integer> set = new HashSet<Integer>();
+        List<Integer> duis = new ArrayList<Integer>();
+        int dui = 0;
+        for (Integer card : hands) {
+            if (!set.contains(card)) {
+                set.add(card);
+            } else {
+                dui++;
+                duis.add(card);
+                duis.add(card);
+            }
+        }
+        return duis;
     }
 
 
