@@ -32,7 +32,7 @@ public class CxMjTool {
 
             if (list.size() == 4) {
                 list.add(CxMjHelper.toMajiang(copy));
-                System.out.println(JacksonUtil.writeValueAsString(list));
+                //System.out.println(JacksonUtil.writeValueAsString(list));
                 return list;
             } else if (list.size() == 5) {
                 return list;
@@ -158,7 +158,7 @@ public class CxMjTool {
             return false;
         }
         if (majiangIds.size() % 3 != 2) {
-            System.out.println("%3！=2");
+           // System.out.println("%3！=2");
             return false;
 
         }
@@ -701,11 +701,11 @@ public class CxMjTool {
         }
 
         try {
-            System.out.println("hand " + CxMjHelper.toMajiang(handPais));
-            System.out.println("hand ar " + handPais);
-            System.out.println("peng " + CxMjHelper.toMajiang(peng));
-            System.out.println("peng ar " + peng);
-            System.out.println("gangMj " + gangMj );
+//            System.out.println("hand " + CxMjHelper.toMajiang(handPais));
+//            System.out.println("hand ar " + handPais);
+//            System.out.println("peng " + CxMjHelper.toMajiang(peng));
+//            System.out.println("peng ar " + peng);
+//            System.out.println("gangMj " + gangMj );
 
             //自摸 hand 58 7 34 14 90 peng 21 48 75 9 36 63 4 31 85
 
@@ -787,7 +787,7 @@ public class CxMjTool {
                         //移除杠的牌，
                         ids = CxMjHelper.dropValById(copy, gangV);
                         copy = ids;
-                        System.out.println("ids " + CxMjHelper.toMajiang(ids));
+                       // System.out.println("ids " + CxMjHelper.toMajiang(ids));
                     }
                     List<Integer> handPais2 = new ArrayList<>(ids);
 //                    handPais2.add(1005);
@@ -894,7 +894,7 @@ public class CxMjTool {
                         //移除杠的牌，
                         ids = CxMjHelper.dropValById(copy, gangV);
                         copy = ids;
-                          System.out.println("ids " + CxMjHelper.toMajiang(ids));
+                          //System.out.println("ids " + CxMjHelper.toMajiang(ids));
 
                     }
                     if (TingTool.isHu(copy)){
@@ -1109,7 +1109,7 @@ public class CxMjTool {
 
         copy_hand.add(1004);
         copy_hand.add(1005);
-         System.out.println("==>"+CxMjHelper.toMajiang(copy_hand));
+         //System.out.println("==>"+CxMjHelper.toMajiang(copy_hand));
         if( TingTool.isHu(copy_hand)){
             result.put("hu", true);
             result.put("gang1", CxMjHelper.toMajiang(gangList.get(gangVal1)));
