@@ -670,9 +670,17 @@ public class CxMjTool {
 //        peng [3万, 3万, 3万]
 //        peng ar [21, 48, 102]
 //        gangMj 3筒
-        List<Integer> hand =Arrays.asList(2, 29, 12, 39, 66, 13, 40, 67, 94, 75, 93);
-        List<Integer> peng =Arrays.asList(21, 48, 102);
-        System.err.println( checkShuangGang(1,hand,peng,CxMj.getMajang(93),true).toString());;
+//        List<Integer> hand =Arrays.asList(2, 29, 12, 39, 66, 13, 40, 67, 94, 75, 93);
+//        List<Integer> peng =Arrays.asList(21, 48, 102);
+//        System.err.println( checkShuangGang(1,hand,peng,CxMj.getMajang(93),true).toString());;
+
+//        List<Integer> list = Arrays.asList(11,28,55,82,12,29,56,83,13,30,57,84,38,65);
+//        System.err.println( checkShuangGang(1,list,new ArrayList<>(),CxMj.getMajang(65),true).toString());
+        //
+        List<Integer> hand =Arrays.asList(101,97, 5,32,59,6,33);
+        List<Integer> peng =Arrays.asList(21, 48, 102, 16,43,70);//86,
+        System.err.println( checkShuangGang(1,hand,peng,CxMj.getMajang(86),false).toString());
+
 
     }
 
@@ -687,8 +695,8 @@ public class CxMjTool {
      */
     public static   HashMap<Object,Object> checkShuangGang(int ver, List<Integer> handPais, List<Integer> peng, CxMj gangMj, boolean ismo) {
         HashMap<Object,Object> result = new HashMap<>();
+        result.put("hu", false);
         if (null == gangMj && handPais.size()!=14) {
-            result.put("hu", false);
             return result;
         }
 
@@ -1070,7 +1078,7 @@ public class CxMjTool {
                 }
 
             }
-            if(result.size()>3){
+            if(result!=null && result.size()>3){
                 //特殊牌型处理      List<Integer> hand =Arrays.asList(25, 52, 14, 41, 68, 15, 16, 5, 32, 59, 95);
                 //        List<Integer> peng =Arrays.asList(13, 40, 67);
                 //        checkShuangGang(1,hand,peng,CxMj.getMajang(95),true);

@@ -814,7 +814,7 @@ public class CxMjPlayer extends Player {
         if (count == 3&&!passGangValList.contains(majiang.getVal())) {
 
             HashMap<Object,Object> gangM3 = CxMjTool.checkShuangGang(1,CxMjHelper.toMajiangIds(handPais),CxMjHelper.toMajiangIds(peng),majiang,false);
-            if(gangM3.size()>2){
+            if(gangM3!=null && gangM3.size()>2){
                 //出的牌可双杠直接胡
                 if(gangM3.get("hu")!=null && (boolean)gangM3.get("hu") ){
                     shuangGangData = gangM3;
@@ -836,7 +836,7 @@ public class CxMjPlayer extends Player {
             l.add(1005);
             Map<Integer,List<Integer>> gangM2 = CxMjTool.checkGang(1, l, CxMjHelper.toMajiangValMap(peng),1005);
 
-            if(gangM1.size()>0||gangM2.size()>0 ||gangM3.size()>2){
+            if(gangM1.size()>0||gangM2.size()>0 ||(null!=gangM3 && gangM3.size()>2)){
                 virtualGang.clear();
                 virtualGang.add(majiang.getId());
                 arr[CxMjConstants.ACTION_INDEX_MINGGANG] = 1;// 可以杠
@@ -914,7 +914,7 @@ public class CxMjPlayer extends Player {
             }
             Map<Integer,List<Integer>> gangM = CxMjTool.checkGang(gangNum, CxMjHelper.toMajiangIds(handPais), CxMjHelper.toMajiangValMap(peng),buId);
             HashMap<Object,Object> gangM3 = CxMjTool.checkShuangGang(1,CxMjHelper.toMajiangIds(handPais),CxMjHelper.toMajiangIds(peng),majiang,true);
-           if(gangM3.size()>2){
+           if(null!=gangM3 && gangM3.size()>2){
                //可双杠直接胡
                if(gangM3.get("hu")!=null && (boolean)gangM3.get("hu") ){
                    shuangGangData = gangM3;
@@ -927,7 +927,7 @@ public class CxMjPlayer extends Player {
 
                }
            }
-            if(gangM.size()>0||gangM3.size()>0)
+            if(gangM.size()>0||(null!=gangM3 &&gangM3.size()>0))
                 virtualGang.clear();
             for(Map.Entry<Integer,List<Integer>> entry:gangM.entrySet()){
                 if(entry.getKey()!=0){

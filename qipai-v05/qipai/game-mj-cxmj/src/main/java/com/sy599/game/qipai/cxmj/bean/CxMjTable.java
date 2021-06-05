@@ -987,6 +987,7 @@ public class CxMjTable extends BaseTable {
             player.getHandMajiang().add(huCard);
         List<CxMj> huHand = new ArrayList<>(player.getHandMajiang());
         if (!TingTool.isHu(CxMjHelper.toMajiangIds(huHand))) {
+            System.err.println("~~~~990~~~~~~~~~~~~~~~~~~~不能胡");
             return;
         }
 
