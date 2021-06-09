@@ -261,6 +261,20 @@ public final class CardUtils {
         return false;
     }
 
+    public static  boolean isAllZhu(List<Integer> list,int zhuColor){
+        if(null==list || list.isEmpty()){
+            return false;
+        }else{
+            for (int val:list
+                 ) {
+                if(!isZhu(val,zhuColor)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /**
      *
      * @param card1
@@ -555,6 +569,54 @@ public final class CardUtils {
             if (!CardUtils.isYingZhu(card) && cardColor == color) {
                 res.add(card);
             }
+        }
+        return res;
+    }
+
+    /**
+     *
+     * @param hands
+     * @param color 主色
+     * @return
+     */
+    public static List<Integer> getDianCards2(List<Integer> hands, int color) {
+        List<Integer> res = new ArrayList<Integer>();
+        for (Integer card : hands) {
+            if(color==0){
+                if(CardUtils.isZhu(card,0)){
+                    res.add(card);
+                }
+            }else if(color>=1 && color<=4){
+                //常规主色
+                if(CardUtils.isZhu(card,color)){
+                    res.add(card);
+                }
+            }else{
+                int cardColor = CardUtils.loadCardColor(card);
+                if (!CardUtils.isYingZhu(card) && cardColor == color) {
+                    res.add(card);
+                }
+            }
+
+
+        }
+        return res;
+    }
+public static List<Integer> getDianCards3(List<Integer> hands, int color) {
+        List<Integer> res = new ArrayList<Integer>();
+        for (Integer card : hands) {
+            if(color>=0 && color<=4){
+                if(CardUtils.isZhu(card,color)){
+                    res.add(card);
+                }
+            } else{
+                int cardColor = CardUtils.loadCardColor(card);
+                if (!CardUtils.isYingZhu(card) && cardColor == color) {
+                    res.add(card);
+                }
+            }
+
+
         }
         return res;
     }

@@ -992,8 +992,15 @@ public class CxxdzTable extends BaseTable {
 	public synchronized void t1j(int param,CxxdzPlayer player){
 		if(!canTiSeat.contains(player.getSeat()))
 			return;
-		if(canTiSeat.contains(player.getSeat())&&param==1)
+
+		if(canTiSeat.contains(player.getSeat())&&param==1){
+			if(player.getT1j()==1){
+				return;
+			}
 			player.setT1j(1);
+		}
+
+
 		canTiSeat.remove((Integer) player.getSeat());
 		broadcastMsg(WebSocketMsgType.com_cxxdz_t1j_result,player,param);
 		if(canTiSeat.size()==0){
@@ -1010,9 +1017,16 @@ public class CxxdzTable extends BaseTable {
 	public synchronized void menT(int param,CxxdzPlayer player){
 		if(!canTiSeat.contains(player.getSeat()))
 			return;
+
 		player.lookCard();
-		if(canTiSeat.contains(player.getSeat())&&param==1)
+		if(canTiSeat.contains(player.getSeat())&&param==1){
+			if(player.getMenT()==1){
+				return;
+			}
 			player.setMenT(1);
+		}
+
+
 		canTiSeat.remove((Integer) player.getSeat());
 		broadcastMsg(WebSocketMsgType.com_cxxdz_menT_result,player,param);
 		if(canTiSeat.size()==0){
@@ -1028,12 +1042,17 @@ public class CxxdzTable extends BaseTable {
 	public synchronized void h1j(int param,CxxdzPlayer player){
 		if(player.getSeat()!=dizhuSeat)
 			return;
+		if(player.getH1j()==1){
+			//已经回了
+			return;
+		}
 		if(param==1){
 			for (CxxdzPlayer p:seatMap.values()) {
 				if(p.getT1j()==1||p.getMenT()==1)
 					player.setH1j(1,p);
 			}
 		}
+
 		if(menzhua==1){
 			player.lookCard();
 			//调整为轮到地主出牌前才能看牌（保证地主在选闷回时看不到牌）

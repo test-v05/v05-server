@@ -625,11 +625,15 @@ public final class CardTool {
 
 
     private static List<Integer> checkShuaiPaiContainTuoLaJi(List<List<Integer>> fenzuList, int zhuColor) {
+
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < fenzuList.size(); i++) {
             //方片 1 梅花2 红桃3 黑桃4  5王
             int color = i + 1;
             List<Integer> colorlist = fenzuList.get(i);
+//            if(null == colorlist || colorlist.size()%2!=0){
+//                continue;
+//            }
             if (colorlist.size() >= 4 && color != zhuColor) {
                 int[] ary = turnFuPaiToAry(colorlist, zhuColor);
                 //int minPai = isContainTuoLaJi(ary);
@@ -1583,161 +1587,11 @@ public final class CardTool {
     }
 
     public static void main(String args[]) {
-        //fapai(5, null);
-//        List<Integer> chuPaiSeatTuoLaJi = new ArrayList<>();
-//        chuPaiSeatTuoLaJi.add(210);
-//        chuPaiSeatTuoLaJi.add(210);
-//        chuPaiSeatTuoLaJi.add(211);
-//        chuPaiSeatTuoLaJi.add(211);
-//
-//        chuPaiSeatTuoLaJi.add(214);
-//        chuPaiSeatTuoLaJi.add(214);
-//        chuPaiSeatTuoLaJi.add(213);
-//        chuPaiSeatTuoLaJi.add(213);
-////
-////
-//        //4321
-//        int zhuColor = 4;
-//        List<Integer> nextChuPaiSeatTuoLaJi = new ArrayList<>();
-//        nextChuPaiSeatTuoLaJi.add(411);
-//        nextChuPaiSeatTuoLaJi.add(411);
-//        nextChuPaiSeatTuoLaJi.add(412);
-//        nextChuPaiSeatTuoLaJi.add(412);
-//
-//        nextChuPaiSeatTuoLaJi.add(413);
-//        nextChuPaiSeatTuoLaJi.add(413);
-//        nextChuPaiSeatTuoLaJi.add(414);
-//        nextChuPaiSeatTuoLaJi.add(501);
-//
-//        //回合结束 能否毙掉上家甩牌
-//       int a = ComparaShuaiPai(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,zhuColor,1,2);
-//               //System.out.println("winSeat = "+a);
-//        test();
-//        testAAQQ();
-//        testAQ();
-        test2AA();
-
-        //        //拖拉机
-       // List<List<Integer>> fenzuList = handFenZu(chuPaiSeatTuoLaJi, zhuColor);
-//          List<Integer> tuolaji = checkShuaiPaiContainTuoLaJi(fenzuList, zhuColor);
-//        //System.out.println(checkNextPlayersCanOutTuoLaJi(tuolaji, nextChuPaiSeatTuoLaJi, zhuColor, 2));
-
-        //dui
-		//List<Integer> dui= checkShuaiPaiContainDuiZi(fenzuList,zhuColor);
-   // //System.out.println(checkNextPlayersCanOutDuiZi(dui,nextChuPaiSeatTuoLaJi,zhuColor));
-
-        //dan
-        //List<Integer> dan = checkShuaiPaiContainDan(fenzuList, zhuColor);
-         //System.out.println(checkNextPlayersCanOutDan(dan, nextChuPaiSeatTuoLaJi, zhuColor));
-
-//		nextChuPaiSeatTuoLaJi.add(502);nextChuPaiSeatTuoLaJi.add(501);
-//		nextChuPaiSeatTuoLaJi.add(115);
-//		nextChuPaiSeatTuoLaJi.add(115);
-//		nextChuPaiSeatTuoLaJi.add(215);
-
-
-//		//System.out.println(checkNextPlayersCanOutTuoLaJi(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,0,0));
-//		//System.out.println(checkNextPlayersCanOutDuiZi(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,0));
-////
-//		//System.out.println(checkNextPlayersCanOutDan(dan,nextChuPaiSeatTuoLaJi,3));
-////
-//		//System.out.println(chuPaiSeatTuoLaJi);
-
-//		item.out.println(isContainTuoLaJi(a));
-         //System.out.println(getTuoLaJiFromParam(10,1,5,new ArrayList<>()));
-
-//		int[] a ={2,2,0,2,0};
-//		isContainDuiZi(a);
-
-//		List<Integer> list =new ArrayList<>();
-//		list.add(110);list.add(110);
-//		//System.out.println(getCardType(list,3));
-
-//		int[] ary ={0,0,1,1,2};
-//		isContainTuoLaJi(ary);
-
-//		List<Integer> list =new ArrayList<>();
-//		list.add(115);list.add(115);
-//		list.add(415);list.add(114);list.add(113);list.add(113);
-//		turnZhuPaiToAry(list,1);
-
-//		List<List<Integer>> list =new ArrayList<>();
-//		List<Integer> l1 = new ArrayList<>();
-//		l1.add(501);
-//		List<Integer> l2 = new ArrayList<>();
-//		l1.add(502);
-//		List<Integer> l3 = new ArrayList<>();
-//		l1.add(501);
-//		list.add(l1);
-//		list.add(l2);
-//		list.add(l3);
-//		 int playerCount=3;
-//		Collections.shuffle( DddzConstants.cardList);
-//		for (List<Integer> cards : list) {
-//			//调牌补牌
-//			if(playerCount==3){
-//				//16
-//				if(cards.size()<16){
-//					int su = 16-  cards.size();
-//					cards.addAll(DddzConstants.cardList.subList(0,su));
-//				}
-//			}else  if(playerCount==2){
-//				//12
-//			}else if(playerCount==5){
-//				//10
-//			}
-//		}
-//		for (List<Integer> cards : list) {
-//			//System.out.println(cards.size()+" Cards="+cards);
-//		}
-
-//		List<Integer> copy2 =new ArrayList<>(DddzConstants.cardList);
-//		for (List<Integer> l: list
-//			 ) {
-//			copy2.removeAll(l);
-//		}
-//		//System.out.println(copy2.size());
-
-//		List<Integer> copy2 =new ArrayList<>(DddzConstants.cardList);
-//		//System.out.println(copy2);
-//		Collections.shuffle(copy2);
-//		//System.out.println(copy2.subList(0,2));
-//		//System.out.println(copy2.subList(2,copy2.size()));
-//		//System.out.println(copy2);
-
-        //HashMap<Integer, CardType> map = new HashMap<>();
-//		List<Integer> t3 =new ArrayList<>();
-//		t3.add(414);
-//		CardType a3 = new CardType(1,t3);
-//
-//        List<Integer> t = new ArrayList<>();
-//        t.add(213);
-//        CardType a = new CardType(1, t);
-//
-//        List<Integer> t1 = new ArrayList<>();
-//        t1.add(502);
-//
-//        CardType a1 = new CardType(1, t1);
-//
-//        map.put(2, a);
-//        map.put(3, a1);
-//
-//        CardType c = CardTool.getTunKill(map, 2, 0, 3);
-         //System.out.println(c.getType());
-//		//System.out.println(c.getType()+" " +c.getCardIds());
-
-//		List<Integer> t =new ArrayList<>();
-////				t.add(213);	t.add(213);
-////				t.add(214);	t.add(214);
-////				t.add(315);	t.add(315);
-////		t.add(215);	t.add(215);
-////		t.add(315);	t.add(315);
-//		t.add(501);	t.add(501);
-//		t.add(502);	t.add(502);
-//		CardType ty = getCardType(t,0,0);
-//		//System.out.println(ty.getType());
-
-
+        List<Integer> chu = Arrays.asList(501,501,502);
+        List<Integer> jie = Arrays.asList(115,115,315);
+        int zhuColor = 0;
+        int seat =  ComparaShuaiPai(chu,jie,zhuColor,1,2);
+        System.err.println("seat:"+seat);
     }
 
     private static void test2AA() {
@@ -1757,7 +1611,7 @@ public final class CardTool {
             nextChuPaiSeatTuoLaJi.add(210);
 
             //回合结束 能否毙掉上家甩牌
-            int a = ComparaShuaiPai(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,zhuColor,1,2);
+           // int a = ComparaShuaiPai(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,zhuColor,1,2);
             //System.out.println(" 1 test2AA winSeat = "+a);
         }
     }
@@ -1780,7 +1634,7 @@ public final class CardTool {
         nextChuPaiSeatTuoLaJi.add(501);
 
         //回合结束 能否毙掉上家甩牌
-        int a = ComparaShuaiPai(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,zhuColor,1,2);
+        //int a = ComparaShuaiPai(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,zhuColor,1,2);
         //System.out.println(" 1 AAQQ winSeat = "+a);
     }
     private static void testAQ() {
@@ -1797,7 +1651,7 @@ public final class CardTool {
         nextChuPaiSeatTuoLaJi.add(501);
 
         //回合结束 能否毙掉上家甩牌
-        int a = ComparaShuaiPai(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,zhuColor,1,2);
+        //int a = ComparaShuaiPai(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,zhuColor,1,2);
         //System.out.println("2 AQ winSeat = "+a);
     }
 
@@ -1828,11 +1682,42 @@ public final class CardTool {
         nextChuPaiSeatTuoLaJi.add(501);
 
         //回合结束 能否毙掉上家甩牌
-        int a = ComparaShuaiPai(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,zhuColor,1,2);
+        //int a = ComparaShuaiPai(chuPaiSeatTuoLaJi,nextChuPaiSeatTuoLaJi,zhuColor,1,2);
         //System.out.println(" 1 winSeat = "+a);
     }
 
+    private static  int  CompareShuaiPai( List<Integer> chu, List<Integer> jie,int zhuColor,int nextSeat,int winseat){
 
+        CardType cardType =CardTool.getCardType(chu,zhuColor,1);
+        System.err.println(cardType.getType());
+        List<Integer> chuDui =CardUtils.getDuiCards(chu);
+        List<Integer> jieDui =CardUtils.getDuiCards(jie);
+        if(chuDui.size()>=2){
+            if(jieDui.size()>=2){
+              int chuMinCard =  CardUtils.getMinCard(chuDui,zhuColor);
+               int jieMaxCard = CardUtils.getMaxCard(jieDui,zhuColor);
+                //接牌的人中。最大的对子能否打得起上家最小的对子
+                boolean re = CardUtils.comCardValue(jieMaxCard,chuMinCard,zhuColor);
+               if(re){
+                   return nextSeat;
+               }else{
+                    return winseat;
+               }
+            }else{
+                 return winseat;
+            }
+        }else{
+            //单
+            int chuMinCard =  CardUtils.getMinCard(chu,zhuColor);
+            int jieMaxCard = CardUtils.getMaxCard(jie,zhuColor);
+            boolean re = CardUtils.comCardValue(jieMaxCard,chuMinCard,zhuColor);
+            if(re){
+               return nextSeat;
+            }else{
+                return winseat;
+            }
+        }
+    }
     public static CardType getCardType(List<Integer> list, int zhuColor, int chulongpai) {
         CardType ct;
 
@@ -2030,6 +1915,11 @@ public final class CardTool {
                         continue;
                     }
                 }else{
+                    //甩主  消主
+                    if(winType.getType()==CardType.SHUAIPAI){
+                        //甩主
+                        continue;
+                    }
                     CardType ctcopy = new CardType(ct.getType(),ct.getCardIds());
                     int winSeat2 = ComparaShuaiPai(winType.getCardIds(),ct.getCardIds(),zhuColor,winSeat,nextS);
                     if(winSeat2!=winSeat){
@@ -2139,6 +2029,10 @@ public final class CardTool {
                 return  winSeat;
             }
         }else{
+            if(shuaiCardIds.size()>0 && ctCardId.size()>0){
+                //BUG处理 上架501 501 502 最后一家消 115 115 315 ;zhuColor=0
+                return CompareShuaiPai(shuaiCardIds,ctCardId,zhuColor,nextS,winSeat);
+            }
             return  ComparaShuaiPai(shuaiCardIds, ctCardIds, zhuColor, winSeat, nextS);
         }
 
