@@ -976,7 +976,7 @@ public class CxMjPlayer extends Player {
         PlayCardResMsg.PlayMajiangRes.Builder gangBuilder = PlayCardResMsg.PlayMajiangRes.newBuilder();
         gangBuilder.setFromSeat(getSeat());
         gangBuilder.setUserId(String.valueOf(getUserId()));
-        if(size==4){
+        if(size>=4){
             table.buildPlayRes(gangBuilder, this, CxMjDisAction.action_angang,g1);
             table.addPlayLog((dcr++) + "_" + getSeat() + "_" +4+ "_" + CxMjHelper.toMajiangStrs(g1) + getExtraPlayLog());
         }else {
@@ -994,7 +994,7 @@ public class CxMjPlayer extends Player {
                 table.addPlayLog((dcr++) + "_" + getSeat() + "_" +3+ "_" + CxMjHelper.toMajiangStrs(g1) + getExtraPlayLog());
             }
        }
-        addOutPais(g1, size==4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
+        addOutPais(g1, size>=4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
 
 //        peng.removeAll(g1);
 //        outPais.removeAll(g1);
@@ -1013,7 +1013,7 @@ public class CxMjPlayer extends Player {
         PlayCardResMsg.PlayMajiangRes.Builder gang2Builder = PlayCardResMsg.PlayMajiangRes.newBuilder();
         gang2Builder.setFromSeat(getSeat());
         gang2Builder.setUserId(String.valueOf(getUserId()));
-        if(size==4){
+        if(size>=4){
             table.buildPlayRes(gang2Builder, this, CxMjDisAction.action_angang,g2);
             table.addPlayLog((dcr++) + "_" + getSeat() + "_" +4+ "_" + CxMjHelper.toMajiangStrs(g2) + getExtraPlayLog());
         }else {
@@ -1031,7 +1031,7 @@ public class CxMjPlayer extends Player {
                 table.addPlayLog((dcr++) + "_" + getSeat() + "_" +3+ "_" + CxMjHelper.toMajiangStrs(g2) + getExtraPlayLog());
             }
        }
-        addOutPais((List<CxMj>) gangM3.get("gang2"),  size==4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
+        addOutPais((List<CxMj>) gangM3.get("gang2"),  size>=4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
 
         //mo1
         PlayCardResMsg.MoMajiangRes.Builder mo2build = PlayCardResMsg.MoMajiangRes.newBuilder();
@@ -1136,12 +1136,27 @@ public class CxMjPlayer extends Player {
         int dcr = table.getDisCardRound();
         int disSeat = table.getNowDisCardSeat();
        List<CxMj> g1 =(List<CxMj>) gangM3.get("gang1");
-       CxMj majiang = g1.get(0);
+       //gang2
+       List<CxMj> g2 =(List<CxMj>) gangM3.get("gang2");
 
-     //  PlayCardResMsg.PlayMajiangRes.Builder chuBuilder = PlayCardResMsg.PlayMajiangRes.newBuilder();
-       //  List<CxMj> chu = new ArrayList<>();
-        // chu.add(majiang);
-        // table.buildPlayRes(chuBuilder, table.getSeatMap().get(disSeat), CxMjDisAction.action_chupai, chu);
+       CxMj majiang = g1.get(0);
+       //
+        CxMj disMj = table.getNowDisCardIds().get(0);
+        if(disMj.getVal()!= majiang.getVal()){
+            List<CxMj> dis = CxMjHelper.getMajiangList(getHandMajiang(), disMj.getVal());
+            if(dis.size()>=3){
+                //先杠放炮的杠；
+//                dis=4tong g1= 8tiao 先杠4tong
+//               huan
+                List<CxMj> tempg = new ArrayList<>(g1);
+                g1 = g2;
+                majiang = disMj;
+                g2 = tempg;
+                gangM3.put("gang1",g1);
+                gangM3.put("gang2",g2);
+            }
+        }
+
 
 
         //gang1
@@ -1179,14 +1194,14 @@ public class CxMjPlayer extends Player {
         table.addPlayLog((dcr++) + "_" + getSeat() + "_" + CxMjDisAction.action_moMjiang + "_" +   gangM3.get("mo1") + getExtraPlayLog());
         getHandMajiang().add(CxMj.getMajang((Integer) gangM3.get("mo1")));
 
-        //gang2
-        List<CxMj> g2 =(List<CxMj>) gangM3.get("gang2");
+
         size = CxMjHelper.getMajiangList(getHandMajiang(), g2.get(0).getVal()).size();
 
        PlayCardResMsg.PlayMajiangRes.Builder gang2Builder = PlayCardResMsg.PlayMajiangRes.newBuilder();
         gang2Builder.setFromSeat(getSeat());
         gang2Builder.setUserId(String.valueOf(getUserId()));
-        if(size==4){
+        if(size>=4){
+            //放杠之后摸牌 gang2可能会有5张
             table.buildPlayRes(gang2Builder, this, CxMjDisAction.action_angang,g2);
             table.addPlayLog((dcr++) + "_" + getSeat() + "_" + 4 + "_" + CxMjHelper.toMajiangStrs(g2) + getExtraPlayLog());
         }else {
@@ -1206,7 +1221,8 @@ public class CxMjPlayer extends Player {
             }
 
         }
-        addOutPais((List<CxMj>) gangM3.get("gang2"),  size==4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
+      //放杠之后摸牌 gang2可能会有5张
+        addOutPais((List<CxMj>) gangM3.get("gang2"),  size>=4?CxMjDisAction.action_angang:CxMjDisAction.action_minggang, getSeat());
 
       //mo1
         PlayCardResMsg.MoMajiangRes.Builder mo2build = PlayCardResMsg.MoMajiangRes.newBuilder();
