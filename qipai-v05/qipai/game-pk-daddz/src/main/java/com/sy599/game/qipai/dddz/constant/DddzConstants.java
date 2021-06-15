@@ -41,8 +41,7 @@ public class DddzConstants {
 	/*** 选择是否投降、地主过叫分的一半之后,如果整个牌面剩余分数不足以打够地主叫分,地主可	以选择直接投降。(可在创建房间时勾选是否带此玩法) */
 	public static final int TABLE_STATUS_SELDZTX= 12;
 
-	public static final int TABLE_STATUS_KOUDIPAI = 14
-			;
+	public static final int TABLE_STATUS_KOUDIPAI = 14 ;
 
 
 	/**埋牌*/
@@ -55,6 +54,7 @@ public class DddzConstants {
     /**托管**/
     public static final int action_tuoguan = 100;
 	public static final int TABLE_REPLAY_SHUAIPAI =13 ;
+	public static final int TABLE_REPLAY_CallBackPai =15;
 
 	// public static List<Integer> cardList_16 = new ArrayList<>(52);
 	public static List<Integer> cardList = new ArrayList<>(52);

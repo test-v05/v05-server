@@ -937,7 +937,7 @@ public class DddzTable extends BaseTable {
                             for (DddzPlayer splayer : seatMap.values()) {
                                 splayer.writeSocket(builder.build());
                             }
-                            addPlayLog(addSandhPlayLog(player.getSeat(), DddzConstants.TABLE_STATUS_PLAY, cards, false, bankGetScore, null, getNextDisCardSeat()));
+                            addPlayLog(addSandhPlayLog(player.getSeat(), DddzConstants.TABLE_REPLAY_CallBackPai, cards, false, bankGetScore, null, getNextDisCardSeat()));
 
                             addPlayLog(addSandhPlayLog(player.getSeat(), DddzConstants.TABLE_REPLAY_SHUAIPAI, (List<Integer>) map.get("Cards"), true, bankGetScore, null, getNextDisCardSeat()));
                         }
