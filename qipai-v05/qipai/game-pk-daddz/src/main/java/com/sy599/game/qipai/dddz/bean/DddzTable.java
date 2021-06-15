@@ -939,7 +939,7 @@ public class DddzTable extends BaseTable {
                             }
                             addPlayLog(addSandhPlayLog(player.getSeat(), DddzConstants.TABLE_REPLAY_CallBackPai, cards, false, bankGetScore, null, getNextDisCardSeat()));
 
-                            addPlayLog(addSandhPlayLog(player.getSeat(), DddzConstants.TABLE_REPLAY_SHUAIPAI, (List<Integer>) map.get("Cards"), true, bankGetScore, null, getNextDisCardSeat()));
+                            //addPlayLog(addSandhPlayLog(player.getSeat(), DddzConstants.TABLE_REPLAY_SHUAIPAI, (List<Integer>) map.get("Cards"), true, bankGetScore, null, getNextDisCardSeat()));
                         }
                         cards = (List<Integer>) map.get("Cards");
                     }
