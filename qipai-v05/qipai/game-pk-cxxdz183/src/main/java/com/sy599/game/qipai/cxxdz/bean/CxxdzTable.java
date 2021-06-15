@@ -599,11 +599,22 @@ public class CxxdzTable extends BaseTable {
 		return bei;
 	}
 
+	/**
+	 *
+	 * @param player1 地主
+	 * @param player2 闲
+	 * @param ct
+	 * @return
+	 */
 	public int countTwoPeopleBeiFD(CxxdzPlayer player1,CxxdzPlayer player2,boolean ct){
 		int bei=1;
+
 		if(player1!=null&&player2!=null)
 			bei=player1.getBeishu()*player2.getBeishu();
 		bei*=boomBeiShu;
+		if(passQdz>=2 && getMaxPlayerCount()==3 && menzhua==0){
+			bei*=2;//3人为例，现在为地主2倍，闲家为1倍，改为地主4倍，闲家2倍） 在原来基础上X2
+		}
 		if(ct)
 			bei*=2;
 		if(op_fengding!=0&&bei>op_fengding)
@@ -946,6 +957,7 @@ public class CxxdzTable extends BaseTable {
 				p.lookdp();
 				p.lookCard();
 			}
+
 			broadcastMsg(WebSocketMsgType.com_cxxdz_qdz,player,param);
 			changeLoaclTableStatus(CxxdzConstants.TABLE_STATUS_T1J);
 		}else {

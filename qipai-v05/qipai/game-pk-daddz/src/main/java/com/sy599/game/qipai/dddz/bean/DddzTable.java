@@ -927,6 +927,7 @@ public class DddzTable extends BaseTable {
                         if (fen < 0) {
                             //甩失败
                             addGameActionLog(player, "|shuaiPaiFail|cards=" + cards + "|result=" + map.toString());
+
                             if (player.getSeat() == banker) {
                                 bankGetScore = bankGetScore + fen;
                             } else {
@@ -936,6 +937,8 @@ public class DddzTable extends BaseTable {
                             for (DddzPlayer splayer : seatMap.values()) {
                                 splayer.writeSocket(builder.build());
                             }
+                            addPlayLog(addSandhPlayLog(player.getSeat(), DddzConstants.TABLE_STATUS_PLAY, cards, false, bankGetScore, null, getNextDisCardSeat()));
+
                             addPlayLog(addSandhPlayLog(player.getSeat(), DddzConstants.TABLE_REPLAY_SHUAIPAI, (List<Integer>) map.get("Cards"), true, bankGetScore, null, getNextDisCardSeat()));
                         }
                         cards = (List<Integer>) map.get("Cards");
