@@ -732,11 +732,10 @@ public class DddzTable extends BaseTable {
             timeNum = 0;
             List<List<Integer>> list;
             list = CardTool.fapai(seatMap.size(), zp);
-            int i = 0;
-            for (DddzPlayer player : playerMap.values()) {
+            for (int i=0;i<maxPlayerCount;i++) {
+                DddzPlayer player = seatMap.get(i+1);
                 player.changeState(player_state.play);
                 player.dealHandPais(list.get(i), this);
-                i++;
 
                 if (!player.isAutoPlay()) {
                     player.setAutoPlay(false, this);
@@ -744,7 +743,7 @@ public class DddzTable extends BaseTable {
                 }
                 addGameActionLog(player, "fapai|" + player.getHandPais());
             }
-            setDipai(list.get(i));
+            setDipai(list.get(maxPlayerCount));
         }
         finishFapai = 1;
         noticeJiaofen();

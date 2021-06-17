@@ -716,6 +716,7 @@ public static List<Integer> getDianCards3(List<Integer> hands, int color) {
 
 
     public static void main(String[] args) {
+       System.err.println( comCardValue(115,212,2));;
 
         List<Integer> newCardIds = new LinkedList<Integer>();
         newCardIds.add(105);
