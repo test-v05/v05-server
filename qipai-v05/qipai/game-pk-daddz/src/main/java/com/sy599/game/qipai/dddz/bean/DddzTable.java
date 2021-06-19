@@ -2517,7 +2517,13 @@ public class DddzTable extends BaseTable {
                         //无对子
                         if(cards.size()>0){
                             //无对但至少有1个同花色
-                            List<Integer> dianSameColorPai = CardUtils.getColorCards(curList,color);
+                            List<Integer> dianSameColorPai = Collections.emptyList();
+                            if(color==zhuColor){
+                               dianSameColorPai = CardUtils.getDianCards3(curList,color);
+                            } else{
+                               dianSameColorPai =  CardUtils.getColorCards(curList,color);
+                            }
+                         
                             if(list.size()>dianSameColorPai.size()){
                                 disList.addAll(dianSameColorPai);
                                 List<Integer> curList2 = new ArrayList<>(curList);
