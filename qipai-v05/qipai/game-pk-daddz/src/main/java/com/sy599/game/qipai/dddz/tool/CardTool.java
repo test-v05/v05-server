@@ -753,6 +753,71 @@ public final class CardTool {
         return result;
     }
 
+    /**
+     * 得到分组咧中最大的对子
+     * @param fenzuList
+     * @param zhuColor
+     * @return
+     */
+    private static List<Integer> getShuaiPaiContainMaxDuiZi(List<List<Integer>> fenzuList, int zhuColor) {
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < fenzuList.size(); i++) {
+            //方片 1 梅花2 红桃3 黑桃4  5王
+            int color = i + 1;
+            List<Integer> colorlist = fenzuList.get(i);
+            if (colorlist.size() >= 2 && color != zhuColor) {
+                int[] ary = turnFuPaiToAry(colorlist, zhuColor);
+                int minPai = getContainMaxDuiZi(ary);
+                if (minPai > 0) {
+                    //返回这一对
+                    int cards = minPai + 100 * color;
+                    result.add(cards);
+                    result.add(cards);
+                   return result;
+                }
+            }
+            if (i == 4) {
+                //主 int[] ay ={0,0,0,0,0,0,0,0,0};//10,j q k A   副2  正2  小王 大王
+                int[] ary = turnZhuPaiToAry(colorlist, zhuColor);
+                int minPai = getContainMaxDuiZi(ary);
+                if (minPai == 0) {
+                    return result;
+                }
+                if (minPai == 15) {
+                    //副2
+                    List<Integer> fu2 = getFu2(colorlist, zhuColor);
+                    if (null != fu2 && fu2.size() >= 2) {
+                        result.addAll(fu2);
+                    }
+                    return result;
+                } else if (minPai == 16) {
+                    //正2
+                    int cards = 15 + 100 * zhuColor;
+                    result.add(cards);
+                    result.add(cards);
+                    return result;
+                } else if (minPai == 17) {
+                    //小王
+                    result.add(501);
+                    result.add(501);
+                    return result;
+                } else if (minPai == 18) {
+                    //小王
+                    result.add(502);
+                    result.add(502);
+                    return result;
+                } else {
+                    int cards = minPai + 100 * zhuColor;//10-A
+                    result.add(cards);
+                    result.add(cards);
+                    return result;
+                }
+            }
+        }
+       return  result;
+
+    }
+
     private static List<Integer> checkShuaiPaiContainDan(List<List<Integer>> fenzuList, int zhuColor) {
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < fenzuList.size(); i++) {
@@ -913,6 +978,8 @@ public final class CardTool {
                             handPai.removeAll( tem) ;
                             return true;
                         }
+                    }else {
+                        return true;
                     }
                 }
             }
@@ -999,11 +1066,15 @@ public final class CardTool {
                                 chuPaiSeatTuoLaJi = chuPaiSeatTuoLaJiCopy.subList(0,8);
                             }
                             List<Integer> a =  getTuoLaJiFromParam(i+10,zhuColor,chuPaiSeatTuoLaJi.size()/2,fulist);
-                            handPai.removeAll(a) ;
+                            List<Integer> hands2 = new ArrayList<>(handPai);
+                            hands2.removeAll(a);
+                            handPai=hands2;
                             return true;
                         }else {
                             List<Integer> tem = getTuoLaJiFromParam(i+10,zhuColor,chuPaiSeatTuoLaJi.size()/2,fulist);
-                            handPai.removeAll( tem) ;
+                             List<Integer> hands2 = new ArrayList<>(handPai);
+                            hands2.removeAll(tem);
+                            handPai=hands2;
                             return true;
                         }
                     }
@@ -1042,8 +1113,8 @@ public final class CardTool {
                 return false;
             }
             int[] nextPlaySeatAry = turnZhuPaiToAryDuiZiAndDan(zhulist, zhuColor);//10,j q k A   副2  正2  小王 大王
-             //System.out.println("主对出牌：" + StringUtil.implode(chuPaiSeatAry));
-             //System.out.println("主对下家：" + StringUtil.implode(nextPlaySeatAry));
+//             System.out.println("主对出牌：" + StringUtil.implode(chuPaiSeatAry));
+//             System.out.println("主对下家：" + StringUtil.implode(nextPlaySeatAry));
             for (int i = 0; i < nextPlaySeatAry.length; i++) {
                 if (nextPlaySeatAry[i] >= 2 && i > chuPaiTljBeginIndex) {
                     if(i==5){
@@ -1501,6 +1572,22 @@ public final class CardTool {
         }
         return 0;
     }
+    public static int getContainMaxDuiZi(int[] handAry) {
+        // 10 j q k a fu2  zheng2
+        //干掉拖拉机
+//        for (int i = 0; i < handAry.length - 1; i++) {
+//            if (handAry[i] >= 2 && handAry[i + 1] >= 2) {
+//                handAry[i] = 0;
+//                handAry[i + 1] = 0;
+//            }
+//        }
+        for (int i = handAry.length-1; i >0; i--) {
+            if (handAry[i] >= 2) {
+                return i+10;
+            }
+        }
+        return 0;
+    }
 
     public static int isContainDan(int[] handAry) {
         // 10 j q k a fu2  zheng2
@@ -1587,11 +1674,11 @@ public final class CardTool {
     }
 
     public static void main(String args[]) {
-        List<Integer> chu = Arrays.asList(415, 315, 115);
-        List<Integer> jie = Arrays.asList(115, 213, 212);
-        int zhuColor = 2;
-        int seat =  ComparaShuaiPai(chu,jie,zhuColor,1,2);
-        System.err.println("seat:"+seat);
+        List<Integer> chu = Arrays.asList(113, 113,114,114);//
+        List<Integer> jie = Arrays.asList(215,215,315,315);//
+
+      boolean a =  checkNextPlayersCanKillShuaiTuoLaJi(chu, jie, 2, 2);
+      // System.err.println("a："+a);
     }
 
     private static void test2AA() {
@@ -1689,7 +1776,7 @@ public final class CardTool {
     private static  int  CompareShuaiPai( List<Integer> chu, List<Integer> jie,int zhuColor,int nextSeat,int winseat){
 
         CardType cardType =CardTool.getCardType(chu,zhuColor,1);
-        System.err.println(cardType.getType());
+        // System.err.println(cardType.getType());
         List<Integer> chuDui =CardUtils.getDuiCards(chu);
         List<Integer> jieDui =CardUtils.getDuiCards(jie);
         if(chuDui.size()>=2){
@@ -1847,28 +1934,6 @@ public final class CardTool {
         boolean isallDan = isallDan(winType.getCardIds());
         int size = map.size();
         int nextS = winSeat;
-        //甩牌
-        if(winType.getType()>=5){
-            //甩牌对比
-            for (int i = 0; i < size - 1; i++) {
-                nextS += 1;
-                if (nextS > size) {
-                    nextS = 1;
-                }
-
-                CardType ct = map.get(nextS);
-                if (ct == null) {
-                    continue;
-                }
-                List<Integer> chu =new ArrayList<>(map.get(winSeat).getCardIds());
-                List<Integer> jie =new ArrayList<>(map.get(nextS).getCardIds());
-                addScore(ct, fenCards);
-                winSeat =  ComparaShuaiPai(chu,jie,zhuColor,winSeat,nextS);
-
-            }
-            CardType result = new CardType(winSeat,fenCards );
-            return result;
-        }
 
         for (int i = 0; i < size - 1; i++) {
             nextS += 1;
@@ -1877,6 +1942,10 @@ public final class CardTool {
             }
 
             CardType ct = map.get(nextS);
+            if (ct == null) {
+                continue;
+            }
+
             addScore(ct, fenCards);
             List<Integer> cards = ct.getCardIds();
             int color = CardUtils.loadCardColor(cards.get(0));
@@ -1887,71 +1956,69 @@ public final class CardTool {
             }
             int winCard = winType.getCardIds().get(winType.getCardIds().size() - 1);
             int winColor = CardUtils.loadCardColor(winType.getCardIds().get(0));
+
             //甩牌 不同牌型大小比较3,
-//            if(winType.getType()>=5){
-//                //都是散单牌
-//                if(isallDan){
-//                    //首家全是散单牌 最大
-//                    boolean winSameColor =CardUtils.isSameColor(winType.getCardIds());
-//                    boolean winTypeIsAllFu = !haveZhu(new ArrayList<>(winType.getCardIds()),zhuColor);
-//                    int WinMaxCard = CardUtils.getMaxCard(winType.getCardIds(),zhuColor);
-//                    boolean winTypeIsAllzhu = CardTool.allZhu(new ArrayList<>(winType.getCardIds()),zhuColor);
-//                    boolean ctTypeIsAllFu = !haveZhu(new ArrayList<>(ct.getCardIds()),zhuColor);
-//                    boolean ctSameColor =!CardUtils.isSameColor(ct.getCardIds());
-//                    boolean ctTypeIsAllzhu = CardTool.allZhu(new ArrayList<>(ct.getCardIds()),zhuColor);
-//                    //比较两个最小牌
-//                    //比较逻辑 先判断win是甩副 ct跟甩副 winSeat=nextS;
-//                    if(winTypeIsAllFu && ctTypeIsAllFu && winSameColor && ctSameColor && ctSameColor && color==winColor ){
-//                        //甩副接甩副
-//                         //System.out.println("winSeat:WinMinCard:"+WinMinCard);
-//                        int ctMaxCard = CardUtils.getMaxCard(ct.getCardIds(),zhuColor);
-//                         //System.out.println("nextS:ctMaxCard:"+ctMaxCard);
-//                        if(CardUtils.comCardValue(WinMaxCard, ctMaxCard, zhuColor)){
-//                            continue;
-//                        }else{
-//                            winSeat = nextS;
-//                            winType = ct;
-//                            continue;
-//                        }
-//                    }else if(ctTypeIsAllzhu && winTypeIsAllzhu){
-//                         //System.out.println("甩主接甩主");
-//                         //System.out.println("winSeat:WinMinCard:"+WinMinCard);
-//                        int ctMaxCard = CardUtils.getMaxCard(ct.getCardIds(),zhuColor);
-//                         //System.out.println("nextS:ctMaxCard:"+ctMaxCard);
-//                        if(CardUtils.comCardValue(WinMaxCard, ctMaxCard, zhuColor)){
-//                            continue;
-//                        }else{
-//                            winSeat = nextS;
-//                            winType = ct;
-//                            continue;
-//                        }
-//                    }else if(winTypeIsAllFu && ctTypeIsAllzhu) {
-//                        winSeat = nextS;
-//                        winType = ct;
-//                        continue;
-//                    }else {
-//                        //上家甩的全是主 下家主带副 =(winTypeIsAllzhu && !ctTypeIsAllzhu && !ctTypeIsAllFu)
-//                        continue;
-//                    }
-//                }else{
-//                    //甩主  消主
-//                    if(winType.getType()==CardType.SHUAIPAI){
-//                        //甩主
-//                        continue;
-//                    }
-//                    CardType ctcopy = new CardType(ct.getType(),ct.getCardIds());
-//                    int winSeat2 = ComparaShuaiPai(winType.getCardIds(),ct.getCardIds(),zhuColor,winSeat,nextS);
-//                    if(winSeat2!=winSeat){
-//                        winSeat = nextS;
-//                        winType = ctcopy;
-//                        continue;
-//                    }else{
-//                        continue;//winseat无变化 继续循环判断
-//                    }
-//                }
-//
-//            }
-        //System.out.println( );
+            if(winType.getType()>=5){
+                //都是散单牌
+                if(isallDan){
+                    //首家全是散单牌 最大
+                    boolean winSameColor =CardUtils.isSameColor(winType.getCardIds());
+                    boolean winTypeIsAllFu = !haveZhu(new ArrayList<>(winType.getCardIds()),zhuColor);
+                    int WinMaxCard = CardUtils.getMaxCard(winType.getCardIds(),zhuColor);
+                    boolean winTypeIsAllzhu = CardTool.allZhu(new ArrayList<>(winType.getCardIds()),zhuColor);
+                    boolean ctTypeIsAllFu = !haveZhu(new ArrayList<>(ct.getCardIds()),zhuColor);
+                    boolean ctSameColor =!CardUtils.isSameColor(ct.getCardIds());
+                    boolean ctTypeIsAllzhu = CardTool.allZhu(new ArrayList<>(ct.getCardIds()),zhuColor);
+                    //比较两个最小牌
+                    //比较逻辑 先判断win是甩副 ct跟甩副 winSeat=nextS;
+                    if(winTypeIsAllFu && ctTypeIsAllFu && winSameColor && ctSameColor && ctSameColor && color==winColor ){
+                        //甩副接甩副
+                         //System.out.println("winSeat:WinMinCard:"+WinMinCard);
+                        int ctMaxCard = CardUtils.getMaxCard(ct.getCardIds(),zhuColor);
+                         //System.out.println("nextS:ctMaxCard:"+ctMaxCard);
+                        if(CardUtils.comCardValue(WinMaxCard, ctMaxCard, zhuColor)){
+                            continue;
+                        }else{
+                            winSeat = nextS;
+                            winType = ct;
+                            continue;
+                        }
+                    }else if(ctTypeIsAllzhu && winTypeIsAllzhu){
+                         //System.out.println("甩主接甩主");
+                         //System.out.println("winSeat:WinMinCard:"+WinMinCard);
+                        int ctMaxCard = CardUtils.getMaxCard(ct.getCardIds(),zhuColor);
+                         //System.out.println("nextS:ctMaxCard:"+ctMaxCard);
+                        if(CardUtils.comCardValue(WinMaxCard, ctMaxCard, zhuColor)){
+                            continue;
+                        }else{
+                            winSeat = nextS;
+                            winType = ct;
+                            continue;
+                        }
+                    }else if(winTypeIsAllFu && ctTypeIsAllzhu) {
+                        winSeat = nextS;
+                        winType = ct;
+                        continue;
+                    }else {
+                        //上家甩的全是主 下家主带副 =(winTypeIsAllzhu && !ctTypeIsAllzhu && !ctTypeIsAllFu)
+                        continue;
+                    }
+                }else{
+
+                    CardType ctcopy = new CardType(ct.getType(),ct.getCardIds());
+                    int winSeat2 = ComparaShuaiPai(winType.getCardIds(),ct.getCardIds(),zhuColor,winSeat,nextS);
+                    if(winSeat2!=winSeat){
+                        winSeat = nextS;
+                        winType = ctcopy;
+                        // System.err.println("aaaaaa上甩副下甩主 主："+zhuColor+" 赢家座位号："+winSeat);
+                        continue;
+                    }else{
+                        continue;//winseat无变化 继续循环判断
+                    }
+                }
+
+            }
+
             //同牌型
             if (winType.getType() == ct.getType() && !CardUtils.comCardValue(winCard, card, zhuColor) && winType.getType()!=CardType.LONGPAI) {
                 winSeat = nextS;
@@ -1965,6 +2032,79 @@ public final class CardTool {
             }
         }
         CardType result = new CardType(winSeat, fenCards);
+        return result;
+    }
+
+    /**
+     *
+     * @param map
+     * @param turnFirst
+     * @param zhuColor
+     * @return CardType 获取当轮最大的牌的玩家位置和牌
+     */
+ public static CardType getTunWin2(HashMap<Integer, CardType> map, int turnFirst, int zhuColor) {
+
+        int winSeat = turnFirst;
+        CardType winType = map.get(winSeat);
+        List<Integer> fenCards = new ArrayList<Integer>();
+         List<Integer> firstCards = new ArrayList<>(winType.getCardIds());
+        CardType firstType = map.get(winSeat);
+        int size = map.size();
+        int nextS = winSeat;
+        addScore(winType,fenCards);
+        for (int i = 0; i < size - 1; i++) {
+            nextS += 1;
+            if (nextS > size) {
+                nextS = 1;
+            }
+
+            CardType ct = map.get(nextS);
+            if (ct == null) {
+                continue;
+            }
+            addScore(ct,fenCards);
+            List<Integer> cards = ct.getCardIds();
+            int color = CardUtils.loadCardColor(cards.get(0));
+            int card = cards.get(cards.size() - 1);
+            int card2 = cards.get(0);
+            if (CardUtils.comCardValue(card2, card, zhuColor)) {
+                card = card2;
+            }
+
+            int winCard = winType.getCardIds().get(winType.getCardIds().size() - 1);
+            int winColor = CardUtils.loadCardColor(winType.getCardIds().get(0));
+            // System.err.println(winSeat+ "上家："+CardUtils.toStringCards(winType.getCardIds()));
+            // System.err.println(nextS+ "下家："+CardUtils.toStringCards(ct.getCardIds()));
+            // System.err.println("主："+zhuColor);
+
+
+            if (winType.getType()<5 && firstType.getType()==ct.getType() && winType.getType() == ct.getType() && !CardUtils.comCardValue(winCard, card, zhuColor) && winType.getType()!=CardType.LONGPAI) {
+                winSeat = nextS;
+                winType = ct;
+                // System.err.println(" 同牌比较 主："+zhuColor+" 赢家座位号："+winSeat);
+            }else{
+                CardType ctcopy = new CardType(ct.getType(),ct.getCardIds());
+                int winSeat2 = ComparaShuaiPai2(winType.getCardIds(),ct.getCardIds(),zhuColor,winSeat,nextS,firstCards);
+                if(winSeat2!=winSeat){
+                    winSeat = nextS;
+                    winType = ctcopy;
+                    // System.err.println(" 甩牌比较 主："+zhuColor+" 赢家座位号："+winSeat);
+                    continue;
+                }
+            }
+
+//            if (winType.getType() == CardType.LONGPAI && ct.getType() == CardType.LONGPAI) {
+//                if (CardUtils.loadCardValue(cards.get(0)) > CardUtils.loadCardValue(winType.getCardIds().get(0))) {
+//                    winSeat = nextS;
+//                    winType = ct;
+//                }
+//            }
+        }
+
+//        fenCards =map.get(winSeat).getCardIds();
+        CardType result = new CardType(winSeat, fenCards);
+        // System.err.println("当前轮次最大牌玩家位置："+winSeat);
+        // System.err.println("当前轮次最大牌玩家出牌："+CardUtils.toStringCards(map.get(winSeat).getCardIds()));
         return result;
     }
 
@@ -2018,13 +2158,15 @@ public final class CardTool {
             }else{
                 return winSeat;
             }
-            shuaiCardIds.removeAll(chuPaiSeatDuiZi);
+            List<Integer> shuaiCardIds2= new ArrayList<>(shuaiCardIds);
+            shuaiCardIds2.removeAll( chuPaiSeatDuiZi);
+            shuaiCardIds=shuaiCardIds2;
         }
 
-       // List<Integer> chuPaiSeatDan = checkShuaiPaiContainDan(fenzuList, zhuColor);
+        // List<Integer> chuPaiSeatDan = checkShuaiPaiContainDan(fenzuList, zhuColor);
 //        1、甩多个纯单牌：要毙掉必须满足甩牌数量相同的主牌（副和主混一起是毙不了的）
-//        在毙牌中比较大小则只按最大单牌比较（毙牌的对子也相当于拆成单牌处理）
-         boolean resDan =isallDan(shuaiCardIds);
+//        在毙牌中比较大小则只按最大单牌比较(毙牌的对子也相当于拆成单牌处理）
+        boolean resDan =isallDan(shuaiCardIds);
         boolean ctresDan =isallDan(ctCardIds);
         boolean killDan = true;
         if(resDan && ctresDan){
@@ -2127,6 +2269,86 @@ public final class CardTool {
     }
 
     /**
+     * 比较当前轮次甩牌大小。按照拖拉机。对子。单排的顺序比较。
+     * 任一接牌的玩家按照拖拉机对子单排的顺序能大于上家桌牌。就为当前牌桌最大出牌者
+     * @param shuaiCardIds 上家
+     * @param ctCardId 下家
+     * @param zhuColor
+     * @param winSeat 上家座位号
+     * @param nextS 下家座位号
+     * @return 就为当前牌桌最大出牌者座位号
+     */
+    private static int ComparaShuaiPai2(List<Integer> shuaiCardIds, List<Integer> ctCardId, int zhuColor,int winSeat,int nextS,List<Integer> firstCards) {
+        if(shuaiCardIds.size()==0){
+            return winSeat;
+        }
+        List<Integer>  ctCardIds   = new ArrayList<>(ctCardId);
+        boolean ctTypeIsAllzhu = CardTool.allZhu(ctCardIds, zhuColor);
+        boolean ctTypeIsAllFu = !haveZhu(new ArrayList<>(ctCardIds), zhuColor);
+        //0  ct 接甩牌的人有主有副
+        if (!ctTypeIsAllzhu && !ctTypeIsAllFu) {
+            return winSeat;
+        }
+        //轮次第一个人出牌情况
+
+        List<List<Integer>> firstFenzuList = handFenZu(new ArrayList<>(firstCards), zhuColor);
+        List<Integer> firstChuPaiSeatTuoLaJi = checkShuaiPaiContainTuoLaJi(firstFenzuList, zhuColor);
+        List<Integer> firstChuPaiSeatDuiZi = getShuaiPaiContainMaxDuiZi(firstFenzuList, zhuColor);
+        boolean firstIsAllDan = isallDan(new ArrayList<>(firstCards));
+        boolean firstHaveTuoLaJi = firstChuPaiSeatTuoLaJi.size()>=4?true:false;
+        boolean firstHaveDui = firstChuPaiSeatDuiZi.size()>=2?true:false;
+        int fisrtDuiCount = (CardUtils.getDuiCards(new ArrayList<>(firstCards)).size());
+        // System.err.println("首家：firstIsAllDan "+firstIsAllDan);
+        // System.err.println("首家：firstHaveTuoLaJi "+firstHaveTuoLaJi);
+        // System.err.println("首家：firstHaveDui "+firstHaveDui);
+        // System.err.println("首家：对子数量 "+fisrtDuiCount);
+        // System.err.println("首家：  "+CardUtils.toStringCards(firstCards));
+        //
+        //甩牌对子size
+        int shuaiDuiCount = (CardUtils.getDuiCards(new ArrayList<>(shuaiCardIds)).size());
+        //出牌对子size
+        int ctDuiCount = (CardUtils.getDuiCards(new ArrayList<>(ctCardIds)).size());
+        // System.err.println("shuaiDuiCount：对子数量 "+shuaiDuiCount);
+        // System.err.println("ctDuiCount：对子数量 "+ctDuiCount);
+        List<Integer> hand = new ArrayList<>(shuaiCardIds);
+        List<List<Integer>> fenzuList = handFenZu(hand, zhuColor);
+        //拖拉机
+        List<Integer> chuPaiSeatTuoLaJi = checkShuaiPaiContainTuoLaJi(fenzuList, zhuColor);
+        int tljlength = chuPaiSeatTuoLaJi.size() / 2;
+        if (firstHaveTuoLaJi && chuPaiSeatTuoLaJi.size() >= 4) {
+            boolean canOut = checkNextPlayersCanKillShuaiTuoLaJi(chuPaiSeatTuoLaJi, ctCardIds, zhuColor, tljlength);
+            if (canOut ) {
+                shuaiCardIds.removeAll(chuPaiSeatTuoLaJi);
+                return nextS;
+            }else{
+                return winSeat;
+            }
+        }
+
+        // 对子
+        List<Integer> chuPaiSeatDuiZi = getShuaiPaiContainMaxDuiZi(fenzuList, zhuColor);
+        if (firstHaveDui && chuPaiSeatDuiZi.size() >= 2) {
+            boolean canOut = checkNextPlayersCanKillShuaiDui(chuPaiSeatDuiZi, ctCardIds, zhuColor);
+            if (canOut && (shuaiDuiCount==ctDuiCount)) {
+                //能毙且对子数量相等
+                return nextS;
+            }else {
+                return winSeat;
+            }
+        }
+
+        // List<Integer> chuPaiSeatDan = checkShuaiPaiContainDan(fenzuList, zhuColor);
+//        1、甩多个纯单牌：要毙掉必须满足甩牌数量相同的主牌（副和主混一起是毙不了的）
+//        在毙牌中比较大小则只按最大单牌比较(毙牌的对子也相当于拆成单牌处理）
+            int winmax = CardUtils.getMaxCard(shuaiCardIds,zhuColor);
+            int ctmax = CardUtils.getMaxCard(ctCardIds,zhuColor);
+            if(firstIsAllDan &&!CardUtils.comCardValue(winmax,ctmax,zhuColor) ){
+                return nextS;
+            }
+            return winSeat;
+    }
+
+    /**
      * 剩余拍是否都是单排
      * @param shuaiCardIds
      * @return
@@ -2154,30 +2376,6 @@ public final class CardTool {
         int size = maxplay;
         int nextS = winSeat;
 
-
-        if(winType.getType()>=5){
-            //甩牌对比
-            for (int i = 0; i < size - 1; i++) {
-                nextS += 1;
-                if (nextS > size) {
-                    nextS = 1;
-                }
-
-                CardType ct = map.get(nextS);
-                if (ct == null) {
-                    continue;
-                }
-                List<Integer> chu =new ArrayList<>(map.get(winSeat).getCardIds());
-                List<Integer> jie =new ArrayList<>(map.get(nextS).getCardIds());
-
-                winSeat =  ComparaShuaiPai(chu,jie,zhuColor,winSeat,nextS);
-
-            }
-             fenCards =new ArrayList<>(map.get(winSeat).getCardIds());
-             fenCards = CardUtils.getScoreCards(fenCards);
-             CardType result = new CardType(winSeat,fenCards );
-            return result;
-        }
         for (int i = 0; i < size - 1; i++) {
             nextS += 1;
             if (nextS > size) {
@@ -2200,6 +2398,10 @@ public final class CardTool {
             int winCard = winType.getCardIds().get(winType.getCardIds().size() - 1);
             int winColor = CardUtils.loadCardColor(winType.getCardIds().get(0));
 
+            // System.err.println(winSeat+ "上家："+CardUtils.toStringCards(winType.getCardIds()));
+            // System.err.println(nextS+ "下家："+CardUtils.toStringCards(ct.getCardIds()));
+            // System.err.println("主："+zhuColor);
+            // System.err.println(CardUtils.toStringCards(winType.getCardIds()));
             //同牌型
             if (winType.getType() == ct.getType() && !CardUtils.comCardValue(winCard, card, zhuColor) && winType.getType()!=CardType.LONGPAI) {
                 winSeat = nextS;
@@ -2209,6 +2411,16 @@ public final class CardTool {
                 if (CardUtils.loadCardValue(cards.get(0)) > CardUtils.loadCardValue(winType.getCardIds().get(0))) {
                     winSeat = nextS;
                     winType = ct;
+                }
+            }
+            if(winType.getType()==6 && ct.getType()==5){
+                //上甩副下甩主
+                int winSeat2 =  ComparaShuaiPai(winType.getCardIds(),ct.getCardIds(),zhuColor,winSeat,nextS);
+                if(winSeat2==nextS){
+                    //ct下家此次比较最大
+                    winType=ct;
+                    winSeat=winSeat2;
+                    // System.err.println("上甩副下甩主 主："+zhuColor+" 赢家座位号："+winSeat);
                 }
             }
         }

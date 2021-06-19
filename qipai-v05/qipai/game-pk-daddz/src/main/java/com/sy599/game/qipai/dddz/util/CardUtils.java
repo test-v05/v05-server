@@ -639,7 +639,8 @@ public static List<Integer> getDianCards3(List<Integer> hands, int color) {
             }
         }
         return duis;
-    }   public static List<Integer> getDuiCards(List<Integer> hands) {
+    }
+    public static List<Integer> getDuiCards(List<Integer> hands) {
         HashSet<Integer> set = new HashSet<Integer>();
         List<Integer> duis = new ArrayList<Integer>();
         int dui = 0;
@@ -714,27 +715,60 @@ public static List<Integer> getDianCards3(List<Integer> hands, int color) {
         return false;
     }
 
+    public static List<String> toStringCards(List<Integer> cards){
+        List<String> list = new ArrayList<>();
+        for (int val:cards) {
+           int pai =  val%100;
+           int huase = val/100;
+           String  strPai ="";
+           String  strPai2 ="";
+           switch ( huase){
+               case 4:
+                   strPai ="黑桃";  break;
+                   case 3:
+                   strPai ="红桃";  break;
+                   case 2:
+                   strPai ="梅花";  break;
+                   case 1:
+                   strPai ="方块";  break;
+           }
+           switch (pai){
+               case 1:
+                   strPai2 ="小王";  break;
+                   case 2:
+                       strPai2 ="大王";  break;
+
+                   case 10:
+                       strPai2 ="10";  break;
+                   case 11:
+                       strPai2 ="J";  break;
+                       case 12:
+                       strPai2 ="Q";  break;
+               case 13:
+                   strPai2 ="K";  break;
+               case 14:
+                   strPai2 ="A";
+                   break;
+                   case 15:
+                   strPai2 ="2";
+                   break;
+               default:
+                   strPai2 =""+pai;
+                   break;
+           }
+            list.add(strPai+strPai2+"|"+val);
+        }
+        return list;
+    }
 
     public static void main(String[] args) {
-       System.err.println( comCardValue(115,212,2));;
 
         List<Integer> newCardIds = new LinkedList<Integer>();
         newCardIds.add(105);
         newCardIds.add(108);
         newCardIds.add(105);
         newCardIds.add(108);
-
-//        newCardIds.add(309);
-//        newCardIds.add(309);
-//4 黑
-//        3 红
-//                2 梅
-//                        1 方
-//     System.out.println(  isTuoLaji2(newCardIds,3) );
-//        System.out.println(getCardPro2(105,1));
-//        System.out.println(getCardPro2(106,1));
-//        System.out.println(getCardPro2(107,1));
-//        System.out.println(getCardPro2(108,1));
+        System.err.println(toStringCards(newCardIds));
     }
 
     /**

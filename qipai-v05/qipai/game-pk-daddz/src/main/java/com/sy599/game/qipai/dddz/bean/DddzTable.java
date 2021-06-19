@@ -1064,11 +1064,13 @@ public class DddzTable extends BaseTable {
             if (null == list) {
                 continue;
             }
-            pmap.put(p.getSeat(), CardTool.getCardType(list, zhuColor, op_chulongpai));
+            pmap.put(p.getSeat(), CardTool.getCardType(new ArrayList<>(list), zhuColor, op_chulongpai));
         }
 
-        CardType result = CardTool.getTunKill(pmap, turnFirstSeat, zhuColor, maxPlayerCount);
-        List<Integer> firstOut = seatMap.get(turnFirstSeat).getCurOutCard(getTurnNum());
+        //CardType result = CardTool.getTunKill(pmap, turnFirstSeat, zhuColor, maxPlayerCount);
+         CardType result = CardTool.getTunWin2(pmap, turnFirstSeat, zhuColor);
+        List<Integer> firstOut2 = seatMap.get(turnFirstSeat).getCurOutCard(getTurnNum());
+        List<Integer> firstOut = new ArrayList<>(firstOut2); //防止下面变动指针改变数据内容
         if (firstOut == null) {
             return 0;
         }
@@ -1078,16 +1080,12 @@ public class DddzTable extends BaseTable {
                 return 0;
             }
 
-            List<Integer> myOut = seatMap.get(seat).getCurOutCard(getTurnNum());
+            List<Integer>  myOut2= seatMap.get(seat).getCurOutCard(getTurnNum());
+            List<Integer> myOut =  new ArrayList<>(myOut2);
             if (null == myOut) {
                 return 0;
             }
-//            if(CardTool.allZhu(myOut,zhuColor)&&!CardTool.haveZhu(firstOut,zhuColor) && isKill==0){
-//                //第一家出副  第二家出主1
-//                isKill=1;
-//                return 1;
-//                //第一家
-//            }
+
             if (CardTool.allZhu(myOut, zhuColor) && seat == result.getType()) {
                 if (isKill == 0) {
                     isKill = 1;
@@ -1106,12 +1104,14 @@ public class DddzTable extends BaseTable {
 
         for (DddzPlayer p : seatMap.values()) {
             List<Integer> list = p.getCurOutCard(getTurnNum());
-            pmap.put(p.getSeat(), CardTool.getCardType(list, zhuColor, op_chulongpai));
+            pmap.put(p.getSeat(), CardTool.getCardType(new ArrayList<>(list), zhuColor, op_chulongpai));
             if (p.getHandPais().size() != 0) {
                 isOver = false;
             }
         }
-        CardType result = CardTool.getTunWin(pmap, turnFirstSeat, zhuColor);
+        CardType result = CardTool.getTunWin2(pmap, turnFirstSeat, zhuColor);
+        //System.err.println("一轮结束：");
+        //System.err.println(result.getType()+"| ");
         List<Integer> fenCards = null;
         if (result.getCardIds().size() > 0 && result.getType() == banker) {
             zhuoFen.addAll(result.getCardIds());
@@ -1206,6 +1206,7 @@ public class DddzTable extends BaseTable {
             sb.append("|").append(player.isAutoPlay() ? 1 : 0);
             sb.append("|").append("chuPai");
             sb.append("|").append(cards);
+            sb.append("|").append(CardUtils.toStringCards(cards).toString());
             LogUtil.msgLog.info(sb.toString());
 
             if (cards != null && cards.size() > 0) {
@@ -2667,9 +2668,9 @@ public class DddzTable extends BaseTable {
                 }
 
             }
-            System.err.println(list);
-            System.err.println("==>");
-            System.err.println(disList);
+            //System.err.println(list);
+            //System.err.println("==>");
+            //System.err.println(disList);
         }
         playCommand(player, 0, disList);
     }
