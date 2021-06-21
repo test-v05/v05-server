@@ -481,9 +481,19 @@ public final class CardUtils {
 
         //拖拉机
         if (ct.getType() == 0 && CardTool.allZhu(cards, zhuColor)) {
-            ct.setCardIds(newCardIds);
-            ct.setType(CardType.TUOLAJI);
-            System.out.println("tuolaji...................................... cards = " + newCardIds);
+//            ct.setCardIds(newCardIds);
+//            ct.setType(CardType.TUOLAJI);
+//                BUG修复 在此处114, 114, 315, 315, 415, 415 主=1 判定为拖拉机
+            List<List<Integer>> firstFenzuList = CardTool.handFenZu(new ArrayList<>(cards), zhuColor);
+            List<Integer> firstChuPaiSeatTuoLaJi =  CardTool.checkShuaiPaiContainTuoLaJi(firstFenzuList, zhuColor);
+            if(firstChuPaiSeatTuoLaJi.size()>=4 && firstChuPaiSeatTuoLaJi.size()==cards.size()){
+                ct.setCardIds(newCardIds);
+                ct.setType(CardType.TUOLAJI);
+            }else{
+                ct.setCardIds(newCardIds);
+                ct.setType(CardType.SHUAIPAI);
+            }
+
         }
 
         return ct;

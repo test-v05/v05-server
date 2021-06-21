@@ -624,7 +624,7 @@ public final class CardTool {
     }
 
 
-    private static List<Integer> checkShuaiPaiContainTuoLaJi(List<List<Integer>> fenzuList, int zhuColor) {
+    public static List<Integer> checkShuaiPaiContainTuoLaJi(List<List<Integer>> fenzuList, int zhuColor) {
 
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < fenzuList.size(); i++) {
@@ -1581,7 +1581,7 @@ public final class CardTool {
 //                handAry[i + 1] = 0;
 //            }
 //        }
-        for (int i = handAry.length-1; i >0; i--) {
+        for (int i = handAry.length-1; i >=0; i--) {
             if (handAry[i] >= 2) {
                 return i+10;
             }
@@ -1674,11 +1674,15 @@ public final class CardTool {
     }
 
     public static void main(String args[]) {
-        List<Integer> chu = Arrays.asList(113, 113,114,114);//
-        List<Integer> jie = Arrays.asList(215,215,315,315);//
+        List<Integer> chu = Arrays.asList(314, 314, 313, 313, 311,311);//
+        List<Integer> jie = Arrays.asList(315, 315, 415, 415, 310,310);//
+        int zhu = 3;
+      int a =  ComparaShuaiPai2(chu,jie,zhu,1,2,chu);
+        System.err.println("a："+a);
+//        int[] a1 = {2,0,0,0,1};
+//
 
-      boolean a =  checkNextPlayersCanKillShuaiTuoLaJi(chu, jie, 2, 2);
-      // System.err.println("a："+a);
+
     }
 
     private static void test2AA() {
@@ -2081,14 +2085,21 @@ public final class CardTool {
             if (winType.getType()<5 && firstType.getType()==ct.getType() && winType.getType() == ct.getType() && !CardUtils.comCardValue(winCard, card, zhuColor) && winType.getType()!=CardType.LONGPAI) {
                 winSeat = nextS;
                 winType = ct;
-                // System.err.println(" 同牌比较 主："+zhuColor+" 赢家座位号："+winSeat);
+                 System.err.println(" 同牌比较 主："+zhuColor+" 赢家座位号："+winSeat);
+                 continue;
             }else{
+                //拖拉机比较
+                if(firstType.getType() == CardType.TUOLAJI && ct.getType()!=CardType.TUOLAJI){
+                    //第一家为拖拉机
+                    //System.err.println("第一家为拖拉机：");
+                    continue;
+                }
                 CardType ctcopy = new CardType(ct.getType(),ct.getCardIds());
                 int winSeat2 = ComparaShuaiPai2(winType.getCardIds(),ct.getCardIds(),zhuColor,winSeat,nextS,firstCards);
                 if(winSeat2!=winSeat){
                     winSeat = nextS;
                     winType = ctcopy;
-                    // System.err.println(" 甩牌比较 主："+zhuColor+" 赢家座位号："+winSeat);
+                     //System.err.println(" 甩牌比较 主："+zhuColor+" 赢家座位号："+winSeat);
                     continue;
                 }
             }
@@ -2314,11 +2325,17 @@ public final class CardTool {
         List<List<Integer>> fenzuList = handFenZu(hand, zhuColor);
         //拖拉机
         List<Integer> chuPaiSeatTuoLaJi = checkShuaiPaiContainTuoLaJi(fenzuList, zhuColor);
+
+        List<List<Integer>> ctFenzuList = handFenZu(new ArrayList<>(ctCardIds), zhuColor);
+        List<Integer>  ctTuoLaJiSize =checkShuaiPaiContainTuoLaJi(ctFenzuList, zhuColor);
+        int  ctTuoLaJiSize1 = ctTuoLaJiSize.size();
         int tljlength = chuPaiSeatTuoLaJi.size() / 2;
-        if (firstHaveTuoLaJi && chuPaiSeatTuoLaJi.size() >= 4) {
+        int tljSize = chuPaiSeatTuoLaJi.size();
+        if (firstHaveTuoLaJi && chuPaiSeatTuoLaJi.size() >= 4 ) {
             boolean canOut = checkNextPlayersCanKillShuaiTuoLaJi(chuPaiSeatTuoLaJi, ctCardIds, zhuColor, tljlength);
-            if (canOut ) {
-                shuaiCardIds.removeAll(chuPaiSeatTuoLaJi);
+            if (canOut && ctTuoLaJiSize1 >= tljSize &&  ctDuiCount>=fisrtDuiCount) {
+                //能盖住 且接的拖拉机长度大于出牌人的拖拉机长度。且对子数量必须相等
+                //shuaiCardIds.removeAll(chuPaiSeatTuoLaJi);
                 return nextS;
             }else{
                 return winSeat;
