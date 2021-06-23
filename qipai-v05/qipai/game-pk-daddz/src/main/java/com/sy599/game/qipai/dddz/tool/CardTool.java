@@ -224,8 +224,8 @@ public final class CardTool {
                 if (chupaiSeat == player.getSeat()) {
                     continue;
                 }
-                 //System.out.println();
-                 //System.out.println(player.getName() + "=======tlj=============" + player.getHandPais());
+//                 System.out.println();
+//                 System.out.println(player.getName() + "=======tlj=============" + player.getHandPais());
                 boolean canOut = checkNextPlayersCanOutTuoLaJi(chuPaiSeatTuoLaJi, player.getHandPais(), zhuColor, tljlength);
                 if (canOut) {
                     result.put("score", -20 * chuPaiSeatTuoLaJi.size() / 2);
@@ -241,8 +241,8 @@ public final class CardTool {
                 if (chupaiSeat == player.getSeat()) {
                     continue;
                 }
-                 //System.out.println();
-                 //System.out.println(player.getName() + "=====dui===============" + player.getHandPais());
+//                 System.out.println();
+//                 System.out.println(player.getName() + "=====dui===============" + player.getHandPais());
                 boolean canOut = checkNextPlayersCanOutDuiZi(chuPaiSeatDuiZi, player.getHandPais(), zhuColor);
                 if (canOut) {
                     result.put("score", -20);
@@ -293,7 +293,7 @@ public final class CardTool {
         List<Integer> handPais = new ArrayList<>(handPai);
         if (index0color == zhuColor) {
             //出牌为主拖拉机
-            int[] chuPaiSeatAry = turnZhuPaiToAry(chuPaiSeatTuoLaJi, zhuColor);
+            int[] chuPaiSeatAry = turnZhuPaiToAryTLJ(chuPaiSeatTuoLaJi, zhuColor);
             int chuPaiTljBeginIndex = 0;
             for (int i = 0; i < chuPaiSeatAry.length; i++) {
                 if (chuPaiSeatAry[i] >= 2) {
@@ -308,7 +308,7 @@ public final class CardTool {
             if (zhulist.size() < 4) {
                 return false;
             }
-            int[] nextPlaySeatAry = turnZhuPaiToAry(zhulist, zhuColor);//10,j q k A   副2  正2  小王 大王
+            int[] nextPlaySeatAry = turnZhuPaiToAryTLJ(zhulist, zhuColor);//10,j q k A   副2  正2  小王 大王
              //System.out.println("主拖出牌：" + StringUtil.implode(chuPaiSeatAry));
              //System.out.println("主拖下家：" + StringUtil.implode(nextPlaySeatAry));
             for (int i = 0; i < nextPlaySeatAry.length - 1; i++) {
@@ -673,7 +673,9 @@ public final class CardTool {
             } else if (i == 15) {
                 //副2
                 List<Integer> fu2 = getFu2(colorlist, zhuColor);
-                tuolaji.addAll(fu2);
+                if(null!=fu2 && fu2.size()>0){
+                    tuolaji.addAll(fu2);
+                }
             } else if (i == 16) {
                 //正2小王
                 int cards = 15 + 100 * zhuColor;
@@ -927,7 +929,7 @@ public final class CardTool {
         List<Integer> handPais = new ArrayList<>(handPai);
         if (index0color == zhuColor) {
             //出牌为主拖拉机
-            int[] chuPaiSeatAry = turnZhuPaiToAry(chuPaiSeatTuoLaJi, zhuColor);
+            int[] chuPaiSeatAry = turnZhuPaiToAryTLJ(chuPaiSeatTuoLaJi, zhuColor);
             int chuPaiTljBeginIndex = 0;
             for (int i = 0; i < chuPaiSeatAry.length; i++) {
                 if (chuPaiSeatAry[i] >= 2) {
@@ -945,7 +947,7 @@ public final class CardTool {
             if (zhulist.size() < 4) {
                 return false;
             }
-            int[] nextPlaySeatAry = turnZhuPaiToAry(zhulist, zhuColor);//10,j q k A   副2  正2  小王 大王
+            int[] nextPlaySeatAry = turnZhuPaiToAryTLJ(zhulist, zhuColor);//10,j q k A   副2  正2  小王 大王
              //System.out.println("主拖出牌：" + StringUtil.implode(chuPaiSeatAry));
              //System.out.println("主拖下家：" + StringUtil.implode(nextPlaySeatAry));
             for (int i = 0; i < nextPlaySeatAry.length - 1; i++) {
@@ -1039,7 +1041,7 @@ public final class CardTool {
             } else if (fulist.size() == 0) {
                 //自己没副  出主能否打起
                 fulist=fenzuList.get(4);
-                int[] nextPlaySeatAry =turnZhuPaiToAry(fulist,zhuColor);//10,j q k A
+                int[] nextPlaySeatAry =turnZhuPaiToAryTLJ(fulist,zhuColor);//10,j q k A
                 //System.out.println("副拖出牌："+ StringUtil.implode(chuPaiSeatAry));
                 //System.out.println("主拖下家："+ StringUtil.implode(nextPlaySeatAry));
                 for(int i=0;i<nextPlaySeatAry.length-1;i++){
@@ -1205,92 +1207,92 @@ public final class CardTool {
         }
         return false;
     }
-    private static boolean checkNextPlayersCanKillShuaiDan(List<Integer> chuPaiSeatTuoLaJi, List<Integer> handPai, int zhuColor) {
-        int index0color = 0;
-        if (CardUtils.isZhu(chuPaiSeatTuoLaJi.get(0), zhuColor)) {
-            index0color = zhuColor;
-        } else {
-            index0color = CardUtils.loadCardColor(chuPaiSeatTuoLaJi.get(0));
-        }
-        List<Integer> handPais = new ArrayList<>(handPai);
-        if (index0color == zhuColor) {
-            //出牌为主
-            int[] chuPaiSeatAry = turnZhuPaiToAry(chuPaiSeatTuoLaJi, zhuColor);
-            int chuPaiTljBeginIndex = 0;
-            for (int i = 0; i < chuPaiSeatAry.length; i++) {
-                if (chuPaiSeatAry[i] == 1) {
-                    chuPaiTljBeginIndex = i;
-                    break;
-                }
-            }
-
-            List<List<Integer>> fenzuList = handFenZu(handPais, zhuColor);
-            // fenzulist.get(4); 对应主牌组
-            List<Integer> zhulist = fenzuList.get(4);
-            if (zhulist.size() <= 0) {
-                return false;
-            }
-            int[] nextPlaySeatAry = turnZhuPaiToAryDuiZiAndDan(zhulist, zhuColor);//10,j q k A   副2  正2  小王 大王
-            //System.out.println("k主单出牌：" + StringUtil.implode(chuPaiSeatAry));
-            //System.out.println("k主单下家：" + StringUtil.implode(nextPlaySeatAry));
-            for (int i = 0; i < nextPlaySeatAry.length; i++) {
-                if (nextPlaySeatAry[i] >= 1 && i > chuPaiTljBeginIndex) {
-                    if(i==5){
-                        List<Integer> f2 = getOneFu2(zhulist,zhuColor);
-                        removeListParam(handPai,f2.get(0),1);return true;
-                    }else if(i==6){
-                        removeListParam(handPai,15+100*zhuColor,1);return true;
-                    }else if(i==7){
-                        removeListParam(handPai,501,1);return true;
-                    }else if(i==8){
-                        removeListParam(handPai,502,1);return true;
-                    }else{
-                        removeListParam(handPai,10+i+100*zhuColor,1);return true;
-                    }
-                }
-            }
-        } else {
-            //出牌为副
-            int[] chuPaiSeatAry = turnFuPaiToAry(chuPaiSeatTuoLaJi, zhuColor);
-            int chuPaiTljBeginIndex = 0;
-            for (int i = 0; i < chuPaiSeatAry.length; i++) {
-                if (chuPaiSeatAry[i] == 1) {
-                    chuPaiTljBeginIndex = i;
-                    break;
-                }
-            }
-            List<List<Integer>> fenzuList = handFenZu(handPais, zhuColor);
-            int co = index0color - 1;
-            List<Integer> fulist = fenzuList.get(co);//对应颜色的副牌
-            if (fulist.size() >= 1) {
-                int[] nextPlaySeatAry = turnFuPaiToAry(fulist, zhuColor);//10,j q k A
-                 //System.out.println("k副单出牌：" + StringUtil.implode(chuPaiSeatAry));
-                 //System.out.println("k副单下家：" + StringUtil.implode(nextPlaySeatAry));
-                for (int i = 0; i < nextPlaySeatAry.length; i++) {
-                    if (nextPlaySeatAry[i] >= 1 && i > chuPaiTljBeginIndex) {
-                        removeListParam(handPai,10+co*100,1);
-                        return true;
-                    }
-                }
-            } else if (fulist.size() == 0) {
-                //自己没副  出主能否打起
-                fulist=fenzuList.get(4);
-                int[] nextPlaySeatAry =turnZhuPaiToAryDuiZiAndDan(fulist,zhuColor);//10,j q k A   副2  正2  小王 大王
-                //System.out.println("副单出牌："+ StringUtil.implode(chuPaiSeatAry));
-                //System.out.println("主单下家："+ StringUtil.implode(nextPlaySeatAry));
-                for(int i=0;i<nextPlaySeatAry.length;i++){
-                    if(nextPlaySeatAry[i]>=1){
-                        removeListParam(handPai,fulist.get(0),1);
-                        return true;
-                    }
-                }
-            } else {
-                return false;
-            }
-
-        }
-        return false;
-    }
+//    private static boolean checkNextPlayersCanKillShuaiDan(List<Integer> chuPaiSeatTuoLaJi, List<Integer> handPai, int zhuColor) {
+//        int index0color = 0;
+//        if (CardUtils.isZhu(chuPaiSeatTuoLaJi.get(0), zhuColor)) {
+//            index0color = zhuColor;
+//        } else {
+//            index0color = CardUtils.loadCardColor(chuPaiSeatTuoLaJi.get(0));
+//        }
+//        List<Integer> handPais = new ArrayList<>(handPai);
+//        if (index0color == zhuColor) {
+//            //出牌为主
+//            int[] chuPaiSeatAry = turnZhuPaiToAry(chuPaiSeatTuoLaJi, zhuColor);
+//            int chuPaiTljBeginIndex = 0;
+//            for (int i = 0; i < chuPaiSeatAry.length; i++) {
+//                if (chuPaiSeatAry[i] == 1) {
+//                    chuPaiTljBeginIndex = i;
+//                    break;
+//                }
+//            }
+//
+//            List<List<Integer>> fenzuList = handFenZu(handPais, zhuColor);
+//            // fenzulist.get(4); 对应主牌组
+//            List<Integer> zhulist = fenzuList.get(4);
+//            if (zhulist.size() <= 0) {
+//                return false;
+//            }
+//            int[] nextPlaySeatAry = turnZhuPaiToAryDuiZiAndDan(zhulist, zhuColor);//10,j q k A   副2  正2  小王 大王
+//            //System.out.println("k主单出牌：" + StringUtil.implode(chuPaiSeatAry));
+//            //System.out.println("k主单下家：" + StringUtil.implode(nextPlaySeatAry));
+//            for (int i = 0; i < nextPlaySeatAry.length; i++) {
+//                if (nextPlaySeatAry[i] >= 1 && i > chuPaiTljBeginIndex) {
+//                    if(i==5){
+//                        List<Integer> f2 = getOneFu2(zhulist,zhuColor);
+//                        removeListParam(handPai,f2.get(0),1);return true;
+//                    }else if(i==6){
+//                        removeListParam(handPai,15+100*zhuColor,1);return true;
+//                    }else if(i==7){
+//                        removeListParam(handPai,501,1);return true;
+//                    }else if(i==8){
+//                        removeListParam(handPai,502,1);return true;
+//                    }else{
+//                        removeListParam(handPai,10+i+100*zhuColor,1);return true;
+//                    }
+//                }
+//            }
+//        } else {
+//            //出牌为副
+//            int[] chuPaiSeatAry = turnFuPaiToAry(chuPaiSeatTuoLaJi, zhuColor);
+//            int chuPaiTljBeginIndex = 0;
+//            for (int i = 0; i < chuPaiSeatAry.length; i++) {
+//                if (chuPaiSeatAry[i] == 1) {
+//                    chuPaiTljBeginIndex = i;
+//                    break;
+//                }
+//            }
+//            List<List<Integer>> fenzuList = handFenZu(handPais, zhuColor);
+//            int co = index0color - 1;
+//            List<Integer> fulist = fenzuList.get(co);//对应颜色的副牌
+//            if (fulist.size() >= 1) {
+//                int[] nextPlaySeatAry = turnFuPaiToAry(fulist, zhuColor);//10,j q k A
+//                 //System.out.println("k副单出牌：" + StringUtil.implode(chuPaiSeatAry));
+//                 //System.out.println("k副单下家：" + StringUtil.implode(nextPlaySeatAry));
+//                for (int i = 0; i < nextPlaySeatAry.length; i++) {
+//                    if (nextPlaySeatAry[i] >= 1 && i > chuPaiTljBeginIndex) {
+//                        removeListParam(handPai,10+co*100,1);
+//                        return true;
+//                    }
+//                }
+//            } else if (fulist.size() == 0) {
+//                //自己没副  出主能否打起
+//                fulist=fenzuList.get(4);
+//                int[] nextPlaySeatAry =turnZhuPaiToAryDuiZiAndDan(fulist,zhuColor);//10,j q k A   副2  正2  小王 大王
+//                //System.out.println("副单出牌："+ StringUtil.implode(chuPaiSeatAry));
+//                //System.out.println("主单下家："+ StringUtil.implode(nextPlaySeatAry));
+//                for(int i=0;i<nextPlaySeatAry.length;i++){
+//                    if(nextPlaySeatAry[i]>=1){
+//                        removeListParam(handPai,fulist.get(0),1);
+//                        return true;
+//                    }
+//                }
+//            } else {
+//                return false;
+//            }
+//
+//        }
+//        return false;
+//    }
 
 
     /**
@@ -1332,8 +1334,10 @@ public final class CardTool {
      */
     private static int[] turnZhuPaiToAry(List<Integer> colorlist, int zhuColor) {
         int[] ay = {0, 0, 0, 0, 0, 0, 0, 0, 0};//10,j q k A   副2  正2  小王 大王
+        List<Integer> fu2 = new ArrayList<>();
         for (int p : colorlist) {
             int val = CardUtils.loadCardValue(p);
+            int color = CardUtils.loadCardColor(p);
 //			有主花色时,主A副2主2小王大王可组成姊妹对。无主时,只有大王和	小王可组成姊妹对。
             if (zhuColor > 0) {
                 if (val == 15 && zhuColor == CardUtils.loadCardColor(p)) {
@@ -1356,8 +1360,55 @@ public final class CardTool {
                     ay[5] = ay[5] + 1;//副2
                 }
             }
+            if(val==15 && color!=zhuColor){
+                fu2.add(p);
+            }
         }
          //System.out.println(StringUtil.implode(ay,","));
+
+        return ay;
+    }
+  private static int[] turnZhuPaiToAryTLJ(List<Integer> colorlist, int zhuColor) {
+        int[] ay = {0, 0, 0, 0, 0, 0, 0, 0, 0};//10,j q k A   副2  正2  小王 大王
+        List<Integer> fu2 = new ArrayList<>();
+        for (int p : colorlist) {
+            int val = CardUtils.loadCardValue(p);
+            int color = CardUtils.loadCardColor(p);
+//			有主花色时,主A副2主2小王大王可组成姊妹对。无主时,只有大王和	小王可组成姊妹对。
+            if (zhuColor > 0) {
+                if (val == 15 && zhuColor == CardUtils.loadCardColor(p)) {
+                    //主2下标
+                    ay[6] = ay[6] + 1;
+                } else if (val == 15 && (zhuColor != CardUtils.loadCardColor(p) || zhuColor == 0)) {
+                    ay[5] = ay[5] + 1;//副2
+                } else if (val == 2) {
+                    ay[8] = ay[8] + 1;//大王
+                } else if (val == 1) {
+                    ay[7] = ay[7] + 1;//小王
+                } else {
+                    ay[val - 10] = ay[val - 10] + 1;
+                }
+            } else {
+                if (val == 15 && zhuColor == CardUtils.loadCardColor(p)) {
+                    //主2下标
+                    ay[6] = ay[6] + 1;
+                } else if (val == 15 && (zhuColor != CardUtils.loadCardColor(p) || zhuColor == 0)) {
+                    ay[5] = ay[5] + 1;//副2
+                }
+            }
+            if(val==15 && color!=zhuColor){
+                fu2.add(p);
+            }
+        }
+         //System.out.println(StringUtil.implode(ay,","));
+        //10,j q k A   副2  正2  小王 大王
+        if(ay[5]>=2){
+            //检查附二花色是否成对
+            List<Integer> fu2Dui = CardUtils.getDuiCards(fu2);
+            if(null==fu2Dui || fu2Dui.size()<=0){
+                ay[5]=0;
+            }
+        }
         return ay;
     }
 
@@ -2085,7 +2136,7 @@ public final class CardTool {
             if (winType.getType()<5 && firstType.getType()==ct.getType() && winType.getType() == ct.getType() && !CardUtils.comCardValue(winCard, card, zhuColor) && winType.getType()!=CardType.LONGPAI) {
                 winSeat = nextS;
                 winType = ct;
-                 System.err.println(" 同牌比较 主："+zhuColor+" 赢家座位号："+winSeat);
+                 //System.err.println(" 同牌比较 主："+zhuColor+" 赢家座位号："+winSeat);
                  continue;
             }else{
                 //拖拉机比较
