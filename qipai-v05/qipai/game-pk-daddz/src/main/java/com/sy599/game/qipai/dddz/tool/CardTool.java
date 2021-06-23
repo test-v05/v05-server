@@ -131,7 +131,7 @@ public final class CardTool {
      * @param
      * @return
      */
-    public static int checkCardValue(List<Integer> hands, List<Integer> list, int zhuColor, int disColor, boolean isFirst, int chulongpai) {
+    public static int checkCardValue(List<Integer> hands, List<Integer> list, int zhuColor, int disColor, boolean isFirst, int chulongpai,List<Integer> deskPai) {
 
         //一轮首次出牌
         if (isFirst) {
@@ -172,7 +172,7 @@ public final class CardTool {
                 if (!allZhu(list, zhuColor)) {
                     return -1;
                 }
-                return canChuPai(list, type, zhuCards);
+                return canChuPai(list, type, zhuCards,deskPai,zhuColor);
             } else {
                 List<Integer> chuZhus = CardUtils.getZhu(list, zhuColor);
                 //还有主没出完
@@ -195,7 +195,7 @@ public final class CardTool {
                 }
             }
 
-            return canChuPai(list, type, cards);
+            return canChuPai(list, type, cards,deskPai,zhuColor);
 
         }
 
@@ -1706,7 +1706,7 @@ public final class CardTool {
      * @param handCards
      * @return
      */
-    private static int canChuPai(List<Integer> list, int type, List<Integer> handCards) {
+    private static int canChuPai(List<Integer> list, int type, List<Integer> handCards,List<Integer> deskPai,int zhuColor) {
         int hDui = CardUtils.hasDuiCount(handCards);
         int cDui = CardUtils.hasDuiCount(list);
         //有对不出对
@@ -1720,6 +1720,26 @@ public final class CardTool {
             if (sDui > cDui && hDui != 100) {
                 return -1;
             }
+        }else if(type >=5){
+            //如果出牌带对子 垫牌手中有对必须出对
+            List<Integer> deskPaiCopy = new ArrayList<>(deskPai);
+
+            //桌牌对子数量
+            int deskDuiNum = CardUtils.hasDuiNum(deskPaiCopy);
+
+            List<Integer> dianpai = CardUtils.getDianCards3(handCards,zhuColor);
+            int dianpaiDuiNum = CardUtils.hasDuiNum(dianpai);
+            if(deskDuiNum>0 && dianpaiDuiNum>0 && cDui==0){
+                // 情况1：甩牌带对子 自己垫牌有对不出对子
+                return -1;
+            }
+            if(deskDuiNum>0 && cDui>0){
+                if(dianpaiDuiNum >=deskDuiNum && cDui<deskDuiNum){
+                    //情况2：首家甩中有2个对子 自己能垫2个 但是只垫了1个
+                    return -1;
+                }
+            }
+
         }
         return 0;
     }

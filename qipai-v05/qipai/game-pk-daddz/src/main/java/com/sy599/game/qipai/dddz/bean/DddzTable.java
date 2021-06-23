@@ -907,12 +907,12 @@ public class DddzTable extends BaseTable {
      * @param player
      * @param cards
      */
-    public void disCards(DddzPlayer player, List<Integer> cards) {
+    public void disCards(DddzPlayer player, List<Integer> cards,List<Integer> deskPai) {
         setDisCardSeat(player.getSeat());
 
         if (turnFirstSeat == player.getSeat()) {
             //插画
-            int res = CardTool.checkCardValue(player.getHandPais(), cards, zhuColor, disColor, true, op_chulongpai);
+            int res = CardTool.checkCardValue(player.getHandPais(), cards, zhuColor, disColor, true, op_chulongpai,deskPai);
             if (res < 0) {
                 player.writeErrMsg("出牌不符合规则。");
                 return;
@@ -952,7 +952,7 @@ public class DddzTable extends BaseTable {
                 player.writeErrMsg("出牌不符合规则。");
                 return;
             }
-            int res = CardTool.checkCardValue(player.getHandPais(), cards, zhuColor, disColor, false, op_chulongpai);
+            int res = CardTool.checkCardValue(player.getHandPais(), cards, zhuColor, disColor, false, op_chulongpai,deskPai);
             if (res < 0) {
                 player.writeErrMsg("出牌不符合规则。");
                 return;
@@ -1212,7 +1212,12 @@ public class DddzTable extends BaseTable {
             if (cards != null && cards.size() > 0) {
                 changeDisCardRound(1);
                 // 出牌了
-                disCards(player, cards);
+                List<Integer> fisrtDis = seatMap.get(turnFirstSeat).getCurOutCard(getTurnNum());
+                if(fisrtDis==null){
+                    disCards(player, cards,new ArrayList<>());
+                }else{
+                    disCards(player, cards,new ArrayList<>(fisrtDis));
+                }
             } else {
                 if (disCardRound > 0) {
                     changeDisCardRound(1);

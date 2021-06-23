@@ -704,7 +704,28 @@ public static List<Integer> getDianCards3(List<Integer> hands, int color) {
         }
 
         return dui;
+
     }
+
+    /**
+     *
+     * @param hands
+     * @return 返回对子数量
+     */
+    public static int hasDuiNum(List<Integer> hands) {
+        HashSet<Integer> set = new HashSet<Integer>();
+        int dui = 0;
+        for (Integer card : hands) {
+            if (!set.contains(card)) {
+                set.add(card);
+            } else {
+                dui++;
+            }
+        }
+        return dui;
+    }
+
+
     public static boolean isAllDui(List<Integer> hands) {
         HashSet<Integer> set = new HashSet<Integer>();
         int dui = 0;
