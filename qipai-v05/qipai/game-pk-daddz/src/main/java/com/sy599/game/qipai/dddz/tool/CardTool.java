@@ -211,7 +211,7 @@ public final class CardTool {
     public static Map<String, Object> checkShuaiPai(List<Integer> hands, Map<Integer, DddzPlayer> seatMap, int zhuColor, int chupaiSeat) {
         //大王小王 主2 副二 A K  Q J 10
         List<Integer> hand = new ArrayList<>(hands);
-        List<Integer> shuaiPaiResult = new ArrayList<>();
+        List<Integer> res = new ArrayList<>(hands);
         Map<String, Object> result = new HashMap<>();
         result.put("score", 0);
         result.put("Cards", hand);
@@ -233,7 +233,17 @@ public final class CardTool {
                     return result;
                 }
             }
+
+                //判断完拖拉机后移除拖拉机的牌
+                res.removeAll(chuPaiSeatTuoLaJi);
+            if(res.isEmpty()){
+                return result;
+            }else{
+                fenzuList = handFenZu(res, zhuColor);
+            }
+
         }
+
         // 对子
         List<Integer> chuPaiSeatDuiZi = checkShuaiPaiContainDuiZi(fenzuList, zhuColor);
         if (!chuPaiSeatDuiZi.isEmpty()) {
@@ -250,6 +260,13 @@ public final class CardTool {
                     return result;
                 }
             }
+                //判断完拖拉机后移除对子的牌
+                res.removeAll(chuPaiSeatDuiZi);
+                if(res.isEmpty()){
+                    return result;
+                }else{
+                    fenzuList = handFenZu(res, zhuColor);
+                }
         }
 
         List<Integer> chuPaiSeatDan = checkShuaiPaiContainDan(fenzuList, zhuColor);
