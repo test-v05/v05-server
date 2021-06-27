@@ -5434,7 +5434,8 @@ public abstract class BaseTable {
                 return false;
             }
         } catch (Exception e) {
-            LogUtil.errorLog.error("Exception:" + e.getMessage(), e);
+        	LogUtil.errorLog.error("Exception:" + e.getMessage(), e);
+            return false;
         }
         return true;
     }
@@ -7338,6 +7339,7 @@ public abstract class BaseTable {
             }
         } catch (Exception e) {
             LogUtil.errorLog.error("Exception:" + e.getMessage(), e);
+            return false;
         }
         return true;
     }
