@@ -5402,7 +5402,9 @@ public abstract class BaseTable {
 					GroupUser gu = getGroupUser(player.getUserId());
 					if (gu == null || gu.getCredit() + player.getWinLoseCredit() < creditDissLimit) {
 						disPlayerNames += player.getName() + ",";
-						sb.append(gu.getUserId()).append(",").append(gu.getCredit()).append(",").append(player.getWinLoseCredit()).append(";");
+						if(gu!=null){
+							sb.append(gu.getUserId()).append(",").append(gu.getCredit()).append(",").append(player.getWinLoseCredit()).append(";");
+						}
 					}
 				}
             }
@@ -7305,7 +7307,9 @@ public abstract class BaseTable {
                 GroupUser gu = GroupDao.getInstance().loadGroupUserForceMaster(player.getUserId(), groupIdStr);
                 if (gu == null || gu.getCredit() < creditJoinLimit) {
                     disPlayerNames += player.getName() + ",";
-                    sb.append(gu.getUserId()).append(",").append(gu.getCredit()).append(";");
+                    if(gu !=null){
+						sb.append(gu.getUserId()).append(",").append(gu.getCredit()).append(";");
+					}
                 }
             }
             if (!"".equals(disPlayerNames)) {
