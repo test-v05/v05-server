@@ -269,11 +269,7 @@ public final class CardTool {
                 }
         }
 
-//         List<Integer> chuPaiSeatDan = checkShuaiPaiContainDan(fenzuList, zhuColor);
-        if(!res.isEmpty()) {
-            List<Integer> chuPaiSeatDan = new ArrayList<>();
-            int min_ =CardUtils.getMinCard(new ArrayList<>(res),zhuColor);
-            chuPaiSeatDan.add(min_);
+         List<Integer> chuPaiSeatDan = checkShuaiPaiContainDan(fenzuList, zhuColor);
             if (!chuPaiSeatDan.isEmpty()) {
                 for (DddzPlayer player : seatMap.values()) {
                     if (chupaiSeat == player.getSeat()) {
@@ -289,7 +285,6 @@ public final class CardTool {
                     }
                 }
             }
-        }
         return result;
     }
 
@@ -865,6 +860,7 @@ public final class CardTool {
                 if (minPai == 0) {
                     return result;
                 }
+
                 if (minPai == 15) {
                     //副2 返回一个副2
                     List<Integer> fu2 = getOneFu2(colorlist, zhuColor);
@@ -1674,9 +1670,6 @@ public final class CardTool {
     public static int isContainDan2(int[] handAry) {
         // 10 j q k a fu2  zheng2
         for (int i = 0; i < handAry.length; i++) {
-            if (handAry[5] >= 1) {
-                return 15;
-            }
             if (handAry[i] == 1) {
                 return i + 10;
             }
@@ -1771,8 +1764,9 @@ public final class CardTool {
         int zhu = 3;
       int a =  ComparaShuaiPai2(chu,jie,zhu,1,2,chu);
         System.err.println("a："+a);
-//        int[] a1 = {2,0,0,0,1};
+        int[] a1 = {0,0,1,0,1,1,0,0,0};
 //
+       System.err.println(" isContainDan2(a1):"+ isContainDan2(a1));
 
 
     }
