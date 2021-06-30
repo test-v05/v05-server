@@ -269,23 +269,27 @@ public final class CardTool {
                 }
         }
 
-        List<Integer> chuPaiSeatDan = checkShuaiPaiContainDan(fenzuList, zhuColor);
-        if (!chuPaiSeatDan.isEmpty()) {
-            for (DddzPlayer player : seatMap.values()) {
-                if (chupaiSeat == player.getSeat()) {
-                    continue;
-                }
-               //  //System.out.println();
-                 //System.out.println(player.getName() + "=======dan=============" + player.getHandPais());
-                boolean canOut = checkNextPlayersCanOutDan(chuPaiSeatDan, player.getHandPais(), zhuColor);
-                if (canOut) {
-                    result.put("score", -10);
-                    result.put("Cards", chuPaiSeatDan);
-                    return result;
+//         List<Integer> chuPaiSeatDan = checkShuaiPaiContainDan(fenzuList, zhuColor);
+        if(!res.isEmpty()) {
+            List<Integer> chuPaiSeatDan = new ArrayList<>();
+            int min_ =CardUtils.getMinCard(new ArrayList<>(res),zhuColor);
+            chuPaiSeatDan.add(min_);
+            if (!chuPaiSeatDan.isEmpty()) {
+                for (DddzPlayer player : seatMap.values()) {
+                    if (chupaiSeat == player.getSeat()) {
+                        continue;
+                    }
+                    System.out.println();
+                    System.out.println(player.getName() + "=======dan=============" + player.getHandPais());
+                    boolean canOut = checkNextPlayersCanOutDan(chuPaiSeatDan, player.getHandPais(), zhuColor);
+                    if (canOut) {
+                        result.put("score", -10);
+                        result.put("Cards", chuPaiSeatDan);
+                        return result;
+                    }
                 }
             }
         }
-
         return result;
     }
 
