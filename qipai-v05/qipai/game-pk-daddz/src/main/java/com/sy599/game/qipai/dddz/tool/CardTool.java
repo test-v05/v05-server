@@ -279,8 +279,8 @@ public final class CardTool {
                     if (chupaiSeat == player.getSeat()) {
                         continue;
                     }
-                    System.out.println();
-                    System.out.println(player.getName() + "=======dan=============" + player.getHandPais());
+//                    System.out.println();
+//                    System.out.println(player.getName() + "=======dan=============" + player.getHandPais());
                     boolean canOut = checkNextPlayersCanOutDan(chuPaiSeatDan, player.getHandPais(), zhuColor);
                     if (canOut) {
                         result.put("score", -10);
