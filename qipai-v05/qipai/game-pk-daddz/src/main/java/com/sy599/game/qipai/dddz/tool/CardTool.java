@@ -276,7 +276,7 @@ public final class CardTool {
                         continue;
                     }
 //                    System.out.println();
-//                    System.out.println(player.getName() + "=======dan=============" + player.getHandPais());
+                    System.out.println(player.getName() + "=======dan=============" + player.getHandPais());
                     boolean canOut = checkNextPlayersCanOutDan(chuPaiSeatDan, player.getHandPais(), zhuColor);
                     if (canOut) {
                         result.put("score", -10);
@@ -1672,6 +1672,9 @@ public final class CardTool {
         for (int i = 0; i < handAry.length; i++) {
             if (handAry[i] == 1) {
                 return i + 10;
+            }
+            if(i==5 && handAry[i]>=1){
+                return i+10;//副2特殊处理
             }
         }
         return 0;
