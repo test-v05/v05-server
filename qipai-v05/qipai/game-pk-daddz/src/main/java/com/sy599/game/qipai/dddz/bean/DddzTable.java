@@ -1010,7 +1010,7 @@ public class DddzTable extends BaseTable {
             //地主过叫分的一半之后,如果整个牌面剩余分数不足以打够地主叫分,地主可	以选择直接投降。(可在创建房间时勾选是否带此玩法)
             if (jiaoFen!=300 && bankGetScore >= jiaoFen / 2 && bankGetScore + deskSyScore < jiaoFen && op_bankerTX == 1 && bankerClickedTouXiang == 0) {
                 //没叫春天 可投降
-                setNowDisCardSeat(banker);
+               // setNowDisCardSeat(banker);
                 ComRes.Builder builder = SendMsgUtil.buildComRes(WebSocketMsgType.res_code_pk_dddz_dztouxiang, banker, -1);
                 for (DddzPlayer splayer : seatMap.values()) {
                     splayer.writeSocket(builder.build());
@@ -1457,9 +1457,9 @@ public class DddzTable extends BaseTable {
         player.setTouXiang(type);
         bankerClickedTouXiang = 1;
         int nextseat = getTurnFirstSeat();
-        setNowDisCardSeat(nextseat);
+        //  setNowDisCardSeat(nextseat);
         changeExtend();
-        ComRes.Builder builder = SendMsgUtil.buildComRes(WebSocketMsgType.res_code_pk_dddz_dztouxiang, nextseat, type);
+        ComRes.Builder builder = SendMsgUtil.buildComRes(WebSocketMsgType.res_code_pk_dddz_dztouxiang, getNowDisCardSeat(), type);
         for (DddzPlayer splayer : seatMap.values()) {
             splayer.writeSocket(builder.build());
         }
