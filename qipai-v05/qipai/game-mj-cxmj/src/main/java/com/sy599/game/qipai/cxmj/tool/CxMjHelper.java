@@ -1,10 +1,6 @@
 package com.sy599.game.qipai.cxmj.tool;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.sy599.game.qipai.cxmj.constant.CxMj;
 import org.apache.commons.lang.StringUtils;
@@ -266,4 +262,35 @@ public class CxMjHelper {
         }
         return list;
     }
+
+    /**
+     * 移除牌型ids中 val的牌
+     * @param ids
+     * @param val
+     * @param num 移除张数
+     * @return
+     */
+    public static List<Integer> dropValById(List<Integer> ids,int val,int num){
+        List<Integer> list=new ArrayList<>();
+        int count =0;
+        for (Integer id:ids) {
+            if(count>num){
+                list.add(id);
+            }
+            if(CxMj.getMajang(id).getVal()==val && count<num){
+                count++;
+                continue;
+            }else{
+                list.add(id);
+            }
+        }
+        return  list;
+    }
+
+//    public static void main(String[] args) {
+//       List<Integer> as = Arrays.asList(21, 22, 23, 1, 28, 55, 14, 41, 68, 67,13, 40, 94, 1004);
+//       System.out.println("==>");
+//       System.err.println(CxMjHelper.toMajiang(as));
+//        System.err.println(CxMjHelper.toMajiang(dropValById(as,24,4)));
+//    }
 }

@@ -1634,7 +1634,7 @@ public class CxMjTable extends BaseTable {
         checkMo();
     }
     public void addlogmsg(CxMjPlayer player,String str){
-        StringBuilder sb = new StringBuilder("cxmj");
+        StringBuilder sb = new StringBuilder("Cxmj");
         sb.append("|").append(getId());
         sb.append("|").append(getPlayBureau());
         sb.append("|").append(player.getUserId());
