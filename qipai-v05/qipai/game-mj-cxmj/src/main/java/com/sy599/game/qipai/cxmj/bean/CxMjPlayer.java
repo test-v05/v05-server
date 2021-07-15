@@ -626,7 +626,9 @@ public class CxMjPlayer extends Player {
         virtualGang.clear();
         gangNum=0;
         buId=0;
-        shuangGangData.clear();
+        if(shuangGangData!=null){
+            shuangGangData.clear();
+        }
     }
 
     /**
@@ -739,7 +741,9 @@ public class CxMjPlayer extends Player {
         virtualGang.clear();
         gangNum=0;
         buId=0;
-        shuangGangData.clear();
+        if(null!=shuangGangData){
+            shuangGangData.clear();
+        }
     }
 
     @Override
@@ -1684,7 +1688,7 @@ public class CxMjPlayer extends Player {
                 shuangGangData = CxMjTool.checkShuangGang(1, CxMjHelper.toMajiangIds(handPais), CxMjHelper.toMajiangIds(peng), getLastMoMajiang(), true);
                 //.println("MoCheck==>");
                 //System.err.println(shuangGangData);
-                if (shuangGangData.size() < 2) {
+                if (null==shuangGangData ||shuangGangData.size() < 2) {
                     return false;
                 } else {
                     return true;
@@ -1698,7 +1702,7 @@ public class CxMjPlayer extends Player {
                     shuangGangData = CxMjTool.checkShuangGang(1, CxMjHelper.toMajiangIds(handPais), CxMjHelper.toMajiangIds(peng), majiang, false);
                     //System.err.println("DisCheck==>");
                     //System.err.println(shuangGangData);
-                    if (shuangGangData.size() < 2) {
+                    if (shuangGangData==null||shuangGangData.size() < 2) {
                         return false;
                     } else {
                         return true;
