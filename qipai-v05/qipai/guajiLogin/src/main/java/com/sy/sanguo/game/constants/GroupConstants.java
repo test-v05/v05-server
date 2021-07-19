@@ -170,8 +170,9 @@ public class GroupConstants {
         SYS_COMMISSION_LOG_MAP_1.put(7, genGroupCommissionConfig(7, 801, 1000));
         SYS_COMMISSION_LOG_MAP_1.put(8, genGroupCommissionConfig(8, 1001, 1500));
         SYS_COMMISSION_LOG_MAP_1.put(9, genGroupCommissionConfig(9, 1501, 2000));
-        SYS_COMMISSION_LOG_MAP_1.put(10, genGroupCommissionConfig(10, 2001, 3000));
-        SYS_COMMISSION_LOG_MAP_1.put(11, genGroupCommissionConfig(11, 3001, 999900));
+        SYS_COMMISSION_LOG_MAP_1.put(10, genGroupCommissionConfig(10, 2001, 999900));
+//        SYS_COMMISSION_LOG_MAP_1.put(10, genGroupCommissionConfig(10, 2001, 3000));
+//        SYS_COMMISSION_LOG_MAP_1.put(11, genGroupCommissionConfig(11, 3001, 999900));
 
         SYS_COMMISSION_LOG_MAP_10.put(1, genGroupCommissionConfig(1, 0, 2000));
         SYS_COMMISSION_LOG_MAP_10.put(2, genGroupCommissionConfig(2, 2001, 3000));
@@ -182,8 +183,9 @@ public class GroupConstants {
         SYS_COMMISSION_LOG_MAP_10.put(7, genGroupCommissionConfig(7, 8001, 10000));
         SYS_COMMISSION_LOG_MAP_10.put(8, genGroupCommissionConfig(8, 10001, 15000));
         SYS_COMMISSION_LOG_MAP_10.put(9, genGroupCommissionConfig(9, 15001, 20000));
-        SYS_COMMISSION_LOG_MAP_10.put(10, genGroupCommissionConfig(10, 20001, 30000));
-        SYS_COMMISSION_LOG_MAP_10.put(11, genGroupCommissionConfig(11, 30001, 9999900));
+        SYS_COMMISSION_LOG_MAP_10.put(10, genGroupCommissionConfig(10, 20001, 9999900));
+//        SYS_COMMISSION_LOG_MAP_10.put(10, genGroupCommissionConfig(10, 20001, 30000));
+//        SYS_COMMISSION_LOG_MAP_10.put(11, genGroupCommissionConfig(11, 30001, 9999900));
 
         SYS_COMMISSION_LOG_MAP_100.put(1, genGroupCommissionConfig(1, 0, 20000));
         SYS_COMMISSION_LOG_MAP_100.put(2, genGroupCommissionConfig(2, 20001, 30000));
@@ -194,8 +196,9 @@ public class GroupConstants {
         SYS_COMMISSION_LOG_MAP_100.put(7, genGroupCommissionConfig(7, 80001, 100000));
         SYS_COMMISSION_LOG_MAP_100.put(8, genGroupCommissionConfig(8, 10001, 150000));
         SYS_COMMISSION_LOG_MAP_100.put(9, genGroupCommissionConfig(9, 150001, 200000));
-        SYS_COMMISSION_LOG_MAP_100.put(10, genGroupCommissionConfig(10, 200001, 300000));
-        SYS_COMMISSION_LOG_MAP_100.put(11, genGroupCommissionConfig(11, 300001, 9999900));
+        SYS_COMMISSION_LOG_MAP_100.put(10, genGroupCommissionConfig(10, 200001, 9999900));
+//        SYS_COMMISSION_LOG_MAP_100.put(10, genGroupCommissionConfig(10, 200001, 300000));
+//        SYS_COMMISSION_LOG_MAP_100.put(11, genGroupCommissionConfig(11, 300001, 9999900));
 
         SYS_GOLD_COMMISSION_LOG_MAP.put(1, genGroupGoldCommissionConfig(1, 0, 500));
         SYS_GOLD_COMMISSION_LOG_MAP.put(2, genGroupGoldCommissionConfig(2, 501, 1000));
