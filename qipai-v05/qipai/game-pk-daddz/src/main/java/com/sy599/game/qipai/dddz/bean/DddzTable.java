@@ -368,8 +368,14 @@ public class DddzTable extends BaseTable {
                 isOver = true;
             }
         }
+        //地主手中是否有牌
+       List<Integer> dzhands = seatMap.get(banker).getHandPais();
+        boolean shouAllPlayerLeftCards = false;
+        if(null!=dzhands && !dzhands.isEmpty()){
+            shouAllPlayerLeftCards = true;
+        }
         calcAfter();
-        ClosingInfoRes.Builder res = sendAccountsMsg(isOver, false, score, false, 0, seatMap.get(banker).getTouXiang() == 1, calcType);
+        ClosingInfoRes.Builder res = sendAccountsMsg(isOver, false, score, false, 0,  shouAllPlayerLeftCards, calcType);
         saveLog(isOver, 0, res.build());
         setLastWinSeat(banker);//下轮开始 地主先先叫
         lastbanker = banker;
@@ -2142,6 +2148,7 @@ public class DddzTable extends BaseTable {
         res.addAllExt(buildAccountsExt(over ? 1 : 0, score, koudi, touxiang));
         res.addExt(calcType + "");//26
         res.addExt(bankerKouDiPai+ "");//27
+        res.addExt(touxiang==true?"1":"0");
 //        if(koudi){
 //        	res.addAllCutCard(dipai);
 //        }
