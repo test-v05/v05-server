@@ -778,10 +778,10 @@ public class CxMjTool {
                                 result.put("gang2", dealGangList(CxMjHelper.toMajiang(try2Map.get(25))));
                                 result.put("mo2", 1004);
                                 result.put("hand", CxMjHelper.toMajiang(try2));
-                                 
-                                return result;
-                            }
-                        }
+
+                        return result;
+                    }
+                }
                     }
                 }
                 int g1val = 0;
