@@ -964,6 +964,9 @@ public class CxMjPlayer extends Player {
         CxMjTable table = getPlayingTable(CxMjTable.class);
         int dcr = table.getDisCardRound();
         List<CxMj> g1 =(List<CxMj>) gangM3.get("gang1");
+        if(g1==null ||g1.isEmpty()){
+            return;
+        }
         CxMj majiang = g1.get(0);
 
 //        PlayCardResMsg.MoMajiangRes.Builder mobuild = PlayCardResMsg.MoMajiangRes.newBuilder();
@@ -1142,7 +1145,9 @@ public class CxMjPlayer extends Player {
        List<CxMj> g1 =(List<CxMj>) gangM3.get("gang1");
        //gang2
        List<CxMj> g2 =(List<CxMj>) gangM3.get("gang2");
-
+        if(g1==null || g2==null|| g1.isEmpty()||g2.isEmpty()){
+            return;
+        }
        CxMj majiang = g1.get(0);
        //
         CxMj disMj = table.getNowDisCardIds().get(0);
