@@ -678,9 +678,11 @@ public class CxMjTool {
 //        List<Integer> hand = Arrays.asList(13, 40, 67, 14, 41, 68, 17, 44, 15, 72);
 //        List<Integer> peng = Arrays.asList(18, 45, 99);//86,
 //        System.err.println(checkShuangGang(1, hand, peng, CxMj.getMajang(16), false).toString());
-        List<Integer> hand = Arrays.asList(14, 41, 68, 95, 10, 37, 64, 91, 11, 38, 65, 92, 12, 13);
-        List<Integer> peng = Arrays.asList(12, 39, 66);
-        System.err.println(checkShuangGang(1, hand, new ArrayList<>(), CxMj.getMajang(13), true).toString());
+        List<Integer> hand = Arrays.asList(17, 44, 71, 4, 5, 6, 33, 7, 8, 13, 14, 41, 68, 98);
+        List<Integer> peng = new ArrayList<>();
+        CxMj mj =CxMj.getMajang(98);
+        boolean ismo  = true;
+        System.err.println(checkShuangGang(1, hand, new ArrayList<>(), mj,ismo ).toString());
 
 
     }
@@ -706,6 +708,7 @@ public class CxMjTool {
 //            System.out.println("peng " + CxMjHelper.toMajiang(peng));
 //            System.out.println("peng ar " + peng);
 //            System.out.println("gangMj " + gangMj);
+//            System.out.println("ismo " + ismo);
 //            if (gangMj != null) {
 //                System.out.println("gangMj " + gangMj + " " + gangMj.getId());
 //            }
@@ -724,6 +727,7 @@ public class CxMjTool {
 
                 Map<Integer, List<Integer>> gangList = CxMjHelper.getGangListById(ary);
                 Map<Integer, List<Integer>> gangSortList = new HashMap<>();
+                //2021年7月28日 09:43:57 下面这个是新的双杠逻辑判断
                 if (gangMj != null && gangList.size() >= 1 && gangList.size() < 3) {
                     if (gangList.containsKey(gangMj.getVal())) {
                         //先杠1个
@@ -766,9 +770,9 @@ public class CxMjTool {
                             try2.add(1004);
                             //移除2个杠；能否胡
                             try2 = CxMjHelper.dropValById(try2, gangMj.getVal(), 4);
-                            int try2length1 = try1.size();
+                            int try2length1 = try2.size();
                             try2 = CxMjHelper.dropValById(try2, 25, 4);
-                            int try2length2 = try1.size();
+                            int try2length2 = try2.size();
                             //剩余
                             //System.err.println( CxMjHelper.toMajiang(try2));
                             if(!peng.isEmpty()){
@@ -790,6 +794,8 @@ public class CxMjTool {
                         }
                     }
                 }
+
+                //之前的保底逻辑兜底计算
                 int g1val = 0;
                 int g2Val = 0;
                 List<Integer> g1 = new ArrayList<>();
@@ -918,15 +924,13 @@ public class CxMjTool {
                                 result.put("gang2", _g2);
                                 result.put("mo2", 1004);
                                 result.put("hand", CxMjHelper.toMajiang(copy4));
-
                                 return result;
-                                //gang1 =val
-                                //gang2 ==25
                             }
                         }
                     }
 
-                } else if ((gangList.size() == 1 && tong4num == 3 && (tong5num < 3 || tong5num == 4))) {
+                }
+                else if ((gangList.size() == 1 && tong4num == 3 && (tong5num < 3 || tong5num == 4))) {
                     ary.add(1004);
                     ary.add(1005);
                     List<Integer> cop = new ArrayList<>(ary);
@@ -963,7 +967,8 @@ public class CxMjTool {
                         result.put("mo2", 1005);
                         result.put("hand", CxMjHelper.toMajiang(copy));
                     }
-                } else if (gangList.size() == 1 && tong5num == 3 && (tong4num < 3 || tong4num == 4)) {
+                }
+                else if (gangList.size() == 1 && tong5num == 3 && (tong4num < 3 || tong4num == 4)) {
                     ary.add(1005);
                     ary.add(1004);
                     List<Integer> cop = new ArrayList<>(ary);
@@ -999,7 +1004,8 @@ public class CxMjTool {
                         result.put("mo2", 1004);
                         result.put("hand", CxMjHelper.toMajiang(copy));
                     }
-                } else if (gangList.size() == 1 && tong4num == 3 && tong5num == 3) {
+                }
+                else if (gangList.size() == 1 && tong4num == 3 && tong5num == 3) {
                     //shoupai 3万, 9条, 4条, 6万, 7筒, 8筒, 9筒, 1条, 1条, 7条, 2条, 8条, 1筒, 3万
                     // peng 3筒, 3筒, 3筒, 4筒, 4筒, 4筒
                     // gangmj =93 3筒
@@ -1073,7 +1079,8 @@ public class CxMjTool {
                             }
                         }
                     }
-                } else if (gangList.size() == 3) {
+                }
+                else if (gangList.size() == 3) {
                     List<Integer> _gangVal = new ArrayList<>();
                     for (Integer gangV : gangList.keySet()) {
                         _gangVal.add(gangV);
