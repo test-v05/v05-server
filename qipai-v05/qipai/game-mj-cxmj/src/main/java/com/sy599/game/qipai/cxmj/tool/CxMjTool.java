@@ -678,10 +678,10 @@ public class CxMjTool {
 //        List<Integer> hand = Arrays.asList(13, 40, 67, 14, 41, 68, 17, 44, 15, 72);
 //        List<Integer> peng = Arrays.asList(18, 45, 99);//86,
 //        System.err.println(checkShuangGang(1, hand, peng, CxMj.getMajang(16), false).toString());
-        List<Integer> hand = Arrays.asList(17, 44, 71, 4, 5, 6, 33, 7, 8, 13, 14, 41, 68, 98);
+        List<Integer> hand = Arrays.asList(11, 12, 39, 13, 40, 67, 15, 42, 69, 14, 41, 68, 96);
         List<Integer> peng = new ArrayList<>();
-        CxMj mj =CxMj.getMajang(98);
-        boolean ismo  = true;
+        CxMj mj =CxMj.getMajang(95);
+        boolean ismo  = false;
         System.err.println(checkShuangGang(1, hand, new ArrayList<>(), mj,ismo ).toString());
 
 
@@ -748,10 +748,8 @@ public class CxMjTool {
                             if(!peng.isEmpty()){
                                 try1.removeAll(peng);
                             }
-                            if(try1length1==try1length2){
-                                return result;//gangMj=4tong 只是单杠
-                            }
-                            if (TingTool.isHu(try1)) {
+
+                            if (TingTool.isHu(try1) && try1length1!=try1length2) {
                                 result.put("hu", true);
                                 result.put("gang1", dealGangList( CxMjHelper.toMajiang(gangList.get(gangMj.getVal()))));
                                 result.put("mo1", 1004);
@@ -778,10 +776,7 @@ public class CxMjTool {
                             if(!peng.isEmpty()){
                                 try2.removeAll(peng);
                             }
-                            if(try2length1==try2length2){
-                                return result;//gangMj=4tong 只是单杠
-                            }
-                            if (TingTool.isHu(try2)) {
+                            if (TingTool.isHu(try2) && try2length1!=try2length2) {
                                 result.put("hu", true);
                                 result.put("gang1", dealGangList(CxMjHelper.toMajiang(gangList.get(gangMj.getVal()))));
                                 result.put("mo1", 1005);
@@ -1014,7 +1009,7 @@ public class CxMjTool {
 //                    List<Integer> peng = Arrays.asList(18, 45, 99);//86,
 //                    System.err.println(checkShuangGang(1, hand, peng, CxMj.getMajang(16), false).toString());
                     for (Integer gangV : gangList.keySet()) {
-                        if (gangMj.getVal() != gangV) {
+                        if (gangMj!=null && gangMj.getVal() != gangV) {
                             gangMj = CxMj.getMajiangByVal(gangV);
                             break;
                         }
