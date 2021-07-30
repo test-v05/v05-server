@@ -715,6 +715,7 @@ public class CxMjTool {
 
             if (ver < 2) {
                 //获取所有组成4张的可能
+
                 List<Integer> ary = new ArrayList<>(handPais);
                 ary.addAll(new ArrayList<>(peng));
                 if (!ismo && gangMj != null) {
