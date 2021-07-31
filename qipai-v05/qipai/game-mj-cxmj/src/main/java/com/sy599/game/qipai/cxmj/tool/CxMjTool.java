@@ -678,10 +678,10 @@ public class CxMjTool {
 //        List<Integer> hand = Arrays.asList(13, 40, 67, 14, 41, 68, 17, 44, 15, 72);
 //        List<Integer> peng = Arrays.asList(18, 45, 99);//86,
 //        System.err.println(checkShuangGang(1, hand, peng, CxMj.getMajang(16), false).toString());
-        List<Integer> hand = Arrays.asList(11, 12, 39, 13, 40, 67, 15, 42, 69, 14, 41, 68, 96);
-        List<Integer> peng = new ArrayList<>();
-        CxMj mj =CxMj.getMajang(95);
-        boolean ismo  = false;
+        List<Integer> hand = Arrays.asList(3, 30, 57, 13, 40, 14, 41, 68, 95, 15, 84);
+        List<Integer> peng = Arrays.asList(19, 46, 73);
+        CxMj mj =CxMj.getMajang(84);
+        boolean ismo  = true;
         System.err.println(checkShuangGang(1, hand, new ArrayList<>(), mj,ismo ).toString());
 
 
@@ -728,6 +728,8 @@ public class CxMjTool {
 
                 Map<Integer, List<Integer>> gangList = CxMjHelper.getGangListById(ary);
                 Map<Integer, List<Integer>> gangSortList = new HashMap<>();
+                int tong4num = CxMjHelper.getMajiangCount(CxMjHelper.toMajiang(ary), 24);
+                int tong5num = CxMjHelper.getMajiangCount(CxMjHelper.toMajiang(ary), 25);
                 //2021年7月28日 09:43:57 下面这个是新的双杠逻辑判断
                 if (gangMj != null && gangList.size() >= 1 && gangList.size() < 3) {
                     if (gangList.containsKey(gangMj.getVal())) {
@@ -736,7 +738,40 @@ public class CxMjTool {
                         List<Integer> try1 = new ArrayList<>(handPais);
                         try1.add(1004);
                         Map<Integer, List<Integer>> try1Map = CxMjHelper.getGangListById(try1);
-                        if (try1Map.containsKey(24)) {
+                        if(try1Map.containsKey(25) && tong4num==2 && tong5num==4){
+                            //处理BUG 杠3条摸4筒 再杠5筒
+//                            List<Integer> hand = Arrays.asList(3, 30, 57, 13, 40, 14, 41, 68, 95, 15, 84);
+//                            List<Integer> peng = Arrays.asList(19, 46, 73);
+//                            CxMj mj =CxMj.getMajang(84);
+//                            boolean ismo  = true;
+//                            System.err.println(checkShuangGang(1, hand, new ArrayList<>(), mj,ismo ).toString());
+                            {
+                                try1.add(1005);
+                                //移除2个杠；能否胡
+
+                                try1 = CxMjHelper.dropValById(try1, gangMj.getVal(), 4);
+                                int try1length1 = try1.size();
+                                try1 = CxMjHelper.dropValById(try1, 25, 4);
+                                int try1length2 = try1.size();
+                                //剩余
+                                //   System.err.println( CxMjHelper.toMajiang(try1));
+                                if(!peng.isEmpty()){
+                                    try1.removeAll(peng);
+                                }
+
+                                if (TingTool.isHu(try1) && try1length1!=try1length2) {
+                                    result.put("hu", true);
+                                    result.put("gang1", dealGangList( CxMjHelper.toMajiang(gangList.get(gangMj.getVal()))));
+                                    result.put("mo1", 1004);
+                                    result.put("gang2", dealGangList(CxMjHelper.toMajiang(try1Map.get(25))));
+                                    result.put("mo2", 1005);
+                                    result.put("hand", CxMjHelper.toMajiang(try1));
+                                    System.err.println("0 "+result);
+                                    return result;
+                                }
+                            }
+
+                        }else  if (try1Map.containsKey(24)) {
                             try1.add(1005);
                             //移除2个杠；能否胡
 
@@ -812,8 +847,7 @@ public class CxMjTool {
                     gangSortList.putIfAbsent(g2Val, g2);
                     gangList = gangSortList;
                 }
-                int tong4num = CxMjHelper.getMajiangCount(CxMjHelper.toMajiang(ary), 24);
-                int tong5num = CxMjHelper.getMajiangCount(CxMjHelper.toMajiang(ary), 25);
+
                 List<Integer> ids = new ArrayList<>();
                 if (gangList.size() == 2) {
                     // 以下情况 手牌不包含3个4筒或者5筒 摸45筒共计2个双杠胡
