@@ -759,7 +759,7 @@ public class CxMjTool {
                                     try1.removeAll(peng);
                                 }
 
-                                if (TingTool.isHu(try1) && try1length1!=try1length2) {
+                                if (TingTool.isHu(try1) && try1length1-try1length2>=4) {
                                     result.put("hu", true);
                                     result.put("gang1", dealGangList( CxMjHelper.toMajiang(gangList.get(gangMj.getVal()))));
                                     result.put("mo1", 1004);
@@ -785,7 +785,7 @@ public class CxMjTool {
                                 try1.removeAll(peng);
                             }
 
-                            if (TingTool.isHu(try1) && try1length1!=try1length2) {
+                            if (TingTool.isHu(try1) && try1length1-try1length2>=4) {
                                 result.put("hu", true);
                                 result.put("gang1", dealGangList( CxMjHelper.toMajiang(gangList.get(gangMj.getVal()))));
                                 result.put("mo1", 1004);
@@ -812,7 +812,7 @@ public class CxMjTool {
                             if(!peng.isEmpty()){
                                 try2.removeAll(peng);
                             }
-                            if (TingTool.isHu(try2) && try2length1!=try2length2) {
+                            if (TingTool.isHu(try2) && try2length1-try2length2>=4) {
                                 result.put("hu", true);
                                 result.put("gang1", dealGangList(CxMjHelper.toMajiang(gangList.get(gangMj.getVal()))));
                                 result.put("mo1", 1005);
