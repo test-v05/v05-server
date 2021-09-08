@@ -218,7 +218,8 @@ public class HzMjTable extends BaseTable {
     private int below=0;
     
     private int hongzhongBJP = 0;
-    
+    private int bankTh = 0;
+
     
 
     public int getDealDice() {
@@ -273,6 +274,11 @@ public class HzMjTable extends BaseTable {
     @Override
     public void calcOver() {
         List<Integer> winList = new ArrayList<>(huConfirmList);
+        if(bankTh>0){
+            winList.clear();
+            winList.add(bankTh);
+            bankTh=0;
+        }
         boolean selfMo = false;
         int[] birdMjIds = null;//抓的鸟牌Id
         int[] seatBirds = null;//中鸟的位置
@@ -958,13 +964,12 @@ public class HzMjTable extends BaseTable {
         logFaPaiTable();
         // 天胡或者暗杠
         boolean chupai = true;
-        
+
         for (HzMjPlayer tablePlayer : seatMap.values()) {
       	  int hongZhongCount = HzMjQipaiTool.getMajiangCount(tablePlayer.getHandMajiang(), HzMj.getHongZhongVal());
             if(hongZhongCount >=4 &&isSiBaHZ()) {
             	chupai = false;
-            } 
-      	
+            }
       }
         
         for (HzMjPlayer tablePlayer : seatMap.values()) {
@@ -1251,7 +1256,14 @@ public class HzMjTable extends BaseTable {
         }
         // 加入胡牌数组
         addHuList(player.getSeat());
-        changeDisCardRound(1);
+        if(getDisCardRound()==0 && zimo){
+            if(player.getHandMajiang().size()==14 ){
+                bankTh = player.getSeat();//庄家天hu 记录位置
+            }
+        }else{
+            changeDisCardRound(1);
+        }
+
         List<HzMj> huPai = new ArrayList<>();
         huPai.add(huHand.get(huHand.size() - 1));
         addPlayLog(disCardRound + "_" + player.getSeat() + "_" + action + "_" + HzMjHelper.toMajiangStrs(huPai) + "_" + StringUtil.implode(player.getHuType(), ",") + player.getExtraPlayLog());

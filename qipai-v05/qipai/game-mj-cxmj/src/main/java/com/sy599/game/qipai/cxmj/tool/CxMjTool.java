@@ -703,16 +703,6 @@ public class CxMjTool {
         }
 
         try {
-//            System.out.println("hand " + CxMjHelper.toMajiang(handPais));
-//            System.out.println("hand ar " + handPais);
-//            System.out.println("peng " + CxMjHelper.toMajiang(peng));
-//            System.out.println("peng ar " + peng);
-//            System.out.println("gangMj " + gangMj);
-//            System.out.println("ismo " + ismo);
-//            if (gangMj != null) {
-//                System.out.println("gangMj " + gangMj + " " + gangMj.getId());
-//            }
-
             if (ver < 2) {
                 //获取所有组成4张的可能
 
@@ -738,7 +728,7 @@ public class CxMjTool {
                         List<Integer> try1 = new ArrayList<>(handPais);
                         try1.add(1004);
                         Map<Integer, List<Integer>> try1Map = CxMjHelper.getGangListById(try1);
-                        if(try1Map.containsKey(25) && tong4num==2 && tong5num==4){
+                        if(try1Map.containsKey(25)   && tong5num==4){
                             //处理BUG 杠3条摸4筒 再杠5筒
 //                            List<Integer> hand = Arrays.asList(3, 30, 57, 13, 40, 14, 41, 68, 95, 15, 84);
 //                            List<Integer> peng = Arrays.asList(19, 46, 73);
@@ -771,7 +761,8 @@ public class CxMjTool {
                                 }
                             }
 
-                        }else  if (try1Map.containsKey(24)) {
+                        }
+                        else  if (try1Map.containsKey(24)) {
                             try1.add(1005);
                             //移除2个杠；能否胡
 
