@@ -330,8 +330,8 @@ public class GroupConstants {
      * @param guOther
      * @return
      */
-    public static boolean isCanPlayWzq(GroupUser guSelf , GroupUser guOther){
-        if(isHuiZhangOrFuHuiZhang(guSelf.getUserRole()) || isHuiZhangOrFuHuiZhang(guOther.getUserRole())){
+    public static boolean isCanPlayWzq(GroupUser guSelf, GroupUser guOther) {
+        if (isHuiZhangOrFuHuiZhang(guSelf.getUserRole()) || isHuiZhangOrFuHuiZhang(guOther.getUserRole())) {
             return true;
         }
         if (guSelf.getPromoterLevel() > guOther.getPromoterLevel()) {
@@ -368,11 +368,12 @@ public class GroupConstants {
 
     /**
      * 获取用户的下一级关系
+     *
      * @param groupUser
      * @param promoterLevel
      * @return
      */
-    public static long getNextId(GroupUser groupUser, int promoterLevel){
+    public static long getNextId(GroupUser groupUser, int promoterLevel) {
         long nextUserId = 0l;
         switch (promoterLevel) {
             case 1:

@@ -43,6 +43,11 @@ public class PaohuziComCommand extends BaseCommand<ZzzpPlayer> {
                 player.setAutoPlay(false, table);
                 player.setLastOperateTime(System.currentTimeMillis());
                 table.piaoFen(player, req.getParams(0));
+            }else if(req.getCode() ==WebSocketMsgType.req_code_debug){
+                int debugids = req.getParams(0);
+                table.debugTable(debugids,player);
+            }else if(req.getCode() ==WebSocketMsgType.req_code_leftIds){
+                table.getLeftIds(player);
             }
         }
 

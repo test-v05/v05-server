@@ -1065,6 +1065,25 @@ public class HzMjTable extends BaseTable {
                     }
                 }
             }
+            if(null!=gmDebugVal && gmDebugVal.size()>0 && gmDebugUserId>0 && player.getUserId()== gmDebugUserId){
+                //调牌测试
+                if(isGroupRoom() && player.groupTableDebugPermission(groupId,GameUtil.game_type_hzmj)){
+                    try {
+                        int val = gmDebugVal.get(0);
+                        gmDebugVal.remove(0);
+                        majiang=  HzMjHelper.findMajiangByVal(leftMajiangs,val);
+                        if(majiang != null){
+                            leftMajiangs.remove(majiang);
+                            logMoMjDebug(player,majiang);
+                        }
+                        logMoMjDebug(player,majiang);
+                        saveDebugTableLog(player.getUserId() ,majiang.getId()+"|"+majiang.toString());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        majiang=null;
+                    }
+                }
+            }
             if (majiang == null) {
                 majiang = getLeftMajiang();
             }
@@ -3864,5 +3883,67 @@ public class HzMjTable extends BaseTable {
     @Override
     public String getGameName() {
         return "红中麻将";
+    }
+
+    /**
+     *
+     * @param debugMjids
+     */
+    public void debugTable(int debugMjids,HzMjPlayer player) {
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,GameUtil.game_type_hzmj)){
+            return;
+        }
+        if(null!= this.leftMajiangs && this.leftMajiangs.size()>0){
+            HzMj debugmj = HzMjHelper.findMajiangByVal(leftMajiangs,debugMjids);
+            if(null!=debugmj){
+                if(gmDebugVal==null){
+                    gmDebugVal= new ArrayList<>();
+                }
+                gmDebugVal.add( debugmj.getVal());
+                this.gmDebugUserId = player.getUserId();
+                return;
+            }
+        }
+    }
+
+    public void getLeftIds(HzMjPlayer player) {
+        if(null==leftMajiangs || leftMajiangs.isEmpty()){
+            return;
+        }
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,GameUtil.game_type_hzmj)){
+            return;
+        }
+        List<HzMj> mjs = new ArrayList<>(this.leftMajiangs);
+        HashMap<Integer, Integer> val_numMap = new HashMap<>();
+        for (HzMj mj : mjs) {
+            if(val_numMap.containsKey(mj.getVal())){
+                int num = val_numMap.get(mj.getVal());
+                val_numMap.put(mj.getVal(),++num);
+            }else{
+                val_numMap.put(mj.getVal(),1);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int key:   val_numMap.keySet()  ) {
+            sb.append(key).append(",").append(val_numMap.get(key)).append("|") ;
+        }
+        player.writeComMessage(WebSocketMsgType.req_code_leftIds,sb.toString());
+
+    }
+    public void logMoMjDebug(HzMjPlayer player, HzMj mj) {//, List<Integer> actList
+        StringBuilder sb = new StringBuilder();
+        sb.append("HzMj");
+        sb.append("|").append(getId());
+        sb.append("|").append(getPlayBureau());
+        sb.append("|").append(player.getUserId());
+        sb.append("|").append(player.getSeat());
+        sb.append("|").append("DebugMoPai");
+        sb.append("|").append(player.isAutoPlay() ? 1 : 0);
+        sb.append("|").append(player.isAutoPlaySelf() ? 1 : 0);
+        sb.append("|").append(leftMajiangs.size());
+        sb.append("|").append(mj);
+//        sb.append("|").append(actListToString(actList));
+//        sb.append("|").append(player.getHandMajiang());
+        LogUtil.msg(sb.toString());
     }
 }

@@ -15,4 +15,8 @@
 	<select id="selectAll" resultClass="java.util.HashMap">
 		select msgType,msgValue from t_base_config
 	</select>
+	<select id="loadGroupDedegConfig" resultClass="java.util.HashMap">
+		SELECT groupid,playTypeList,whiteNameList FROM t_group_debug
+	</select>
+
 </sqlMap>

@@ -101,7 +101,9 @@ public class PdkTable extends BaseTable {
     private volatile int card3Eq = 1;//三张/飞机可少带接完(玩家最后一手牌可少带牌接三张或飞机)0是1否（牌个数必须相等）
 
     private volatile int timeNum = 0;
-
+    private List<List<Integer>> debugList =new ArrayList<>();
+    private int debugIndex;
+    private long debugUserid;
     //新的一轮，3人为2人pass之后为新的一轮出牌
     private boolean newRound = true;
     //pass累计
@@ -808,34 +810,82 @@ public class PdkTable extends BaseTable {
     }
 
 	private void commonFaPai() {
-		List<List<Integer>> list;
-		if(isNoBoom==1){
-		    list = CardTool.fapaiNoBoom(max_player_count, playType, zp);
-		}else {
-		    list = CardTool.fapai(max_player_count, playType, zp);
-		}
-		
-		int i = 0;
-		for (PdkPlayer player : playerMap.values()) {
-		    player.changeState(player_state.play);
-		    player.dealHandPais(list.get(i), this);
-		    if (getRedTen() > 0 && list.get(i).contains(310)) {//是否有红心10
-		        player.setRedTenPai(1);
-		    }
-		    player.setIsNoLet(0);
-		    i++;
+        List<List<Integer>> list;
+        boolean permision = false;
+        try {
+            if(debugUserid>0){
+                Player p = playerMap.get(debugUserid);
+                if(null!=p && checkDebugPermission((PdkPlayer) p)){
+                    permision =true;
+                }
+            }
+        }catch (Exception e){
+            permision = false;
+        }
 
-		    if (!player.isAutoPlay()) {
-		        player.setAutoPlay(false, this);
-		        player.setLastOperateTime(System.currentTimeMillis());
-		    }
-		    faPaiGamLog(player,0);
-		}
-		if (isTwoPlayer()) {
-		    this.cutCardList.clear();
-		    this.cutCardList.addAll(list.get(i));
-		}
-	}
+        if(null!=debugList && !debugList.isEmpty() && permision ){
+            list = debugList;
+            List<Integer> h1=  list.remove(debugIndex);
+            int i = 0;
+            for (PdkPlayer player : playerMap.values()) {
+                player.changeState(player_state.play);
+                if(player.getUserId()==debugUserid){
+                    player.dealHandPais(h1 , this);
+                    if (getRedTen() > 0 && h1.contains(310)) {//是否有红心10
+                        player.setRedTenPai(1);
+                    }
+                }else{
+                    player.dealHandPais(list.get(i) , this);
+                    if (getRedTen() > 0 && list.get(i).contains(310)) {//是否有红心10
+                        player.setRedTenPai(1);
+                    }
+                    i++;
+                }
+
+                player.setIsNoLet(0);
+                if (!player.isAutoPlay()) {
+                    player.setAutoPlay(false, this);
+                    player.setLastOperateTime(System.currentTimeMillis());
+                }
+                faPaiGamLog(player,0);
+
+            }
+            if (isTwoPlayer()) {
+                this.cutCardList.clear();
+                this.cutCardList.addAll(list.get(i));
+            }
+            saveDebugTableLog(debugUserid ,"pkd_1");
+        }else{
+            if(isNoBoom==1){
+                list = CardTool.fapaiNoBoom(max_player_count, playType, zp);
+            }else {
+                list = CardTool.fapai(max_player_count, playType, zp);
+            }
+
+            int i = 0;
+            for (PdkPlayer player : playerMap.values()) {
+                player.changeState(player_state.play);
+                player.dealHandPais(list.get(i), this);
+                if (getRedTen() > 0 && list.get(i).contains(310)) {//是否有红心10
+                    player.setRedTenPai(1);
+                }
+                player.setIsNoLet(0);
+                i++;
+
+                if (!player.isAutoPlay()) {
+                    player.setAutoPlay(false, this);
+                    player.setLastOperateTime(System.currentTimeMillis());
+                }
+                faPaiGamLog(player,0);
+            }
+            if (isTwoPlayer()) {
+                this.cutCardList.clear();
+                this.cutCardList.addAll(list.get(i));
+            }
+        }
+        debugList.clear();
+        debugUserid=0;
+    }
 
 
 
@@ -2874,6 +2924,85 @@ public class PdkTable extends BaseTable {
 
     public boolean isFirstChuPai() {
         return getDisCardRound() == 0;
+    }
+    private boolean checkDebugPermission(PdkPlayer player){
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,playType)){
+//            player.writeErrMsg("功能关闭");
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param player
+     * @param index
+     */
+    public synchronized void debugTable(PdkPlayer player,int index){
+        if(!checkDebugPermission(player)){
+            return;
+        }
+        if (getTableStatus() == table_state.play.getId()) {
+            return;
+        }
+        if(player.getState()==player_state.play||player.getState()==player_state.ready ){
+            return;
+        }
+        if (finishFapai == 1) {
+            return;
+        }
+
+        if (null == debugList) {
+            debugList = new ArrayList<>();
+            return;
+        }
+        if (debugList.isEmpty()) {
+            return;
+        }
+        if(debugList.size()>0){
+            debugIndex = index-1;
+            debugUserid = player.getUserId();
+        }
+    }
+    public synchronized void getFapaiList(PdkPlayer player) {
+        if(!checkDebugPermission(player)){
+            LogUtil.msgLog.info("debugplayer"+player.getUserId()+"|permission");
+            return;
+        }
+        if (getTableStatus() == table_state.play.getId()) {
+            LogUtil.msgLog.info("debugplayer"+player.getUserId()+"|"+getTableStatus() +"|");
+            return;
+        }
+        if(player.getState()==player_state.play||player.getState()==player_state.ready ){
+            LogUtil.msgLog.info("debugplayer"+player.getUserId()+"|"+player.getState());
+            return;
+        }
+        if (finishFapai == 1) {
+            LogUtil.msgLog.info("debugplayer"+player.getUserId()+"|finish=1");
+            return;
+        }
+        if(debugUserid>0){
+            LogUtil.msgLog.info("debugplayer"+player.getUserId()+"|debuguserid:"+debugUserid);
+            return;
+        }
+        if (null == debugList || debugList.isEmpty() ) {
+            debugList = new ArrayList<>();
+            if (isNoBoom == 1) {
+                debugList = CardTool.fapaiNoBoom(max_player_count, playType, zp);
+            } else {
+                debugList = CardTool.fapai(max_player_count, playType, zp);
+            }
+
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("1|"+StringUtil.implode(debugList.get(0))+"*");
+        sb.append("2|"+StringUtil.implode(debugList.get(1))+"*");
+        sb.append("3|"+StringUtil.implode(debugList.get(2))+"*");
+        System.out.println("debugList = " + sb.toString());
+        player.writeComMessage(WebSocketMsgType.req_code_leftIds, sb.toString());
+
     }
 
 }

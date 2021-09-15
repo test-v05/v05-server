@@ -153,7 +153,10 @@ public class WebSocketMsgType {
     //流局
     public static final short competition_msg_case_off = 6006;
 
-
+    public static final short resp_code_groupTableDebugPermission = 6007;
+    public static final short req_code_debug =6008;
+    public static final short req_code_leftIds =6009;
+    public static final short req_code_sybp_debug =6010;
     // ///////////////////////////////////////////////////////////////////
 
     /**

@@ -2424,8 +2424,27 @@ public class YzPhzTable extends BaseTable implements YzPhzBase {
             Integer card = null;
 
             clearMarkMoSeat();
+            boolean debugflag = false;
+            if(null!=gmDebugVal && gmDebugVal.size()>0 &&player.getUserId() == gmDebugUserId ){
+                if(isGroupRoom() && player.groupTableDebugPermission(groupId,getPlayType())){
+                    try{
+                        int val = gmDebugVal.get(0);
+                        gmDebugVal.remove(0);
+                        List<GuihzCard> cardList = YzPhzHuPaiUtils.findPhzByVal(YzPhzCardUtils.toGhzCards(getLeftCards()), val );
+                        if (cardList != null && cardList.size() > 0) {
+                            card = cardList.get(0).getId();
+                            getLeftCards().remove(card);
+                            debugflag = true;
+                            saveDebugTableLog(player.getUserId() ,card+"|"+ cardList.get(0).toString());
+                        }
+                    }catch (Exception e){
+                        card= null;
+                    }
+                }
+            }else{
+                card = getNextCard();
+            }
 
-            card = getNextCard();
             
             //如果有人有3个王，再摸不给王了。除非是最后一张了
             if (card.intValue() > 80) {
@@ -5143,5 +5162,56 @@ public class YzPhzTable extends BaseTable implements YzPhzBase {
         for (Integer integer : wanfaList) {
             TableManager.wanfaTableTypesPut(integer, cls);
         }
+    }
+
+
+    /**
+     *
+     * @param debugPaohzVal
+     */
+    public void debugTable(int debugPaohzVal ,YzPhzPlayer player) {
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,getPlayType())){
+            //player.writeErrMsg("功能关闭");
+            return;
+        }
+        if(null!= this.getLeftCards() && this.getLeftCards().size()>0){
+            List<GuihzCard> debugphz =   YzPhzHuPaiUtils.findPhzByVal(YzPhzCardUtils.toGhzCards(getLeftCards()) , debugPaohzVal );
+            if(null!=debugphz && !debugphz.isEmpty() ){
+                if(gmDebugVal==null){
+                    gmDebugVal= new ArrayList<>();
+                }
+                GuihzCard c=debugphz.get(0);
+                gmDebugVal.add(c.getVal());
+                this.gmDebugUserId = player.getUserId();
+                //player.writeErrMsg("成功 "+c.toString());
+                return;
+            }
+        }
+    }
+
+    public synchronized void getLeftIds(YzPhzPlayer player) {
+        if(null==this.getLeftCards()|| this.getLeftCards().isEmpty()){
+            return;
+        }
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,getPlayType())){
+            player.writeErrMsg("功能关闭");
+            return;
+        }
+        List<GuihzCard> phzs = new ArrayList<>(YzPhzCardUtils.toGhzCards(getLeftCards()));
+        HashMap<Integer, Integer> val_numMap = new HashMap<>();
+        for (GuihzCard card : phzs) {
+            if(val_numMap.containsKey(card.getVal())){
+                int num = val_numMap.get(card.getVal());
+                val_numMap.put(card.getVal(),++num);
+            }else{
+                val_numMap.put(card.getVal(),1);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int key:   val_numMap.keySet()  ) {
+            sb.append(key).append(",").append(val_numMap.get(key)).append("|") ;
+        }
+        player.writeComMessage(WebSocketMsgType.req_code_leftIds,sb.toString());
+
     }
 }

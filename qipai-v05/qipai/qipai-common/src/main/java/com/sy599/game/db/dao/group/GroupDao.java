@@ -951,4 +951,11 @@ public class GroupDao extends BaseDao {
     }
 
 
+    /**
+     * 保存GM调牌记录
+     * @param map
+     */
+    public void saveDebugTableLog(HashMap map) throws SQLException {
+        this.getSqlLoginClient().insert("group.saveDebugTableLog",map);
+    }
 }

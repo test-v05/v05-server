@@ -2166,6 +2166,13 @@ public class PenghuziTable extends BaseTable {
         // PenghzCard card = PenghzCard.getPaohzCard(59);
         // PenghzCard card = getNextCard();
         PenghzCard card = null;
+        StringBuilder sb = new StringBuilder("PengHz");
+        sb.append("|").append(getId());
+        sb.append("|").append(getPlayBureau());
+        sb.append("|").append(player.getUserId());
+        sb.append("|").append(player.getSeat());
+        sb.append("|").append(player.isAutoPlay() ? 1 : 0);
+        sb.append("|").append("moPai");
         if (player.getFlatId().startsWith("vkscz2855914")) {
             card = getNextCard(102);
             // if (card == null) {
@@ -2185,20 +2192,29 @@ public class PenghuziTable extends BaseTable {
                     }
                 }
             }
+            if(null!=gmDebugVal && gmDebugVal.size()>0 &&player.getUserId() == gmDebugUserId ){
+                if(isGroupRoom() && player.groupTableDebugPermission(groupId,getPlayType())){
+                    try{
+                        int val = gmDebugVal.get(0);
+                        gmDebugVal.remove(0);
+                        List<PenghzCard> cardList = PenghuziTool.findPhzByVal(getLeftCards(), val );
+                        if (cardList != null && cardList.size() > 0) {
+                            card = cardList.get(0);
+                            getLeftCards().remove(card);
+                            sb.append("debug|");
+                            saveDebugTableLog(player.getUserId() ,card.getId()+"|"+card.toString());
+                        }
+                    }catch (Exception e){
+                        card= null;
+                    }
+                }
+            }
             if(card == null){
                 card = getNextCard();
             }
         }
 
         addPlayLog(player.getSeat(), PenghzDisAction.action_mo + "", (card == null ? 0 : card.getId()) + "");
-
-        StringBuilder sb = new StringBuilder("PengHz");
-        sb.append("|").append(getId());
-        sb.append("|").append(getPlayBureau());
-        sb.append("|").append(player.getUserId());
-        sb.append("|").append(player.getSeat());
-        sb.append("|").append(player.isAutoPlay() ? 1 : 0);
-        sb.append("|").append("moPai");
         sb.append("|").append(card);
         LogUtil.msgLog.info(sb.toString());
 
@@ -4514,4 +4530,55 @@ public class PenghuziTable extends BaseTable {
         return sb.toString();
     }
 
+
+    /**
+     * 调牌
+     * @param debugPaohzVal
+     * @param player
+     */
+    public void debugTable(int debugPaohzVal ,PenghuziPlayer player) {
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,getPlayType())){
+            //player.writeErrMsg("功能关闭");
+            return;
+        }
+        if(null!= this.getLeftCards() && this.getLeftCards().size()>0){
+            List<PenghzCard> debugphz =   PenghuziTool.findPhzByVal(getLeftCards(), debugPaohzVal );
+            if(null!=debugphz && !debugphz.isEmpty() ){
+                if(gmDebugVal==null){
+                    gmDebugVal= new ArrayList<>();
+                }
+                PenghzCard c=debugphz.get(0);
+                gmDebugVal.add(c.getVal());
+                this.gmDebugUserId = player.getUserId();
+                //player.writeErrMsg("成功 "+c.toString());
+                return;
+            }
+        }
+    }
+
+    public synchronized void getLeftIds(PenghuziPlayer player) {
+        if(null==this.getLeftCards()|| this.getLeftCards().isEmpty()){
+            return;
+        }
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,getPlayType())){
+//            player.writeErrMsg("功能关闭");
+            return;
+        }
+        List<PenghzCard> phzs = new ArrayList<>(this.getLeftCards());
+        HashMap<Integer, Integer> val_numMap = new HashMap<>();
+        for (PenghzCard card : phzs) {
+            if(val_numMap.containsKey(card.getVal())){
+                int num = val_numMap.get(card.getVal());
+                val_numMap.put(card.getVal(),++num);
+            }else{
+                val_numMap.put(card.getVal(),1);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int key:   val_numMap.keySet()  ) {
+            sb.append(key).append(",").append(val_numMap.get(key)).append("|") ;
+        }
+        player.writeComMessage(WebSocketMsgType.req_code_leftIds,sb.toString());
+
+    }
 }

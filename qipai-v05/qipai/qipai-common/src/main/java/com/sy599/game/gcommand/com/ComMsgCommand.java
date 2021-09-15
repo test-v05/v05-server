@@ -16,12 +16,15 @@ public class ComMsgCommand extends BaseCommand {
     private final static int getTWinRwardsInfo=2;
     private final static int getwinReward=3;
 
+
     /**赠钻权限查询 */
     private final static int getSendDiamondsPermission=4;
     /**获取赠钻记录 */
     private final static int getSendDiamondsRecord=5;
     /**赠送钻石 */
     private final static int sendDiamonds=6;
+
+    private final static int tableDebugPermission=7;
 
     @Override
     public void execute(Player player, MessageUnit message) throws Exception {
@@ -62,6 +65,10 @@ public class ComMsgCommand extends BaseCommand {
                 long diamondsNum =req.getParams(2);
                 long type =req.getParams(3);
                 player.sendDiamonds(player.getUserId(),acpUserid,diamondsNum,type);
+                break;
+            case tableDebugPermission :
+                int param = req.getParams(1);
+                player.loadTableDebugPermisson(param);
                 break;
         }
         

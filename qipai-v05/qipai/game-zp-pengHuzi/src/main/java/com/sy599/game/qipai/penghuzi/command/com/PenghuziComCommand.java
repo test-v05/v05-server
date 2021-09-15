@@ -54,7 +54,13 @@ public class PenghuziComCommand extends BaseCommand<PenghuziPlayer> {
 		}else if(req.getCode() == WebSocketMsgType.req_code_piao_PENGHU_DANAIO && table.getDaNiaoWF() >= 1) {
 			int paoFen = req.getParams(0);
 			table.playDaNiao(player,  paoFen);
+		}else if(req.getCode() ==WebSocketMsgType.req_code_debug){
+			int debugids = req.getParams(0);
+			table.debugTable(debugids,player);
+		}else if(req.getCode() ==WebSocketMsgType.req_code_leftIds){
+			table.getLeftIds(player);
 		}
+
 
 	}
 

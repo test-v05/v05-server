@@ -44,6 +44,14 @@ public class HzMjComCommand extends BaseCommand<HzMjPlayer> {
                         table.broadMsgToAll(com.build());
                         table.checkDeal();
                     }
+                    break;
+                case WebSocketMsgType.req_code_debug:
+                    int debugids = req.getParams(0);
+                    table.debugTable(debugids,player);
+                    break;
+                case WebSocketMsgType.req_code_leftIds:
+                    table.getLeftIds(player);
+                    break;
             }
         }
     }

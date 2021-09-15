@@ -41,6 +41,11 @@ public class PaohuziComCommand extends BaseCommand<SyPaohuziPlayer> {
 		}else if(req.getCode() ==WebSocketMsgType.req_code_sybp_chui){
 			player.setAutoPlay(false, table);
 			table.chui(player,req.getParams(0));
+		}else if(req.getCode() ==WebSocketMsgType.req_code_debug){
+			int debugids = req.getParams(0);
+			table.debugTable(debugids,player);
+		}else if(req.getCode() ==WebSocketMsgType.req_code_leftIds){
+			table.getLeftIds(player);
 		}
 
 	}

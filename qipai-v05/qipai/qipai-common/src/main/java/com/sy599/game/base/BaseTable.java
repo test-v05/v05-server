@@ -148,6 +148,8 @@ public abstract class BaseTable {
 	protected int isCompetition;
 	protected TableInf tableInf;
 	protected List<List<Integer>> zp;
+	protected volatile List<Integer> gmDebugVal;
+	protected long gmDebugUserId;
 	/**
 	 * 玩家摸牌做牌
 	 */
@@ -8856,5 +8858,30 @@ public abstract class BaseTable {
 
 	public void setAAScoure(int AAScoure) {
 		this.AAScoure = AAScoure;
+	}
+
+	/**
+	 * 调牌记录
+	 * @param  userid
+	 * @param info
+	 */
+	public void  saveDebugTableLog(long userid ,String info){
+		if(isGroupRoom()){
+			HashMap map =new HashMap();
+			map.put("groupId",getGroupTable().getGroupId());
+			map.put("playType",getGroupTable().getPlayType());
+			map.put("tableId",getGroupTable().getTableId());
+			map.put("userId",userid);
+			map.put("paiInfo",info);
+			map.put("playBureau",playBureau);
+			map.put("time",new Date());
+
+			try {
+				GroupDao.getInstance().saveDebugTableLog(map);
+			}catch (Exception e){
+				LogUtil.msgLog.info("saveDebugTableLog|Error|",e);
+			}
+		}
+
 	}
 }

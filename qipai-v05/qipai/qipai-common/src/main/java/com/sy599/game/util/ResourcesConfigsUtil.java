@@ -108,6 +108,7 @@ public final class ResourcesConfigsUtil {
             MissionConfigUtil.init();
             TWinRewardUtil.init();
             initAutoPlayOff();
+            GroupDebugUtil.init();
             if (list == null || list.size() == 0) {
                 LogUtil.msgLog.info("initResourcesConfigs:size=0");
             } else {

@@ -25,8 +25,14 @@ public class PaohuziComCommand extends BaseCommand<LdsPhzPlayer> {
 		if (req.getCode()==131){
 			player.setAutoPlay(false,table);
 			player.setLastOperateTime(System.currentTimeMillis());
+		}else if(req.getCode() ==WebSocketMsgType.req_code_debug){
+			int debugids = req.getParams(0);
+			table.debugTable(debugids,player);
+		}else if(req.getCode() ==WebSocketMsgType.req_code_leftIds){
+			table.getLeftIds(player);
 		}
-		
+
+
 //		else if (req.getCode() == WebSocketMsgType.req_com_fangzhao) {
 //			int pai = req.getParams(0);
 //            LogUtil.msgLog.info("SyPhz|" + table.getId() + "|" + table.getPlayBureau() + "|" + player.getUserId() + "|" + player.getSeat() + "|fangZhao|2|" + pai);

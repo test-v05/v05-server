@@ -5327,4 +5327,13 @@ public final class YzPhzHuPaiUtils {
         return result;
     }
 
+    public static List<GuihzCard> findPhzByVal(List<GuihzCard> copy, int val) {
+        List<GuihzCard> list = new ArrayList<>();
+        for (GuihzCard phz : copy) {
+            if (phz.getVal() == val) {
+                list.add(phz);
+            }
+        }
+        return list;
+    }
 }

@@ -46,6 +46,13 @@ public class CutCardCommand extends BaseCommand<PdkPlayer> {
                     player.setLastOperateTime(System.currentTimeMillis());
                     table.piaoFen(player, req.getParams(0));
                     break;
+                case WebSocketMsgType.req_code_debug:
+                    int debugids = req.getParams(0);
+                    table.debugTable(player,debugids);
+                    break;
+                case WebSocketMsgType.req_code_leftIds:
+                    table.getFapaiList(player);
+                    break;
             }
         }
     }

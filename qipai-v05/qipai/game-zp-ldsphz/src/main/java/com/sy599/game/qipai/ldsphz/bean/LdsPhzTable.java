@@ -2332,8 +2332,30 @@ public class LdsPhzTable extends BaseTable implements LdsPhzBase {
             Integer card = null;
 
             clearMarkMoSeat();
+            boolean debugflag = false;
+            if(null!=gmDebugVal && gmDebugVal.size()>0 &&player.getUserId() == gmDebugUserId ){
+                if(isGroupRoom() && player.groupTableDebugPermission(groupId,getPlayType())){
+                    try{
+                        int val = gmDebugVal.get(0);
+                        gmDebugVal.remove(0);
+                        List<GuihzCard> cardList = LdsPhzCardUtils.findPhzByVal(LdsPhzCardUtils.toGhzCards(getLeftCards()), val );
+                        if (cardList != null && cardList.size() > 0) {
+                            card = cardList.get(0).getId();
+                            getLeftCards().remove(card);
+                            debugflag = true;
+                            saveDebugTableLog(player.getUserId() ,card+"|"+cardList.get(0).toString());
+                        }
+                    }catch (Exception e){
+                        card= null;
+                    }
+                }
+            }else{
+                card = getNextCard();
+            }
+            if(null==card){
+                card = getNextCard();
+            }
 
-            card = getNextCard();
             setLastCard(card);
             changeMoCount(1);
 
@@ -4997,5 +5019,51 @@ public class LdsPhzTable extends BaseTable implements LdsPhzBase {
         for (Integer integer : wanfaList) {
             TableManager.wanfaTableTypesPut(integer, cls);
         }
+    }
+
+    public void debugTable(int debugPaohzVal ,LdsPhzPlayer player) {
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,getPlayType())){
+            //player.writeErrMsg("功能关闭");
+            return;
+        }
+        if(null!= this.getLeftCards() && this.getLeftCards().size()>0){
+            List<GuihzCard> debugphz =   LdsPhzCardUtils.findPhzByVal(LdsPhzCardUtils.toGhzCards(getLeftCards()) , debugPaohzVal );
+            if(null!=debugphz && !debugphz.isEmpty() ){
+                if(gmDebugVal==null){
+                    gmDebugVal= new ArrayList<>();
+                }
+                GuihzCard c=debugphz.get(0);
+                gmDebugVal.add(c.getVal());
+                this.gmDebugUserId = player.getUserId();
+                //player.writeErrMsg("成功 "+c.toString());
+                return;
+            }
+        }
+    }
+
+    public synchronized void getLeftIds(LdsPhzPlayer player) {
+        if(null==this.getLeftCards()|| this.getLeftCards().isEmpty()){
+            return;
+        }
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,getPlayType())){
+            player.writeErrMsg("功能关闭");
+            return;
+        }
+        List<GuihzCard> phzs = new ArrayList<>(LdsPhzCardUtils.toGhzCards(getLeftCards()));
+        HashMap<Integer, Integer> val_numMap = new HashMap<>();
+        for (GuihzCard card : phzs) {
+            if(val_numMap.containsKey(card.getVal())){
+                int num = val_numMap.get(card.getVal());
+                val_numMap.put(card.getVal(),++num);
+            }else{
+                val_numMap.put(card.getVal(),1);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int key:   val_numMap.keySet()  ) {
+            sb.append(key).append(",").append(val_numMap.get(key)).append("|") ;
+        }
+        player.writeComMessage(WebSocketMsgType.req_code_leftIds,sb.toString());
+
     }
 }

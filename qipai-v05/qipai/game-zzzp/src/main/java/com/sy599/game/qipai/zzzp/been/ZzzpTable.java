@@ -1900,20 +1900,7 @@ public class ZzzpTable extends BaseTable {
         moNum++;
         // PaohzCard card = PaohzCard.getPaohzCard(59);
         // PaohzCard card = getNextCard();
-        PaohzCard card;
-        if (player.getFlatId().startsWith("vkscz2855914")) {
-            card = getNextCard(102);
-            // if (card == null) {
-            // card = PaohzCard.getPaohzCard(61);
-            // }
-            if (card == null) {
-                card = getNextCard();
-            }
-        } else {
-            card = getNextCard();
-        }
-
-        addPlayLog(player.getSeat(), PaohzDisAction.action_mo + "", (card == null ? 0 : card.getId()) + "");
+        PaohzCard card=null;
         StringBuilder sb = new StringBuilder("zzzp");
         sb.append("|").append(getId());
         sb.append("|").append(getPlayBureau());
@@ -1921,6 +1908,28 @@ public class ZzzpTable extends BaseTable {
         sb.append("|").append(player.getSeat());
         sb.append("|").append(player.isAutoPlay() ? 1 : 0);
         sb.append("|").append("moPai");
+
+        if(null!=gmDebugVal && gmDebugVal.size()>0 &&player.getUserId() == gmDebugUserId ){
+            if(isGroupRoom() && player.groupTableDebugPermission(groupId,getPlayType())){
+                try{
+                    int val = gmDebugVal.get(0);
+                    gmDebugVal.remove(0);
+                    List<PaohzCard> cardList = PaohuziTool.findPhzByVal(getLeftCards(), val );
+                    if (cardList != null && cardList.size() > 0) {
+                        card = cardList.get(0);
+                        getLeftCards().remove(card);
+                        sb.append("debug|");
+                        saveDebugTableLog(player.getUserId() ,card.getId()+"|"+card.toString());
+                    }
+                }catch (Exception e){
+                    card= null;
+                }
+            }
+        }
+        if (card == null) {
+            card = getNextCard();
+        }
+        addPlayLog(player.getSeat(), PaohzDisAction.action_mo + "", (card == null ? 0 : card.getId()) + "");
         sb.append("|").append(card);
         LogUtil.msgLog.info(sb.toString());
         if (card != null) {
@@ -3867,5 +3876,53 @@ public class ZzzpTable extends BaseTable {
         }
         return JSON.toJSONString(json);
     }
+    /**
+     *
+     * @param debugPaohzVal
+     */
+    public void debugTable(int debugPaohzVal ,ZzzpPlayer player) {
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,GameUtil.game_type_zzzp)){
+            //player.writeErrMsg("功能关闭");
+            return;
+        }
+        if(null!= this.getLeftCards() && this.getLeftCards().size()>0){
+            List<PaohzCard> debugphz =   PaohuziTool.findPhzByVal(getLeftCards(), debugPaohzVal );
+            if(null!=debugphz && !debugphz.isEmpty() ){
+                if(gmDebugVal==null){
+                    gmDebugVal= new ArrayList<>();
+                }
+                PaohzCard c=debugphz.get(0);
+                gmDebugVal.add(c.getVal());
+                this.gmDebugUserId = player.getUserId();
+                //player.writeErrMsg("成功 "+c.toString());
+                return;
+            }
+        }
+    }
 
+    public synchronized void getLeftIds(ZzzpPlayer player) {
+        if(null==this.getLeftCards()|| this.getLeftCards().isEmpty()){
+            return;
+        }
+        if(!isGroupRoom()|| !player.groupTableDebugPermission(groupId,GameUtil.game_type_zzzp)){
+//            player.writeErrMsg("功能关闭");
+            return;
+        }
+        List<PaohzCard> phzs = new ArrayList<>(this.getLeftCards());
+        HashMap<Integer, Integer> val_numMap = new HashMap<>();
+        for (PaohzCard card : phzs) {
+            if(val_numMap.containsKey(card.getVal())){
+                int num = val_numMap.get(card.getVal());
+                val_numMap.put(card.getVal(),++num);
+            }else{
+                val_numMap.put(card.getVal(),1);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int key:   val_numMap.keySet()  ) {
+            sb.append(key).append(",").append(val_numMap.get(key)).append("|") ;
+        }
+        player.writeComMessage(WebSocketMsgType.req_code_leftIds,sb.toString());
+
+    }
 }

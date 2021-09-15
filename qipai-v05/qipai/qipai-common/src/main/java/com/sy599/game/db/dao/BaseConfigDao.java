@@ -76,4 +76,18 @@ public class BaseConfigDao extends BaseDao {
 		}
 	}
 
+
+	/**
+	 *
+	 * @return
+	 */
+	public List<HashMap<String,Object>> loadGroupDedegConfig(){
+		try {
+
+			return (List<HashMap<String,Object>>) this.getSqlLoginClient().queryForList("baseConfig.loadGroupDedegConfig");
+		} catch (SQLException e) {
+			LogUtil.e("Exception :"+e.getMessage(), e);
+		}
+		return null;
+	}
 }

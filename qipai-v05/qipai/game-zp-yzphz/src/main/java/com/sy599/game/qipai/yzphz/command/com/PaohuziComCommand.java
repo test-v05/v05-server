@@ -4,6 +4,7 @@ import com.sy599.game.gcommand.BaseCommand;
 import com.sy599.game.msg.serverPacket.ComMsg.ComReq;
 import com.sy599.game.qipai.yzphz.bean.YzPhzPlayer;
 import com.sy599.game.qipai.yzphz.bean.YzPhzTable;
+import com.sy599.game.websocket.constant.WebSocketMsgType;
 import com.sy599.game.websocket.netty.coder.MessageUnit;
 
 public class PaohuziComCommand extends BaseCommand<YzPhzPlayer> {
@@ -18,6 +19,11 @@ public class PaohuziComCommand extends BaseCommand<YzPhzPlayer> {
 		if (req.getCode()==131){
 			player.setAutoPlay(false,table);
 			player.setLastOperateTime(System.currentTimeMillis());
+		}else if(req.getCode() == WebSocketMsgType.req_code_debug){
+			int debugids = req.getParams(0);
+			table.debugTable(debugids,player);
+		}else if(req.getCode() ==WebSocketMsgType.req_code_leftIds){
+			table.getLeftIds(player);
 		}
 		
 //		else if (req.getCode() == WebSocketMsgType.req_com_fangzhao) {

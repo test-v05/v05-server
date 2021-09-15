@@ -1064,6 +1064,11 @@
             AND userId in ( $userIdList$)
     </select>
 
+	<insert id="saveDebugTableLog"  parameterClass="java.util.HashMap">
+		INSERT INTO  `t_group_debug_log` (  `playType`, `groupId`, `tableId`, `userId`, `paiInfo`,playBureau, `time`)
+		VALUES ( #playType#, #groupId#, #tableId#, #userId#, #paiInfo# ,#playBureau#,#time#);
+
+	</insert>
 </sqlMap>
 
 

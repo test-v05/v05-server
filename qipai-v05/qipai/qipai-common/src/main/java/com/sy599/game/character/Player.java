@@ -4505,4 +4505,24 @@ public abstract class Player {
 	public void setCreditLogData(long creditLogData) {
 		this.creditLogData = creditLogData;
 	}
+
+	public  void loadTableDebugPermisson(int param){
+		if(getPlayingTableId()>0){
+			if(null!=getPlayingTable() && getPlayingTable().isGroupRoom()){
+				BaseTable t = getPlayingTable();
+				long _groupid = t.getGroupTable().getGroupId();
+				int _playType =t.getPlayType();
+				boolean permission = GroupDebugUtil.groupMemberDebugPermission(_groupid,_playType,getUserId(),getIp());
+				writeComMessage(WebSocketMsgType.resp_code_groupTableDebugPermission, permission?1:0,param);
+				return;
+			}
+		}
+		//默认
+		writeComMessage(WebSocketMsgType.resp_code_groupTableDebugPermission, 0,param);
+	};
+
+	/**调整摸下一张的权限*/
+	public boolean groupTableDebugPermission(long groupid, int playType){
+		return  GroupDebugUtil.groupMemberDebugPermission(groupid,playType,getUserId(),getIp());
+	}
 }
