@@ -2353,6 +2353,10 @@ public abstract class BaseTable {
     }
 
     public void initNext() {
+		gmDebugUserId=0;
+		if(gmDebugVal!=null){
+			gmDebugVal.clear();
+		}
         initNext(playBureau >= totalBureau);
     }
 
