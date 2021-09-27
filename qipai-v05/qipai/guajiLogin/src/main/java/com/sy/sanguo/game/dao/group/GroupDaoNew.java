@@ -2,20 +2,13 @@ package com.sy.sanguo.game.dao.group;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.sy.sanguo.common.parent.impl.CommonDaoImpl;
-import com.sy.sanguo.game.bean.group.GroupCommissionConfig;
-import com.sy.sanguo.game.bean.group.GroupInfo;
-import com.sy.sanguo.game.bean.group.GroupReview;
-import com.sy.sanguo.game.bean.group.GroupTable;
-import com.sy.sanguo.game.bean.group.GroupTableConfig;
-import com.sy.sanguo.game.bean.group.GroupUser;
-import com.sy.sanguo.game.bean.group.GroupUserLog;
-import com.sy.sanguo.game.bean.group.GroupUserReject;
-import com.sy.sanguo.game.bean.group.LogGroupUserAlert;
+import com.sy.sanguo.game.bean.group.*;
 import com.sy.sanguo.game.constants.GroupConstants;
 import com.sy599.sanguo.util.SysPartitionUtil;
 import com.sy599.sanguo.util.TimeUtil;
 import org.apache.commons.lang3.StringUtils;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +17,11 @@ import java.util.List;
 import java.util.Map;
 
 public class GroupDaoNew extends CommonDaoImpl {
+    private static GroupDaoNew _inst = new GroupDaoNew();
+
+    public static GroupDaoNew getInstance() {
+        return _inst;
+    }
 
     public long createGroup(GroupInfo groupInfo) throws Exception {
         Long ret = (Long) this.getSqlMapClient().insert("groupNew.createGroup", groupInfo);
@@ -1524,5 +1522,94 @@ public class GroupDaoNew extends CommonDaoImpl {
 
     public List loadLogGroupCommissionData(Map<String, Object> map) throws Exception {
         return  this.getSqlMapClient().queryForList("groupNew.logGroupCommissionData", map);
+    }
+
+
+    //============红包雨
+    public  List<HashMap<String,Object>> loadAllRedBagConfig(long groupId) throws Exception {
+        return  this.getSqlMapClient().queryForList("groupNew.selectRedBagRainConfigByGroupId", groupId);
+    }
+    public  List<HashMap<String,Object>> loadAllRedBagConfig(HashMap map) throws Exception {
+        return  this.getSqlMapClient().queryForList("groupNew.selectRedBagRainConfigByGroupIdAndState", map);
+    }
+
+    public Object addGroupRedBagRainConfig(HashMap config) throws Exception {
+        return this.getSqlMapClient().insert("groupNew.insertRedBagRainConfig",config);
+    }
+
+    public int updateGroupRedBagRainConfig(HashMap config) throws Exception {
+        return   this.getSqlMapClient().update("groupNew.updateRedBagConfigState",config);
+
+    }
+
+    /**
+     * 初始化红包数据
+     * @param list
+     * @throws Exception
+     */
+    public void insertBatchRedBagList(List<HashMap<String, Object>> list) throws Exception {
+        SqlMapClient sqlMapClient = this.getSqlMapClient();
+        sqlMapClient.startBatch();
+        for (HashMap<String, Object> map : list) {
+            sqlMapClient.update("groupNew.insertRedBagDataList", map);
+        }
+        sqlMapClient.executeBatch();
+    }
+
+    public List<HashMap<String,Object>> loadRedBagRainResult(long keyId) throws SQLException {
+        HashMap<String, Object> map=new HashMap<>();
+        map.put("keyId",keyId);
+        return   this.getSqlMapClient().queryForList("groupNew.loadRedBagRainResult",map);
+    }
+
+    public int deleteRedBagConfigByKeyId(long keyId) throws SQLException {
+        return this.getSqlMapClient().delete("groupNew.deleteRedBagConfigByKeyId",keyId);
+    }
+
+    public int deleteRedBagResultByConfigId(long keyId) throws SQLException{
+        return this.getSqlMapClient().delete("groupNew.deleteRedBagResultByConfigId",keyId);
+    }
+
+    public HashMap sumRedBagResultPushPoint(Long keyId) throws SQLException {
+        return (HashMap) this.getSqlMapClient().queryForObject("groupNew.sumRedBagResultPoint",keyId);
+    }
+
+    public List<HashMap<String, Object>> loadRedBagRainResultByConfigId(Long keyId) throws SQLException {
+        return (List<HashMap<String, Object>>) this.getSqlMapClient().queryForList("groupNew.loadRedBagRainResultByConfigId",keyId);
+    }
+
+
+    public List<HashMap<String, Object>> loadRedBagRainResultByUserId(long userId, long groupId)  throws SQLException {
+        HashMap<String, Object> map=new HashMap<>();
+        map.put("userId",userId);
+        map.put("groupId",groupId);
+        return (List<HashMap<String, Object>>) this.getSqlMapClient().queryForList("groupNew.loadRedBagRainResultByUserId",map);
+    }
+
+    public int userTakeRedBag(Long keyId) throws SQLException {
+        return  this.getSqlMapClient().update("groupNew.userTakeRedBag",keyId);
+
+    }
+
+    public HashMap<String, Object> loadRedBagRainResultByKeyId(Long keyId) throws SQLException {
+        return (HashMap<String, Object>) this.getSqlMapClient().queryForObject("groupNew.loadRedBagRainResultByKeyId",keyId);
+    }
+
+    public HashMap<String, Object> loadRedBagRainStatistics(long groupId) throws SQLException {
+        return (HashMap<String, Object>) this.getSqlMapClient().queryForObject("groupNew.loadRedBagRainStatistics",groupId);
+
+    }
+
+    public List<HashMap<String, Object>> loadHistroyRedBagConfig(HashMap<String, Object> map) throws SQLException {
+        return  this.getSqlMapClient().queryForList("groupNew.loadHistroyRedBagConfig", map);
+    }
+
+    public GroupRedBagRainConfig loadRedBagRainConfigByKeyId(long keyId) throws SQLException {
+        return (GroupRedBagRainConfig) this.getSqlMapClient().queryForObject("groupNew.loadRedBagRainConfigByKeyId", keyId);
+    }
+
+    public List<GroupRedBagRainConfig> loadCheckTimeRedBagRainConfig(HashMap<String, Object> config) throws SQLException {
+        return (List<GroupRedBagRainConfig> )this.getSqlMapClient().queryForList("groupNew.loadCheckTimeRedBagRainConfig", config);
+
     }
 }

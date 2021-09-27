@@ -1925,5 +1925,14 @@ public class WebSocketMsgType {
     /**删除结果*/
     public static final int req_code_quanxian_delete = 4522;
 
+    /**亲友圈红包雨 推送开始抢红包消息*/
+    public static final int resp_code_GroupRedBagRain_push = 4523;
+
+    /**亲友圈红包雨 推送抢到红包消息*/
+    public static final int resp_code_GroupRedBagRain_take = 4524;
+
+    /**请求 抢红包**/
+    public static final int req_code_GroupRedBagRain= 4525;
+
 
 }

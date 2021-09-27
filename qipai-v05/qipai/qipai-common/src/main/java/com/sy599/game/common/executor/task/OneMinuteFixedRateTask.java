@@ -1,12 +1,7 @@
 package com.sy599.game.common.executor.task;
 
 import com.sy599.game.robot.RobotManager;
-import com.sy599.game.util.GoldRoomUtil;
-import com.sy599.game.util.GroupConfigUtil;
-import com.sy599.game.util.LogUtil;
-import com.sy599.game.util.ResourcesConfigsUtil;
-import com.sy599.game.util.SoloRoomUtil;
-import com.sy599.game.util.SysPartitionUtil;
+import com.sy599.game.util.*;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -71,6 +66,12 @@ public class OneMinuteFixedRateTask extends TimerTask {
             LogUtil.errorLog.error("OneMinuteFixedRateTask|error|", t);
         }
 
+        try {
+            //加载红包雨配置
+            GroupRedBagRainUtil.initRedBagRainConfigs();
+        }catch (Throwable t) {
+            LogUtil.errorLog.error("OneMinuteFixedRateTask|error|", t);
+        }
         LogUtil.monitorLog.info("OneMinuteFixedRateTask|initResourcesConfigs|" + (System.currentTimeMillis() - start));
     }
 

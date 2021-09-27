@@ -2771,6 +2771,254 @@
 
     </select>
 
+
+    <!--    03 亲友圈红包雨活动配置-->
+    <resultMap id="GroupRedBagRainConfig" class="com.sy.sanguo.game.bean.group.GroupRedBagRainConfig">
+        <result column="keyid" jdbcType="BIGINT" property="keyid" />
+        <result column="groupId" jdbcType="BIGINT" property="groupid" />
+        <result column="pushStartTime" jdbcType="TIMESTAMP" property="pushstarttime" />
+        <result column="pushEndTime" jdbcType="TIMESTAMP" property="pushendtime" />
+        <result column="totalPoint" jdbcType="INTEGER" property="totalpoint" />
+        <result column="redBagNum" jdbcType="INTEGER" property="redbagnum" />
+        <result column="redMinPoint" jdbcType="INTEGER" property="redminpoint" />
+        <result column="redMaxPoint" jdbcType="INTEGER" property="redmaxpoint" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="gameTypeLimit" jdbcType="VARCHAR" property="gametypelimit" />
+        <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+        <result column="modifytime" jdbcType="TIMESTAMP" property="modifytime" />
+    </resultMap>
+
+    <select id="selectRedBagRainConfigByGroupId" parameterClass="java.lang.Long" resultClass="java.util.HashMap">
+        select
+           *
+        from t_group_redbagrain_config
+        where
+           groupId =#groupId#
+           and  state !=4
+           order by createtime desc
+    </select>
+
+    <!-- state    0未开始1发放中2已结束   and  pushStartTime <![CDATA[>=]]> #pushStartTime#-->
+    <select id="selectRedBagRainConfigByGroupIdAndState" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+        select
+            keyId,
+            groupId,
+            pushStartTime,
+            pushEndTime,
+            totalPoint,
+            redBagNum,
+            redMinPoint,
+            redMaxPoint,
+            state,
+            gameTypeLimit,
+            createtime,
+            modifytime
+        from t_group_redbagrain_config
+        where
+           groupId =#groupId#
+           and   state = 0
+           order by createtime desc
+    </select>
+    <select id="loadHistroyRedBagConfig" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+        select
+            keyId,
+            groupId,
+            pushStartTime,
+            pushEndTime,
+            totalPoint,
+            redBagNum,
+            redMinPoint,
+            redMaxPoint,
+            state,
+            gameTypeLimit,
+            createtime,
+            modifytime
+        from t_group_redbagrain_config
+        where
+           groupId =#groupId#
+                and  state in (2,3)
+                and  pushStartTime <![CDATA[>=]]> #pushStartTime#
+           order by pushStartTime desc
+    </select>
+
+
+    <insert id="insertRedBagRainConfig" parameterClass="java.util.HashMap">
+        insert into t_group_redbagrain_config (groupId, pushStartTime,
+        pushEndTime, totalPoint, redBagNum,
+        redMinPoint, redMaxPoint,state,createTime, gameTypeLimit )
+        values (#groupid#, #pushstarttime#,
+        #pushendtime#, #totalpoint#, #redbagnum#,
+        #redminpoint#, #redmaxpoint#, #state#,#createTime#,#gametypelimit#  )
+        <selectKey resultClass="int" type="post" keyProperty="keyid" >
+            select LAST_INSERT_ID() as value
+        </selectKey>
+    </insert>
+
+    <update id="updateRedBagConfig" parameterClass="java.util.HashMap">
+         update
+            t_group_redbagrain_config
+         set
+            groupid=#groupid#,
+             pushstarttime=#pushstarttime#,
+            pushendtime= #pushendtime#,
+            totalpoint=#totalpoint#,
+          redbagnum=#redbagnum#,
+            redminpoint= #redminpoint#,
+           redmaxpoint=#redmaxpoint#,
+           state= #state#,
+           gametypelimit= #gametypelimit#
+         where keyId=#keyId#
+    </update>
+
+    <update id="updateRedBagConfigState" parameterClass="java.util.HashMap">
+      /*FORCE_MASTER*/   update
+            t_group_redbagrain_config
+         set
+           state= #state#
+         where keyId=#keyId#
+    </update>
+
+
+    <insert id="insertRedBagDataList" parameterClass="java.util.HashMap">
+        insert into t_group_redBagRainResult (
+            redbagnum,redbagConfigId,groupId,createtime
+        ) values (
+            #redbagnum#,#redbagConfigId#,#groupId#,#createtime#
+        )
+    </insert>
+
+
+    <resultMap id="RedBagRainResult" class="com.sy.sanguo.game.bean.group.GroupRedBagResult" >
+        <result column="id" property="id" jdbcType="BIGINT" />
+        <result column="redbagnum" property="redbagnum" jdbcType="BIGINT" />
+        <result column="redbagConfigId" property="redBagConfigId" jdbcType="BIGINT" />
+        <result column="groupId" property="groupid" jdbcType="BIGINT" />
+        <result column="time" property="time" jdbcType="TIMESTAMP" />
+        <result column="userId" property="userid" jdbcType="BIGINT" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+        <result column="modifytime" property="modifytime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="loadRedBagRainResult" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+        select  *  from
+        t_group_redBagRainResult
+        where  redbagConfigId =#keyId# and  userid!=0
+    </select>
+
+    <delete id="deleteRedBagConfigByKeyId" parameterClass="java.lang.Long">
+        DELETE  FROM t_group_redbagrain_config WHERE  keyid=#keyId# and  state=0
+    </delete>
+
+    <delete id="deleteRedBagResultByConfigId" parameterClass="java.lang.Long">
+        DELETE  FROM t_group_redBagRainResult WHERE  redBagConfigId=#keyId#
+    </delete>
+
+    <!--    已领取比赛分 已领取个数统计-->
+    <select id="sumRedBagResultPoint" parameterClass="java.lang.Long" resultClass="java.util.HashMap">
+        SELECT sum(t.redbagnum)  AS 'sumTakePoint' ,count(t.redbagnum) AS 'userTakeNum'
+        FROM t_group_redBagRainResult t WHERE redbagconfigid=#keyId# AND userid!=0  AND userTakeState in (0,1)
+    </select>
+
+    <select id="loadRedBagRainResultByConfigId" parameterClass="java.lang.Long" resultClass="java.util.HashMap">
+        SELECT r.redbagnum,r.userid,u.name,u.headimgurl
+        FROM t_group_redBagRainResult r
+        LEFT JOIN user_inf u ON r.userid=u.userid
+        WHERE r.redbagconfigId =#keyId# AND r.userid!=0 AND userTakeState in (0,1)
+        ORDER BY createtime desc
+    </select>
+
+    <select id="loadRedBagRainResultByUserId" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+       SELECT id, redBagNum,time,userTakeState FROM t_group_redBagRainResult WHERE userid=#userId# and groupid=#groupId#
+    </select>
+
+    <select id="loadRedBagRainResultByKeyId" parameterClass="java.lang.Long" resultClass="java.util.HashMap">
+       SELECT id, redBagNum,time,userTakeState
+       FROM t_group_redBagRainResult
+       WHERE id=#keyId#  and  usertakeState=0
+    </select>
+
+    <select id="loadRedBagRainStatistics" parameterClass="java.lang.Long" resultClass="java.util.HashMap">
+      SELECT
+        SUM(totalPoint) AS 'totalPoint',
+        (
+            SELECT
+                SUM(redBagNum)
+            FROM
+                t_group_redBagRainResult
+            WHERE
+                groupid = #grouId#
+            AND userid  <![CDATA[ > ]]> 0 AND userTakeState = 0
+        ) AS 'unTakePoint'
+        FROM
+            t_group_redbagrain_config
+        WHERE
+        groupid =  #grouId#
+      </select>
+
+    <!--    0未提取1已提取-->
+    <update id="userTakeRedBag"  parameterClass="java.lang.Long">
+       /*FORCE_MASTER*/  UPDATE t_group_redBagRainResult
+       SET usertakeState = 1
+       WHERE id=#id# and  usertakeState=0
+    </update>
+
+    <select id="loadRedBagRainConfigByKeyId" parameterClass="java.lang.Long" resultMap="GroupRedBagRainConfig">
+      /*FORCE_MASTER*/
+        SELECT
+			*
+		FROM
+			t_group_redbagrain_config WHERE keyId=#keyId#
+
+    </select>
+
+    <select id="loadNeedMasterAccount" resultMap="GroupRedBagRainConfig" parameterClass="java.util.HashMap">
+        /*FORCE_MASTER*/ SELECT * FROM t_group_redbagrain_config WHERE state =2 and  pushstarttime <![CDATA[ >= ]]>   #startDate#
+    </select>
+
+    <select id="loadAllUnTakeRedBag" parameterClass="java.lang.Long" resultMap="RedBagRainResult">
+        /*FORCE_MASTER*/
+        SELECT
+                *
+        FROM
+                t_group_redBagRainResult
+        WHERE
+        redbagconfigId =#configId# AND userTakeState =0 AND userid=0
+    </select>
+
+    <select id="loadAllUserUnTakeRedBag" parameterClass="java.lang.Long" resultMap="RedBagRainResult">
+        /*FORCE_MASTER*/
+        SELECT
+                *
+        FROM
+                t_group_redBagRainResult
+        WHERE
+        redbagconfigId =#configId# AND userTakeState =0 AND userid>0
+    </select>
+
+    <update id="updateRedBagResult" parameterClass="java.util.HashMap">
+           UPDATE t_group_redBagRainResult
+           SET usertakeState = 2,userid=#userId#
+           WHERE  redbagconfigid=#keyId#
+            AND usertakeState=0 AND userid=0
+    </update>
+    <update id="updateUserTakeRedBagResult" parameterClass="java.util.HashMap">
+           UPDATE t_group_redBagRainResult
+           SET usertakeState = 1
+           WHERE  redbagconfigid=#keyId#
+            AND usertakeState=0 AND userid=#userId#
+    </update>
+
+
+    <select id="loadNeedMemberAccountRedBagRainConfig" resultMap="GroupRedBagRainConfig" parameterClass="java.util.HashMap">
+        /*FORCE_MASTER*/
+         SELECT * FROM t_group_redbagrain_config
+         WHERE state = 3 and pushendtime <![CDATA[ >= ]]> #endDate#
+    </select>
+
+    <select id="loadCheckTimeRedBagRainConfig" resultMap="GroupRedBagRainConfig" parameterClass="java.util.HashMap">
+          SELECT * FROM t_group_redbagrain_config where groupid=#groupId# and  pushStartTime = #pushstarttime#
+    </select>
 </sqlMap>
 
 

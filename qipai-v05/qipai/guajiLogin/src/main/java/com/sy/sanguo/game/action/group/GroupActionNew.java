@@ -21,6 +21,7 @@ import com.sy.sanguo.game.pdkuai.db.dao.TableLogDao;
 import com.sy.sanguo.game.pdkuai.db.dblock.DbLockEnum;
 import com.sy.sanguo.game.pdkuai.db.dblock.DbLockUtil;
 import com.sy.sanguo.game.pdkuai.user.Manager;
+import com.sy.sanguo.game.pdkuai.util.LogUtil;
 import com.sy.sanguo.game.utils.BjdUtil;
 import com.sy.sanguo.game.utils.GroupUtil;
 import com.sy.sanguo.game.utils.bean.CommonRes;
@@ -33,6 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -5414,6 +5418,681 @@ public class GroupActionNew extends GameStrutsAction {
         } catch (Exception e) {
             LOGGER.error("deleteGroupWarn|error|" + JSON.toJSONString(params), e.getMessage(), e);
             OutputUtil.output(1, LangMsg.getMsg(LangMsg.code_4), getRequest(), getResponse(), false);
+        }
+    }
+
+
+    //==============红包雨=======================================================
+    /**
+     * 查询亲友圈 红包雨所有设置
+     */
+    public void loadRedBagConfig(){
+        try {
+            Integer control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
+            if(null == control|| "0".equals(String.valueOf(control))){
+                //OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+                return;
+            }
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.info("loadRedBagConfig|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            long groupId = NumberUtils.toLong(params.get("groupId"), 0);
+            GroupInfo group = groupDaoNew.loadGroupInfo(groupId);
+            if (group == null) {
+                response(-1, LangMsg.getMsg(LangMsg.code_5));
+                return;
+            }
+            if(group.getRedBagRainConfig()==0){
+                OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+                return;
+            }
+            long userId = Long.valueOf(params.getOrDefault("userId","0"));
+            if(userId==0){
+                OutputUtil.output(2,  "参数错误!", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupUser self = groupDaoNew.loadGroupUser(groupId, userId);
+            int state = Integer.valueOf(params.getOrDefault("state","0"));
+            if(self!=null &&  GroupConstants.isHuiZhang(self.getUserRole())){
+                HashMap<String,Object> map = new HashMap<>();
+                map.put("groupId",groupId);
+                map.put("state",state);
+                List<HashMap<String, Object>> allRedBagConfig= groupDaoNew.loadAllRedBagConfig(map);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("results",JSONObject.toJSON(allRedBagConfig));
+                OutputUtil.output(0, jsonObject.toJSONString(), getRequest(), getResponse(), false);
+            }else {
+                OutputUtil.output(2, "您不是会长!", getRequest(), getResponse(), false);
+            }
+        }catch (Exception e) {
+            OutputUtil.output(2, "系统错误：请联系管理员", getRequest(), getResponse(), false);
+            LogUtil.e("loadRedBagConfig|error|", e);
+            return;
+        }
+    }
+
+    /**
+     * 添加 修改 亲友圈红包雨配置
+     */
+    public void addRedBagConfig(){
+        try {
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            Integer control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
+            if(null == control|| "0".equals(String.valueOf(control))){
+                OutputUtil.output(2,  "此功能目前未开放!", getRequest(), getResponse(), false);
+                return;
+            }
+
+            LOGGER.info("loadRedBagConfig|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            String unionId = params.get("unionId");
+            long groupId = NumberUtils.toLong(params.get("groupId"), 0);
+
+            GroupInfo group = groupDaoNew.loadGroupInfo(groupId);
+            if (group == null) {
+                response(-1, LangMsg.getMsg(LangMsg.code_5));
+                return;
+            }
+            if(group.getRedBagRainConfig()==0){
+                OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+                return;
+            }
+            long userId = Long.valueOf(params.getOrDefault("userId","0"));
+            if ( userId==0) {
+                response(5, "角色不存在，请先创建角色");
+                return;
+            }
+
+            GroupUser self = groupDaoNew.loadGroupUser(groupId, userId);
+            if(self!=null &&  GroupConstants.isHuiZhang(self.getUserRole())){
+                String   pushStartTime = params.get( "pushStartTime") ;
+                Date pushStartTimeDate = DateUtil.stringToDate(pushStartTime,"yyyy-MM-dd hh:mm:ss");
+                String   pushEndTime= params.get( "pushEndTime") ;
+                Date pushEndTimeDate = DateUtil.stringToDate(pushEndTime,"yyyy-MM-dd hh:mm:ss");
+                int   totalPoint= Integer.valueOf(params.getOrDefault( "totalPoint","0")) ;
+                int   redBagNum = Integer.valueOf(params.getOrDefault( "redBagNum","0"));
+                int   redMinPoint=Integer.valueOf( params.getOrDefault( "redMinPoint","0")) ;
+                int   redMaxPoint= Integer.valueOf(params.getOrDefault( "redMaxPoint","0"));
+                int   state = Integer.valueOf(params.getOrDefault( "state","0"));
+                long   keyId = Long.valueOf(params.getOrDefault( "keyId","0"));
+                if(self.getCredit()-totalPoint<0){
+                    OutputUtil.output(2, "擂台分不足!", getRequest(), getResponse(), false);
+                    return;
+                }
+                if(totalPoint<=0 || redBagNum<=0 || redMinPoint<=0 || redMaxPoint<=0){
+                    OutputUtil.output(2, "分数填写错误", getRequest(), getResponse(), false);
+                    return;
+                }
+                if(redMaxPoint<=(totalPoint/redBagNum)){
+                    OutputUtil.output(2, "分数   设置不合理！", getRequest(), getResponse(), false);
+                    return;
+                }
+                LocalDateTime time = LocalDateTime.now();
+                DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+                String   gameTypeLimit= params.get( "gameTypeLimit");
+                HashMap<String,Object> config = new HashMap<>();
+                config.put( "pushstarttime",pushStartTimeDate) ;
+                config.put( "pushendtime",pushEndTimeDate) ;
+                config.put( "totalpoint",totalPoint) ;
+                config.put( "redbagnum",redBagNum) ;
+                config.put( "redminpoint",redMinPoint) ;
+                config.put( "redmaxpoint",redMaxPoint) ;
+                config.put( "state",state) ;
+                config.put( "groupid",groupId) ;
+                config.put( "gametypelimit",gameTypeLimit) ;
+                config.put( "keyId",keyId) ;
+
+
+                HashMap<String,Object> checkParam = new HashMap<>();
+                checkParam.put("groupId",groupId);
+                checkParam.put("pushStartTime",pushStartTime);
+
+                List<GroupRedBagRainConfig> repeat = groupDaoNew.loadCheckTimeRedBagRainConfig(checkParam);
+                if(null!=repeat && repeat.size()>0){
+                    OutputUtil.output(2, "同一时间段福利推送数量限制1个", getRequest(), getResponse(), false);
+                    return;
+                }
+                if(keyId==0){
+                    Object ob=  groupDaoNew.addGroupRedBagRainConfig(config);
+                    keyId = Long.valueOf(""+ob);
+                    List<  HashMap<String,Object>>  initData = new ArrayList<>();
+                    List<Integer> redlistinfo = getRedBagList(redBagNum,totalPoint,redMinPoint,redMaxPoint);
+                    // redbagnum,redbagConfigId,groupId
+                    for (int num:redlistinfo ) {
+                        if(num<=0){
+                            HashMap<String ,Object> map = new HashMap<>();
+                            map.put("state", 4);
+                            map.put("keyId", keyId);
+                            //删除此记录
+                            OutputUtil.output(2, "最大红包金额设置不合理！", getRequest(), getResponse(), false);
+                            groupDaoNew.deleteRedBagConfigByKeyId(keyId);
+                            return;
+                        }
+                        HashMap<String,Object> redmap = new HashMap<>();
+                        redmap.put("redbagConfigId",keyId);
+                        redmap.put("redbagnum",num);
+                        redmap.put("groupId",groupId);
+                        time =time.plusSeconds(1);
+                        redmap.put("createtime", dtf2.format(time));
+
+                        initData.add(redmap);
+                    }
+                    //变更群内比赛分：	keyId =#keyId#
+                    //			AND credit + #credit# <![CDATA[ >= ]]> 0
+                    HashMap<String ,Object> updateMap = new HashMap<>();
+                    updateMap.put("keyId", self.getKeyId());
+                    updateMap.put("credit", -totalPoint);
+                    //添加信用分日志和扣除信用分
+                    groupDaoNew.updateGroupUserCredit(updateMap);
+                    groupDaoNew.insertGroupCreditLog(GroupUtil.redBagRainUpdateCreateLog(groupId,-totalPoint,userId));
+                    groupDaoNew.insertBatchRedBagList(initData);
+
+                }else {
+                    groupDaoNew.updateGroupRedBagRainConfig(config);
+                }
+                OutputUtil.output(0, "配置成功!", getRequest(), getResponse(), false);
+            }else {
+                OutputUtil.output(2, "您不是会长!", getRequest(), getResponse(), false);
+            }
+        }catch (Exception e) {
+            OutputUtil.output(2, "系统错误：请联系管理员", getRequest(), getResponse(), false);
+            LogUtil.e("loadRedBagConfig|error|", e);
+            return;
+        }
+    }
+
+    /**
+     * 删除红包雨配置
+     */
+    public void deleteRedBagConfig(){
+        try {
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            Integer control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
+            if(null == control|| "0".equals(String.valueOf(control))){
+                OutputUtil.output(2,  "此功能目前未开放!", getRequest(), getResponse(), false);
+                return;
+            }
+
+            LOGGER.info("loadRedBagConfig|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            String unionId = params.get("unionId");
+            long groupId = NumberUtils.toLong(params.get("groupId"), 0);
+
+            GroupInfo group = groupDaoNew.loadGroupInfo(groupId);
+            if (group == null) {
+                response(-1, LangMsg.getMsg(LangMsg.code_5));
+                return;
+            }
+            if(group.getRedBagRainConfig()==0){
+                OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+                return;
+            }
+            long userId = Long.valueOf(params.getOrDefault("userId","0"));
+            if ( userId==0) {
+                response(5, "角色不存在，请先创建角色");
+                return;
+            }
+            long keyId = Long.valueOf(params.getOrDefault("keyId","0"));
+            if ( keyId==0) {
+                response(5, "参数错误!");
+                return;
+            }
+            GroupUser self = groupDaoNew.loadGroupUser(groupId, userId);
+            if(self!=null &&  GroupConstants.isHuiZhang(self.getUserRole())){
+                //删除前 。返回信用分
+                GroupRedBagRainConfig   config=  groupDaoNew.loadRedBagRainConfigByKeyId(keyId);
+                if(null==config ){
+                    response(5, "未找到此条配置");
+                    return;
+                }
+                if(config.getState()!=0){
+                    if(config.getState()==1){
+                        response(5, "福利雨投放中 无法删除");
+                        return;
+                    }   if(config.getState()==2){
+                        response(5, "福利雨已投放 无法删除");
+                        return;
+                    }
+                    if(config.getState()==3){
+                        response(5, "福利雨已结算 无法删除");
+                        return;
+                    }
+                }
+                //可删 返回红包数额
+                HashMap<String ,Object> updateMap = new HashMap<>();
+                updateMap.put("keyId", self.getKeyId());
+                updateMap.put("credit", config.getTotalpoint());
+                //日志
+                int updateResult  = groupDaoNew.updateGroupUserCredit(updateMap);
+                groupDaoNew.insertGroupCreditLog(GroupUtil.redBagRainUpdateCreateLog(groupId,config.getTotalpoint(),userId));
+                int i= groupDaoNew.deleteRedBagConfigByKeyId(keyId);
+                int c = groupDaoNew.deleteRedBagResultByConfigId(keyId);
+
+                LOGGER.info("deleteRedBagConfig|keyId:{},i:{},c:{}"+keyId+" i="+i+" c="+c+" r="+updateResult);
+                OutputUtil.output(0, "删除成功!", getRequest(), getResponse(), false);
+            }else{
+                OutputUtil.output(0, "您无权删除!", getRequest(), getResponse(), false);
+            }
+        }catch (Exception e){
+            OutputUtil.output(2, "系统错误：请联系管理员", getRequest(), getResponse(), false);
+            LogUtil.e("loadRedBagConfig|error|", e);
+            return;
+        }
+    }
+
+
+    /**
+     *工具消息 获取红包数据
+     * @param redNum 红包个数
+     * @param totalPoint 总红包点数
+     * @param min 最小红包金额
+     * @param maxR 最大红包金额
+     * @return null 或者 红包list
+     */
+    public  List<Integer>  getRedBagList(int redNum,int totalPoint,int min ,int maxR){
+        int all =totalPoint;
+        //均分
+        int i=1;
+        int max=0;
+        int money=0;
+        List<Integer> hb = new ArrayList<>();
+        List<Integer> math = new ArrayList();
+        while (i < redNum) {
+            //保证即使一个红包是最大的了,后面剩下的红包,每个红包也不会小于最小值
+            max = totalPoint - min * (redNum - i);
+            int k = (int) (redNum - i) / 2;
+            //保证最后两个人拿的红包不超出剩余红包
+            if (redNum - i <= 2) {
+                k = redNum - i;
+            }
+            //最大的红包限定的平均线上下
+            max = max / k;
+
+            //保证每个红包大于最小值,又不会大于最大值
+            money = (int) (min  + Math.random() * (max  - min + 1));
+            if(money>maxR){
+                money = maxR;
+            }
+            totalPoint =  totalPoint  - money;
+            math.add(money);
+            // System.out.println("第" + i + "个人拿到" + money);
+            i++;
+            //最后一个人拿走剩下的红包
+            if (i == redNum) {
+
+                // System.out.println("第" + i + "个人拿到" + totalPoint);
+                if(totalPoint>maxR){
+                    math.add(maxR);
+                    //最后个人大于最大值
+                    //算法溢出金额
+                    int resPoint = totalPoint-maxR;
+                    //回补不满足最大平均值的
+                    for (int n=0;n<math.size();n++  ) {
+                        if(math.get(n)<maxR){
+                            int bu_point = maxR-math.get(n);
+                            if(resPoint-bu_point>0){
+                                math.set(n,maxR);
+                                resPoint=resPoint-bu_point;
+                            }else{
+                                math.set(n,resPoint+math.get(n));
+                                break;
+                            }
+                        }
+                    }
+                }else{
+                    math.add(totalPoint);
+                }
+            }
+        }
+        int acount = 0;
+        for (int d:math ) {
+            acount +=d;
+        }
+        Collections.shuffle(math);
+        if(acount==all){
+            return math;
+        }else{
+            return  null;
+        }
+    }
+    /**
+     * 红包雨结果查询
+     */
+    public void  loadRedBagRainResult(){
+        try {
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            Integer control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
+//            if(null == control|| "0".equals(String.valueOf(control))){
+//                OutputUtil.output(2,  "此功能目前未开放!", getRequest(), getResponse(), false);
+//                return;
+//            }
+
+            LOGGER.info("loadRedBagRainResult|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+
+            //
+            long keyId = Long.valueOf(params.getOrDefault("keyId","0"));
+            if(keyId==0){
+                return;
+            }
+            List<HashMap<String, Object>> results = groupDaoNew.loadRedBagRainResult(keyId);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("results",JSONObject.toJSON(results));
+            OutputUtil.output(0, jsonObject.toJSONString(), getRequest(), getResponse(), false);
+        }catch (Exception e){
+            OutputUtil.output(2, "系统错误：请联系管理员", getRequest(), getResponse(), false);
+            LogUtil.e("loadRedBagConfig|error|", e);
+            return;
+        }
+    }
+
+    /**
+     * 查询历史红包雨信息
+     */
+    public void loadRedBagConfigHistoryInfo(){
+        try {
+            Integer control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
+//            if(null == control|| "0".equals(String.valueOf(control))){
+//                OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+//                return;
+//            }
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.info("loadRedBagConfig|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            long groupId = NumberUtils.toLong(params.get("groupId"), 0);
+            GroupInfo group = groupDaoNew.loadGroupInfo(groupId);
+            if (group == null) {
+                response(-1, LangMsg.getMsg(LangMsg.code_5));
+                return;
+            }
+//            if(group.getRedBagRainConfig()==0){
+//                OutputUtil.output(2,  "功能被管理员关闭!", getRequest(), getResponse(), false);
+//                return;
+//            }
+            long userId = Long.valueOf(params.getOrDefault("userId","0"));
+            if(userId==0){
+                OutputUtil.output(2,  "参数错误!", getRequest(), getResponse(), false);
+                return;
+            }
+            GroupUser self = groupDaoNew.loadGroupUser(groupId, userId);
+            if(self!=null &&  GroupConstants.isHuiZhang(self.getUserRole())){
+                LocalDate localDate = LocalDate.now().plusDays(-7) ;
+
+                HashMap<String,Object> map = new HashMap<>();
+                map.put("groupId",groupId);
+                map.put("pushStartTime", localDate.toString());
+                List<HashMap<String, Object>> data= groupDaoNew.loadHistroyRedBagConfig(map);
+                List<HashMap<String,Object>> results = new ArrayList<>();
+                for (HashMap map1:data  ) {
+                    String redBagNum =map1.get("redBagNum")==null?"0": String.valueOf(map1.get("redBagNum"));
+                    String totalPoint  =map1.get("totalPoint")==null?"0": String.valueOf(map1.get("totalPoint"));
+                    String pushStartTime  =map1.get("pushStartTime")==null?"0": String.valueOf(map1.get("pushStartTime"));
+                    Long keyId = (Long) map1.get("keyId");
+
+                    HashMap map2 = groupDaoNew.sumRedBagResultPushPoint(keyId);
+                    String sumTakePoint = map2.get("sumTakePoint")==null?"0": String.valueOf(map2.get("sumTakePoint"));
+                    String userTakeNum = map2.get("userTakeNum")==null?"0":String.valueOf(map2.get("userTakeNum")) ;
+                    HashMap<String,Object> data1 = new HashMap<>();
+                    data1.put("pushStartTime",pushStartTime);
+                    data1.put("redBagNum",redBagNum);
+                    data1.put("userTakeNum",userTakeNum);
+                    data1.put("sumTakePoint",sumTakePoint);
+                    data1.put("totalPoint",totalPoint);
+                    data1.put("keyId",keyId);
+                    results.add(data1);
+                }
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("results",JSONObject.toJSON(results));
+                OutputUtil.output(0, jsonObject.toJSONString(), getRequest(), getResponse(), false);
+            }
+        }catch (Exception e){
+            OutputUtil.output(2, "系统错误：请联系管理员", getRequest(), getResponse(), false);
+            LogUtil.e("loadRedBagConfigHistoryInfo|error|", e);
+            return;
+        }
+    }
+
+    /**
+     * 群主查看 红包雨发放情况
+     */
+    public void loadGroupRedBagResultInfo(){
+        try {
+            Integer control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
+//            if(null == control|| "0".equals(String.valueOf(control))){
+//                OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+//                return;
+//            }
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.info("loadRedBagConfig|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            String keyId =  params.getOrDefault("keyId","0");
+            if(keyId.equals("0")){
+                OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+                return;
+            }
+            long groupId = NumberUtils.toLong(params.get("groupId"), 0);
+            GroupInfo group = groupDaoNew.loadGroupInfo(groupId);
+            if (group == null) {
+                response(-1, LangMsg.getMsg(LangMsg.code_5));
+                return;
+            }
+//            if(group.getRedBagRainConfig()==0){
+//                OutputUtil.output(2,  "功能被管理员关闭!", getRequest(), getResponse(), false);
+//                return;
+//            }
+            long userId = Long.valueOf(params.getOrDefault("userId","0"));
+            if(userId==0){
+                OutputUtil.output(2,  "参数错误!", getRequest(), getResponse(), false);
+                return;
+            }
+            //
+            GroupUser self = groupDaoNew.loadGroupUser(groupId, userId);
+            if(self!=null &&  GroupConstants.isHuiZhang(self.getUserRole())){
+                List<HashMap<String,Object>>  result= groupDaoNew.loadRedBagRainResultByConfigId(Long.valueOf(keyId));
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("results",JSONObject.toJSON(result));
+                OutputUtil.output(0, jsonObject.toJSONString(), getRequest(), getResponse(), false);
+            }else{
+                OutputUtil.output(2, "权限不足", getRequest(), getResponse(), false);
+                return;
+            }
+        }catch (Exception e){
+            OutputUtil.output(2, "系统错误：请联系管理员", getRequest(), getResponse(), false);
+            LogUtil.e("loadRedBagResultInfo|error|", e);
+            return;
+        }
+    }
+
+    /**
+     * 玩家红包雨结果查询
+     */
+    public void loadUserRedBagResultInfo() {
+        try {
+            Integer control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
+//            if(null == control|| "0".equals(String.valueOf(control))){
+//                OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+//                return;
+//            }
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.info("loadUserRedBagResultInfo|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+
+            long userId = Long.valueOf(params.getOrDefault("userId","0"));
+            if(userId==0){
+                OutputUtil.output(2,  "参数错误!", getRequest(), getResponse(), false);
+                return;
+            }
+            long groupId = NumberUtils.toLong(params.get("groupId"), 0);
+            GroupInfo group = groupDaoNew.loadGroupInfo(groupId);
+            if (group == null) {
+                response(-1, LangMsg.getMsg(LangMsg.code_5));
+                return;
+            }
+//            if(group.getRedBagRainConfig()==0){
+//                OutputUtil.output(2,  "功能被管理员关闭!", getRequest(), getResponse(), false);
+//                return;
+//            }
+            List<HashMap<String,Object>>  result= groupDaoNew.loadRedBagRainResultByUserId(userId,groupId);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("results",JSONObject.toJSON(result));
+            OutputUtil.output(0, jsonObject.toJSONString(), getRequest(), getResponse(), false);
+        } catch (Exception e) {
+            OutputUtil.output(2, "系统错误：请联系管理员", getRequest(), getResponse(), false);
+            LogUtil.e("loadRedBagResultInfo|error|", e);
+            return;
+        }
+    }
+
+    /**
+     * 用户领取红包 领取 一键领取
+     */
+    public synchronized void  userTakeRedBag() {
+        try {
+            Integer control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
+//            if(null == control|| "0".equals(String.valueOf(control))){
+//                OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+//                return;
+//            }
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.info("userTakeRedBag|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+            String keyIds =  params.getOrDefault("keyId","0");
+            if(keyIds.equals("0")){
+                OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+                return;
+            }
+            long userId = Long.valueOf(params.getOrDefault("userId","0"));
+            if(userId==0){
+                OutputUtil.output(2,  "参数错误!", getRequest(), getResponse(), false);
+                return;
+            }
+            long groupId = NumberUtils.toLong(params.get("groupId"), 0);
+            GroupInfo group = groupDaoNew.loadGroupInfo(groupId);
+            if (group == null) {
+                response(-1, LangMsg.getMsg(LangMsg.code_5));
+                return;
+            }
+            if(group.getRedBagRainConfig()==0){
+                OutputUtil.output(2,  "功能被管理员关闭!", getRequest(), getResponse(), false);
+                return;
+            }
+
+            int totalUserTake =0;//用户总领取红包金额
+            String[] ary = keyIds.split(",");
+            for (String id:ary) {
+                if("".equals(id)){
+                    continue;
+                }
+                HashMap<String,Object> map2 =  groupDaoNew.loadRedBagRainResultByKeyId(Long.valueOf(id));
+                // id, redBagNum,time,userTakeState
+                if(null!=map2 && !map2.isEmpty()){
+                    String userTakeState = map2.get("userTakeState")==null?"-1":String.valueOf(map2.get("userTakeState"));
+                    if(userTakeState.equals("0")){
+                        int result= groupDaoNew.userTakeRedBag(Long.valueOf(id));
+                        if(result==1){
+                            //领取成功；
+                            int redbagnum = Integer.parseInt(map2.get("redBagNum").toString());
+                            totalUserTake +=redbagnum;
+                        }
+                    }
+                }
+            }
+            if(totalUserTake>0){
+                GroupUser self = groupDaoNew.loadGroupUser(groupId, userId);
+                //变更群内比赛分：	keyId =#keyId#
+                //			AND credit + #credit# <![CDATA[ >= ]]> 0
+                HashMap<String ,Object> updateMap = new HashMap<>();
+                updateMap.put("keyId", self.getKeyId());
+                updateMap.put("credit", totalUserTake);
+                int updateResult  = groupDaoNew.updateGroupUserCredit(updateMap);
+                if(updateResult==1){
+                    groupDaoNew.insertGroupCreditLog(GroupUtil.redBagRainUpdateCreateLog(groupId,totalUserTake,userId)) ;     //成功
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("results", totalUserTake);
+                    OutputUtil.output(0, jsonObject.toJSONString(), getRequest(), getResponse(), false);
+                    return;
+                }
+            }
+
+        } catch (Exception e) {
+            OutputUtil.output(2, "系统错误：请联系管理员", getRequest(), getResponse(), false);
+            LogUtil.e("loadRedBagResultInfo|error|", e);
+            return;
+        }
+    }
+
+
+    /**
+     * 红包雨投放池统计
+     */
+    public void redBagRainStatistics(){
+        try {
+            Integer control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
+//           if(null == control|| "0".equals(String.valueOf(control))){
+//               OutputUtil.output(2,  "功能已关闭!", getRequest(), getResponse(), false);
+//               return;
+//           }
+            Map<String, String> params = UrlParamUtil.getParameters(getRequest());
+            LOGGER.info("redBagRainStatistics|params:{}", params);
+            if (!checkSign(params)) {
+                OutputUtil.output(-1, LangMsg.getMsg(LangMsg.code_1), getRequest(), getResponse(), false);
+                return;
+            }
+
+            long userId = Long.valueOf(params.getOrDefault("userId","0"));
+            if(userId==0){
+                OutputUtil.output(2,  "参数错误!", getRequest(), getResponse(), false);
+                return;
+            }
+            long groupId = NumberUtils.toLong(params.get("groupId"), 0);
+            GroupInfo group = groupDaoNew.loadGroupInfo(groupId);
+            if (group == null) {
+                response(-1, LangMsg.getMsg(LangMsg.code_5));
+                return;
+            }
+//           if(group.getRedBagRainConfig()==0){
+//               OutputUtil.output(2,  "功能被管理员关闭!", getRequest(), getResponse(), false);
+//               return;
+//           }
+            GroupUser self = groupDaoNew.loadGroupUser(groupId, userId);
+            if(self==null || !GroupConstants.isHuiZhang(self.getUserRole())){
+                OutputUtil.output(2,  "权限不足!", getRequest(), getResponse(), false);
+                return;
+            }
+            HashMap<String,Object> data = groupDaoNew.loadRedBagRainStatistics(groupId);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("results", JSONObject.toJSON(data));
+            OutputUtil.output(0, jsonObject.toJSONString(), getRequest(), getResponse(), false);
+            return;
+        }catch (Exception e){
+            OutputUtil.output(2, "系统错误：请联系管理员", getRequest(), getResponse(), false);
+            LogUtil.e("loadRedBagResultInfo|error|", e);
+            return;
         }
     }
 

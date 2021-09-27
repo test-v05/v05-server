@@ -958,4 +958,23 @@ public class GroupDao extends BaseDao {
     public void saveDebugTableLog(HashMap map) throws SQLException {
         this.getSqlLoginClient().insert("group.saveDebugTableLog",map);
     }
+
+
+    /**
+     * 红包雨 加载当前服务器正在打的亲友圈牌桌
+     * @param groupId
+     * @param serverId
+     * @return
+     */
+    public List<GroupTable> loadGroupPlayingTables(long groupId ,int serverId){
+        Map<String, Object> map = new HashMap<>();
+        map.put("groupId", groupId);
+        map.put("state",1);
+        try {
+            return (List<GroupTable>) this.getSqlLoginClient().queryForList("group.loadGroupPlayingTables", map);
+        }catch (Exception e){
+            LogUtil.errorLog.error("loadGroupPlayingTables:Exception:" + e.getMessage(), e);
+        }
+        return null;
+    }
 }

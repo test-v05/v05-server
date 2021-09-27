@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.security.SecureRandom;
 import java.util.Date;
+import java.util.HashMap;
 
 public class GroupUtil {
 
@@ -205,4 +206,41 @@ public class GroupUtil {
         }
         return gu;
     }
+
+
+    /**
+     * 红包雨信用分日志记录
+     * @param groupId
+     * @param creadit
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    public static HashMap<String, Object> redBagRainUpdateCreateLog(long groupId, int creadit, long userId) throws Exception {
+        HashMap<String, Object> logDest = new HashMap<>();
+        logDest.put("groupId", groupId);
+        logDest.put("optUserId", userId);
+        logDest.put("userId", userId);
+        logDest.put("tableId", 0);
+        logDest.put("credit",  creadit);
+        logDest.put("type", 6);//红包雨来源
+        logDest.put("flag", 1);
+        logDest.put("userGroup", -1 );
+        logDest.put("mode", 1);
+        logDest.put("promoterId1", 0);
+        logDest.put("promoterId3", 0);
+        logDest.put("promoterId4", 0);
+        logDest.put("promoterId5", 0);
+        logDest.put("promoterId6", 0);
+        logDest.put("promoterId7", 0);
+        logDest.put("promoterId8", 0);
+        logDest.put("promoterId9", 0);
+        logDest.put("promoterId10", 0);
+        logDest.put("createdTime", new Date());
+        logDest.put("roomName", "福利雨");
+        logDest.put("groupTableId", 0);
+        return logDest;
+
+    }
+
 }

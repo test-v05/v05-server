@@ -24,7 +24,7 @@ public class TaskExecutor {
 //                                      	new LinkedBlockingQueue<Runnable>(),
 //										createThreadFactory("service:ThreadPoolExecutor"));
 
-    private static final Timer TIMER = new Timer("Scheduled-Timer");
+    public static final Timer TIMER = new Timer("Scheduled-Timer");
 
 	/**
 	 * 统计类数据

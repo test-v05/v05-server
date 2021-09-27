@@ -1069,6 +1069,15 @@
 		VALUES ( #playType#, #groupId#, #tableId#, #userId#, #paiInfo# ,#playBureau#,#time#);
 
 	</insert>
+
+	<select id="loadGroupPlayingTables"  resultMap="GroupTable"  parameterClass="java.util.HashMap">
+ 		/*FORCE_MASTER*/
+        select * from t_group_table
+        WHERE
+        	groupId = #groupId#
+        	and  currentState =1
+    </select>
+
 </sqlMap>
 
 

@@ -168,6 +168,8 @@ public class GeneralCommand extends BaseCommand {
         gcomMap.put(WebSocketMsgType.req_code_quanxian, new Command(AuthorityCommand.class, false));
         /** 其他comMsg，一些松散的接口访问**/
         gcomMap.put(WebSocketMsgType.req_code_comMsg, new Command(ComMsgCommand.class, false));
+        /**红包雨 抢红包*/
+        gcomMap.put(WebSocketMsgType.req_code_GroupRedBagRain, new Command(GroupRedBagRainCommand.class, false));
 
         logCommandSet.add(1);
         logCommandSet.add(2);

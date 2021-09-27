@@ -2,6 +2,7 @@ package com.sy.sanguo.game.pdkuai.manager;
 
 import com.sy.sanguo.common.executor.HourTask;
 import com.sy.sanguo.common.executor.MinuteTask;
+import com.sy.sanguo.common.executor.PushGroupRedBagRainResultTask;
 import com.sy.sanguo.common.util.TaskExecutor;
 import com.sy.sanguo.game.dao.RoomDaoImpl;
 import com.sy.sanguo.game.dao.SqlDao;
@@ -12,6 +13,7 @@ import com.sy599.sanguo.util.SysPartitionUtil;
 import com.sy599.sanguo.util.TimeUtil;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 public class TaskManager {
@@ -27,6 +29,7 @@ public class TaskManager {
     public void init() {
         TaskExecutor.getInstance().submitSchTask(new MinuteTask(), 0, TimeUtil.MIN_IN_MINILLS);
         TaskExecutor.getInstance().submitSchTask(new HourTask(), 60 * 60 * 1000, 6 * 60 * 60 * 1000);
+        TaskExecutor.getInstance().submitSchTask(new PushGroupRedBagRainResultTask(), PushGroupRedBagRainResultTask.getNextMinDelay(),1000*60);
 
         // --------------------------------------------------
         // ------------每天凌晨04:30点执行任务-----------------
@@ -100,6 +103,7 @@ public class TaskManager {
 
                 clearRoomgoldConsumeStatistics();
 
+                clearRedbagRainResult();
             }
         }, c5.getTime(), 24 * 60 * 60 * 1000);
 
@@ -884,6 +888,21 @@ public class TaskManager {
             // ----------------------------- roomgold_consume_statistics ----------------------------------
             delName = "clearRoomgoldConsumeStatistics";
             delSql = "delete from roomgold_consume_statistics where consumeDate <= '" + clearDate + "'";
+            deleteDataForLogin(delName, delSql, delLimit);
+        } catch (Exception e) {
+            LogUtil.e("Exception:" + e.getMessage(), e);
+        }
+    }
+
+
+    private void clearRedbagRainResult(){
+        String clearDate = LocalDate.now().plusDays(-16).toString();
+        String delName = "";
+        String delSql = "";
+        try {
+            // ----------------------------- clearRedbagRainResult ----------------------------------
+            delName = "clearRedbagRainResult";
+            delSql = "delete from t_group_redBagRainResult where pushendtime <= '" + clearDate + "'";
             deleteDataForLogin(delName, delSql, delLimit);
         } catch (Exception e) {
             LogUtil.e("Exception:" + e.getMessage(), e);

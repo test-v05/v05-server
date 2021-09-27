@@ -41,6 +41,16 @@ public class GroupInfo implements Serializable {
     private Long goldRoomRate;
     private Long isCreditUpTime;
 
+    public int getRedBagRainConfig() {
+        return redBagRainConfig;
+    }
+
+    public void setRedBagRainConfig(int redBagRainConfig) {
+        this.redBagRainConfig = redBagRainConfig;
+    }
+
+    private int redBagRainConfig;
+
     public Integer getParentGroup() {
         return parentGroup;
     }

@@ -44,7 +44,7 @@ public class GroupInfo implements Serializable {
     private long totalExp;  // 亲友圈金币系统：总经验
     private int level;      // 亲友圈金币系统：等级
     private long creditExpToday;  // 亲友圈金币系统：当天通过下分获得经验值
-
+    private int redBagRainConfig;
     private String gameIds;
     Set<Integer> gameIdSet = new HashSet<>();
 
@@ -256,5 +256,13 @@ public class GroupInfo implements Serializable {
 
     public Set<Integer> getGameIdSet() {
         return gameIdSet;
+    }
+
+    public int getRedBagRainConfig() {
+        return redBagRainConfig;
+    }
+
+    public void setRedBagRainConfig(int redBagRainConfig) {
+        this.redBagRainConfig = redBagRainConfig;
     }
 }

@@ -198,5 +198,18 @@
 		<action class="com.sy.sanguo.game.action.BjdAction" name="moveGroupUser"  method="moveGroupUser" />
 		<action class="com.sy.sanguo.game.action.BjdAction" name="fireUser"  method="fireUser" />
 		<action class="com.sy.sanguo.game.action.BjdAction" name="selfRegister"  method="selfRegister" />
+
+
+		<action class="com.sy.sanguo.game.action.group.GroupActionNew" name="rbr01"  method="addRedBagConfig" />
+		<action class="com.sy.sanguo.game.action.group.GroupActionNew" name="rbr02"  method="loadRedBagConfig" />
+		<action class="com.sy.sanguo.game.action.group.GroupActionNew" name="rbr03"  method="loadRedBagRainResult" />
+		<action class="com.sy.sanguo.game.action.group.GroupActionNew" name="rbr04"  method="deleteRedBagConfig" />
+		<action class="com.sy.sanguo.game.action.group.GroupActionNew" name="rbr05"  method="loadRedBagConfigHistoryInfo" /><!--群主看红包雨投放记录-->
+		<action class="com.sy.sanguo.game.action.group.GroupActionNew" name="rbr06"  method="loadGroupRedBagResultInfo" /><!--群主看红包雨情况-->
+		<action class="com.sy.sanguo.game.action.group.GroupActionNew" name="rbr07"  method="loadUserRedBagResultInfo" /><!--玩家红包雨结果查询-->
+		<action class="com.sy.sanguo.game.action.group.GroupActionNew" name="rbr08"  method="userTakeRedBag " /><!--用户领取红包 -->
+		<action class="com.sy.sanguo.game.action.group.GroupActionNew" name="rbr09"  method="redBagRainStatistics " /><!--群主红包雨投放池统计 -->
+
+
 	</package>
 </struts>
