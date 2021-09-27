@@ -258,6 +258,7 @@ public class GroupActionNew extends GameStrutsAction {
         map.put("groupName", GroupConstants.filterGroupName(group.getGroupName()));
         map.put("content", group.getContent());
         map.put("currentCount", group.getCurrentCount());
+        map.put("redBagRainConfig", group.getRedBagRainConfig());
         JSONObject jsonObject = StringUtils.isBlank(group.getExtMsg()) ? new JSONObject() : JSONObject.parseObject(group.getExtMsg());
         if ("1".equals(PropertiesCacheUtil.getValueOrDefault("group_kf_oq", "0", Constants.GAME_FILE))) {
             String str = jsonObject.getString("oq");
