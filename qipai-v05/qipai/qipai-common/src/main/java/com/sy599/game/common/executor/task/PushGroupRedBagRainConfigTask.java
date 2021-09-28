@@ -32,7 +32,7 @@ public class PushGroupRedBagRainConfigTask implements  Runnable{
         DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00");
         String startDate = dtf2.format(time);
 //        int control =   ResourcesConfigsUtil.loadIntegerValue("RedBagConfig","isOpen");
-        LogUtil.msgLog.info("RedBagRain|PushGroupRedBagRainConfigTask");
+        LogUtil.msgLog.info("RedBagRain|PushGroupRedBagRainConfigTask|"+startDate);
 //        if(control!=1){
 //            //全部关闭
 //            return;

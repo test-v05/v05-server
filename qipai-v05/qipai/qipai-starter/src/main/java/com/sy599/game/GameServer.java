@@ -23,15 +23,7 @@ import com.sy599.game.common.constant.SharedConstants;
 import com.sy599.game.common.constant.SystemCommonInfoType;
 import com.sy599.game.common.datasource.DataSourceManager;
 import com.sy599.game.common.executor.TaskExecutor;
-import com.sy599.game.common.executor.task.CompetitionTask;
-import com.sy599.game.common.executor.task.DayTask;
-import com.sy599.game.common.executor.task.GoldRoomMatchTask;
-import com.sy599.game.common.executor.task.HeartBeatTask;
-import com.sy599.game.common.executor.task.OneMinuteFixedRateTask;
-import com.sy599.game.common.executor.task.ServerConfigTask;
-import com.sy599.game.common.executor.task.TenMinuteFixedRateTask;
-import com.sy599.game.common.executor.task.TenSencondsTask;
-import com.sy599.game.common.executor.task.ZeroUpdateTask;
+import com.sy599.game.common.executor.task.*;
 import com.sy599.game.db.bean.SystemCommonInfo;
 import com.sy599.game.db.dao.SystemCommonInfoDao;
 import com.sy599.game.gcommand.BaseCommand;
@@ -166,7 +158,9 @@ public class GameServer {
         TaskExecutor.getInstance().submitSchTask(new DayTask(), 0, 24 * 60 * 60 * SharedConstants.SENCOND_IN_MINILLS);
         TaskExecutor.getInstance().scheduleWithFixedRate(new OneMinuteFixedRateTask(), OneMinuteFixedRateTask.loadFirstExecuteDate(), 60 * SharedConstants.SENCOND_IN_MINILLS);
         TaskExecutor.getInstance().submitSchTask(new ZeroUpdateTask(), ZeroUpdateTask.getZeroDelay(), 24 * 60 * 60 * SharedConstants.SENCOND_IN_MINILLS);
-    }
+		TaskExecutor.getInstance().submitSchTask(new PushGroupRedBagRainConfigTask(), PushGroupRedBagRainConfigTask.getNextMinDelay(),  60 * SharedConstants.SENCOND_IN_MINILLS);
+
+	}
 
 
 
